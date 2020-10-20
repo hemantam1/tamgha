@@ -14,6 +14,6 @@ City.belongsTo(Country, { foreignKey: 'id_country' });
 module.exports = {
     Continent,
     Country,
-    // City,
+    City,
     User
 };

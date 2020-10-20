@@ -6,7 +6,8 @@ exports.add = (req, res) => {
     const _b = req.body;
     City.create({
         citName: _b.citName,
-        citNameAr: _b.citNameAr
+        citNameAr: _b.citNameAr,
+        id_country: _b.ctryID
     })
         .then(r => {
             res.status(200).json({ status: true, result: r });

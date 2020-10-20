@@ -2,19 +2,20 @@ const connection = require('../services/sequelize.service').connection();
 const Sequelize = require('sequelize');
 
 
-const city = connection.define('city', {
-    citID: {
+const category = connection.define('category', {
+    catID: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
         primaryKey: true
     },
-    citName: {
-        type: Sequelize.STRING
+    catName: {
+        type: Sequelize.STRING,
+        unique: true
     },
-    citNameAr: {
-        type: Sequelize.STRING
+    catNameAr: {
+        type: Sequelize.STRING,
+        unique: true
     }
-
 }
 );
-module.exports = city;
+module.exports = category;
