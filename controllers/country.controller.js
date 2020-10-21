@@ -1,6 +1,5 @@
 const Sequelize = require('sequelize');
 const Country = require('../models/country.model');
-const Continent = require('../models/continent.model');
 const config = require('../config');
 
 exports.add = (req, res) => {
@@ -12,8 +11,8 @@ exports.add = (req, res) => {
         id_cont: _b.contID
 
     })
-        .then( r => {
-            res.status(200).json({status: true, result: r});
+        .then(r => {
+            res.status(200).json({ status: true, result: r });
         })
         .catch(err => {
             console.error(err);
@@ -27,35 +26,35 @@ exports.add = (req, res) => {
 exports.update = (req, res) => {
     const _b = req.body;
     let payload = {};
-    
-    if(!_b.ctryID){
-        res.status(400).json({status: false, message: "ctryID does not exists"});
+
+    if (!_b.ctryID) {
+        res.status(400).json({ status: false, message: "ctryID does not exists" });
         return
     }
 
-    if(_b.ctryName)
-    payload.ctryName = _b.ctryName 
+    if (_b.ctryName)
+        payload.ctryName = _b.ctryName
 
-    if(_b.ctryNameAr)
-    payload.ctryNameAr = _b.ctryNameAr
-    
-    if(_b.contID)
-    payload.id_cont = _b.contID 
+    if (_b.ctryNameAr)
+        payload.ctryNameAr = _b.ctryNameAr
 
-    Country.update(payload ,
+    if (_b.contID)
+        payload.id_cont = _b.contID
+
+    Country.update(payload,
         {
             where: {
                 ctryID: _b.ctryID
             }
         }
     )
-        .then( c => {
-            if(!c) throw new Error('No countryt found!');
-            res.status(200).json({status: true, category: c});
+        .then(c => {
+            if (!c) throw new Error('No countryt found!');
+            res.status(200).json({ status: true, category: c });
         })
         .catch(err => {
             console.error(err);
-            res.status(400).json({status: false});
+            res.status(400).json({ status: false });
         });
 };
 
@@ -63,8 +62,8 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
     const _b = req.body;
 
-    if(!_b.ctryID){
-        res.status(400).json({status: false, message: "ctryID does not exists"});
+    if (!_b.ctryID) {
+        res.status(400).json({ status: false, message: "ctryID does not exists" });
         return
     }
 
@@ -76,13 +75,13 @@ exports.delete = (req, res) => {
             }
         }
     )
-        .then( c => {
-            if(!c) throw new Error('No country found!');
-            res.status(200).json({status: true, category: c});
+        .then(c => {
+            if (!c) throw new Error('No country found!');
+            res.status(200).json({ status: true, category: c });
         })
         .catch(err => {
             console.error(err);
-            res.status(400).json({status: false});
+            res.status(400).json({ status: false });
         });
 };
 
@@ -95,13 +94,13 @@ exports.getAll = (req, res) => {
             }
         ],
     })
-        .then( c => {
-            if(!c) throw new Error('No country found!');
-            res.status(200).json({status: true, data: c});
+        .then(c => {
+            if (!c) throw new Error('No country found!');
+            res.status(200).json({ status: true, data: c });
         })
         .catch(err => {
             console.error(err);
-            res.status(400).json({status: false});
+            res.status(400).json({ status: false });
         });
 };
 
@@ -113,17 +112,17 @@ exports.getByID = (req, res) => {
                 model: Continent
             }
         ],
-        where:{
+        where: {
             ctryID: req.params.ctryID
         }
     })
-        .then( c => {
-            if(!c) throw new Error('No country found!');
-            res.status(200).json({status: true, data: c});
+        .then(c => {
+            if (!c) throw new Error('No country found!');
+            res.status(200).json({ status: true, data: c });
         })
         .catch(err => {
             console.error(err);
-            res.status(400).json({status: false});
+            res.status(400).json({ status: false });
         });
 };
 

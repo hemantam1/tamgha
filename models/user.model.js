@@ -14,25 +14,22 @@ const user = connection.define('user', {
     usrPassword: {
         type: Sequelize.STRING,
     },
-    usrName: {
-        type: Sequelize.STRING,
-        allowNull: false
-
-    },
     usrFirstName: {
         type: Sequelize.STRING,
-
+    },
+    usrFirstNameAr: {
+        type: Sequelize.STRING,
     },
     usrLastName: {
         type: Sequelize.STRING,
     },
-    usrType: {
-        type: Sequelize.STRING,
-    },
-    usrTypeAr: {
+    usrLastNameAr: {
         type: Sequelize.STRING,
     },
     usrPhoneNo: {
+        type: Sequelize.STRING,
+    },
+    usrCountry: {
         type: Sequelize.STRING,
     },
     usrAddress: {

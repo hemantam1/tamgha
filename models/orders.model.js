@@ -2,21 +2,24 @@ const connection = require('../services/sequelize.service').connection();
 const Sequelize = require('sequelize');
 
 
-const continent = connection.define('continent', {
-    contID: {
+const orders = connection.define('orders', {
+    ordID: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
         primaryKey: true
     },
-    contName: {
+    ordCurrency: {
         type: Sequelize.STRING,
-        unique: true
     },
-    contNameAr: {
+    ordCurrencyAr: {
         type: Sequelize.STRING,
-        unique: true
+    },
+    ordPrice: {
+        type: Sequelize.INTEGER,
+    },
+    ordQuantity: {
+        type: Sequelize.INTEGER,
     }
-
 }
 );
-module.exports = continent;
+module.exports = orders;
