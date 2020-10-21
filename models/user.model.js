@@ -9,33 +9,30 @@ const user = connection.define('user', {
     },
     usrEmail: {
         type: Sequelize.STRING,
-        unique: true    
+        unique: true
     },
     usrPassword: {
-        type: Sequelize.STRING,    
+        type: Sequelize.STRING,
     },
     usrName: {
         type: Sequelize.STRING,
         allowNull: false
-        
+
     },
     usrFirstName: {
         type: Sequelize.STRING,
-        
+
     },
-    usrSurName: {
-        type: Sequelize.STRING,    
-    },
-    usrType: {
-        type: Sequelize.STRING,    
-    },
-    usrTypeAr: {
-        type: Sequelize.STRING,    
-    },
-    usrCardNo: {
+    usrLastName: {
         type: Sequelize.STRING,
     },
-    usrSocialSecurityNo: {
+    usrType: {
+        type: Sequelize.STRING,
+    },
+    usrTypeAr: {
+        type: Sequelize.STRING,
+    },
+    usrPhoneNo: {
         type: Sequelize.STRING,
     },
     usrAddress: {
@@ -43,12 +40,6 @@ const user = connection.define('user', {
     },
     usrAddressAr: {
         type: Sequelize.STRING,
-    },
-    usrLat: {
-        type: Sequelize.DOUBLE(25,10)
-    },
-    usrLong: {
-        type: Sequelize.DOUBLE(25,10)
     },
     emailVerified: {
         type: Sequelize.BOOLEAN,
