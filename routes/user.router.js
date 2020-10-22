@@ -6,6 +6,9 @@ const passport = require('passport');
 router.post('/register', userController.register);
 router.post('/login', userController.login);
 
+// router.post('/details', userController.detail);
+// router.post('/products', userController.detail);
+
 
 //update user profile
 // router.get('/test', passport.authenticate('jwt', { session: false }), userController.test);

@@ -19,6 +19,8 @@ require('./services/passport.service').initialize();
 app.use('/user', require('./routes/user.router'));
 app.use('/country', require('./routes/country.router'));
 app.use('/city', require('./routes/city.router'));
+app.use('/product', require('./routes/product.router'));
+
 
 
 sequelize.connection()

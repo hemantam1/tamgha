@@ -7,7 +7,7 @@ const config = require('../config');
 
 exports.register = (req, res) => {
     const _b = req.body;
-    console.log(_b);
+    // console.log(_b);
     if (_b.registrationType === 'google') {
         res.send('redirect to /user/auth/google');
     }
@@ -16,9 +16,6 @@ exports.register = (req, res) => {
     }
     else if (!_b.password) {
         res.status(400).send({ message: "Password cannot be null" });
-    }
-    else if (!_b.usrType && !_b.usrTypeAr) {
-        res.status(400).send({ message: "user type cannot be null" });
     }
     else if (!_b.usrName) {
         res.status(400).send({ message: "user name cannot be null" });
@@ -43,15 +40,9 @@ exports.register = (req, res) => {
                         usrPassword: bcrypt.hashSync(_b.password, 0),
                         usrName: _b.usrName,
                         usrFirstName: _b.firstName,
-                        usrSurName: _b.lastName,
-                        usrType: _b.usrType,
-                        usrTypeAr: _b.usrTypeAr,
-                        usrCardNo: _b.cardNo,
-                        usrSocialSecurityNo: _b.socialSecurityNo,
-                        usrAddress: _b.address,
-                        usrAddressAr: _b.addressAr,
-                        usrLat: _b.lat,
-                        usrLong: _b.long,
+                        usrLastName: _b.lastName,
+                        usrPhoneNo: _b.phoneNo,
+                        usrCountry: _b.country,
                         emailVerified: true // set to false in production
                     })
                         .then(data => {
@@ -348,7 +339,7 @@ exports.login = (req, res) => {
 
 
 // exports.leaderBoard = (req, res) => {
-    
+
 //     User.findAll(
 //         {
 //             where: {
