@@ -1,6 +1,7 @@
 const Country = require('./country.model');
 const City = require('./city.model');
 const User = require('./user.model');
+const SubCategory = require('./subCategory.model');
 const Category = require('./category.model');
 const Product = require('./product.model');
 const Media = require('./media.model');
@@ -22,8 +23,8 @@ Country.hasMany(City, { foreignKey: 'id_country', onDelete: 'CASCADE' });
 City.belongsTo(Country, { foreignKey: 'id_country' });
 
 // User
-User.hasMany(Product, { foreignKey: 'produsr_id', onDelete: 'CASCADE' })
-Product.belongsTo(User, { foreignKey: 'produsr_id' })
+User.hasMany(Product, { foreignKey: 'usr_id', onDelete: 'CASCADE' })
+Product.belongsTo(User, { foreignKey: 'usr_id' })
 
 User.hasMany(ShippingAddress, { foreignKey: 'usr_id', onDelete: 'CASCADE' })
 ShippingAddress.belongsTo(User, { foreignKey: 'usr_id' })
@@ -32,15 +33,15 @@ ShippingAddress.belongsTo(User, { foreignKey: 'usr_id' })
 User.hasMany(Followers, { foreignKey: 'usr_id', onDelete: 'CASCADE' })
 Followers.belongsTo(User, { foreignKey: 'usr_id' })
 
-User.hasMany(Followers, { foreignKey: 'fol_usrID', onDelete: 'CASCADE' })
-Followers.belongsTo(User, { foreignKey: 'fol_usrID' })
+User.hasMany(Followers, { foreignKey: 'folower_usrID', onDelete: 'CASCADE' })
+Followers.belongsTo(User, { foreignKey: 'folower_usrID' })
 
 // Likes
 User.hasMany(Likes, { foreignKey: 'usr_id', onDelete: 'CASCADE' })
 Likes.belongsTo(User, { foreignKey: 'usr_id' })
 
-User.hasMany(Likes, { foreignKey: 'like_usrID', onDelete: 'CASCADE' })
-Likes.belongsTo(User, { foreignKey: 'like_usrID' })
+User.hasMany(Likes, { foreignKey: 'usr_id', onDelete: 'CASCADE' })
+Likes.belongsTo(User, { foreignKey: 'usr_id' })
 
 // Comment
 User.hasMany(Comment, { foreignKey: 'usr_id', onDelete: 'CASCADE' })
@@ -53,8 +54,11 @@ User.hasMany(Favourite, { foreignKey: 'usr_id', onDelete: 'CASCADE' })
 Favourite.belongsTo(User, { foreignKey: 'usr_id' })
 
 // Categories
-Category.hasMany(Product, { foreignKey: 'cat_id', onDelete: 'CASCADE' })
-Product.belongsTo(Category, { foreignKey: 'cat_id' })
+Category.hasMany(SubCategory, { foreignKey: 'cat_id', onDelete: 'CASCADE' })
+SubCategory.belongsTo(Category, { foreignKey: 'cat_id' })
+
+SubCategory.hasMany(Product, { foreignKey: 'subCat_id', onDelete: 'CASCADE' })
+Product.belongsTo(SubCategory, { foreignKey: 'subCat_id' })
 
 // Product Association
 Product.hasMany(Media, { foreignKey: 'prod_id', onDelete: 'CASCADE' })
@@ -96,15 +100,19 @@ ShippingAddress.hasMany(Orders, { foreignKey: 'address_id', onDelete: 'CASCADE' 
 Orders.belongsTo(ShippingAddress, { foreignKey: 'address_id' })
 
 // // Recipt
-ShippingAddress.hasMany(Recipt, { foreignKey: 'address_id', onDelete: 'CASCADE' })
-Recipt.belongsTo(Recipt, { foreignKey: 'address_id' })
+Orders.hasOne(Recipt, { foreignKey: 'ord_id', onDelete: 'CASCADE' })
+Recipt.belongsTo(Orders, { foreignKey: 'ord_id', onDelete: 'CASCADE' })
+
+
+User.hasMany(Recipt, { foreignKey: 'usr_id', onDelete: 'CASCADE' })
+Recipt.belongsTo(User, { foreignKey: 'usr_id' })
 
 
 module.exports = {
     Country,
     City,
     User,
-    Category,
+    SubCategory,
     Media,
     Product,
     ProdMeasureType,
