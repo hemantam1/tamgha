@@ -12,7 +12,10 @@ const Recipt = require('./recipts.model');
 const Followers = require('./followers.model');
 const Likes = require('./likes.model');
 const Comment = require('./comment.model');
-const ShippingAddress = require('./shippingAddres.model');
+const ShippingAddress = require('./addres.model');
+const Transaction = require('./transaction.model')
+const Favourite = require('./favourite.model');
+const Cart = require('./cart.model');
 
 
 Country.hasMany(City, { foreignKey: 'id_country', onDelete: 'CASCADE' });
@@ -43,6 +46,12 @@ Likes.belongsTo(User, { foreignKey: 'like_usrID' })
 User.hasMany(Comment, { foreignKey: 'usr_id', onDelete: 'CASCADE' })
 Comment.belongsTo(User, { foreignKey: 'usr_id' })
 
+User.hasMany(Transaction, { foreignKey: 'usr_id', onDelete: 'CASCADE' })
+Transaction.belongsTo(User, { foreignKey: 'usr_id' })
+
+User.hasMany(Favourite, { foreignKey: 'usr_id', onDelete: 'CASCADE' })
+Favourite.belongsTo(User, { foreignKey: 'usr_id' })
+
 // Categories
 Category.hasMany(Product, { foreignKey: 'cat_id', onDelete: 'CASCADE' })
 Product.belongsTo(Category, { foreignKey: 'cat_id' })
@@ -50,6 +59,12 @@ Product.belongsTo(Category, { foreignKey: 'cat_id' })
 // Product Association
 Product.hasMany(Media, { foreignKey: 'prod_id', onDelete: 'CASCADE' })
 Media.belongsTo(Product, { foreignKey: 'prod_id' })
+
+Product.hasMany(Favourite, { foreignKey: 'prod_id', onDelete: 'CASCADE' })
+Favourite.belongsTo(Product, { foreignKey: 'prod_id' })
+
+Product.hasMany(Cart, { foreignKey: 'prod_id', onDelete: 'CASCADE' })
+Cart.belongsTo(Product, { foreignKey: 'prod_id' })
 
 Product.hasMany(ProductDetails, { foreignKey: 'prod_id', onDelete: 'CASCADE' })
 ProductDetails.belongsTo(Product, { foreignKey: 'prod_id' })
@@ -68,6 +83,9 @@ Product.hasMany(Comment, { foreignKey: 'prod_id', onDelete: 'CASCADE' })
 Comment.belongsTo(Product, { foreignKey: 'prod_id' })
 
 // // Orders
+Orders.hasMany(Transaction, { foreignKey: 'order_id', onDelete: 'CASCADE' })
+Transaction.belongsTo(Orders, { foreignKey: 'order_id' })
+
 Product.hasMany(Orders, { foreignKey: 'prod_id', onDelete: 'CASCADE' })
 Orders.belongsTo(Product, { foreignKey: 'prod_id' })
 

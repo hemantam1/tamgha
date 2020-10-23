@@ -8,24 +8,32 @@ const prodDetails = connection.define('prod_details', {
         defaultValue: Sequelize.UUIDV4,
         primaryKey: true
     },
-    prdAvailable: {
+    available: {
         type: Sequelize.INTEGER,
     },
-    prdColor: {
+    color: {
         type: Sequelize.STRING,
     },
-    prdColorAr: {
+    colorAr: {
         type: Sequelize.STRING,
     },
-    prdPriceCurrency: {
+    priceCurrency: {
         type: Sequelize.STRING,
     },
-    prdPriceCurrencyAr: {
+    priceCurrencyAr: {
         type: Sequelize.STRING,
     },
-    prdPrice: {
-        type: Sequelize.INTEGER,
-    }
+    price: {
+        type: Sequelize.DOUBLE,
+    },
+    isFaltDiscount: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false
+    },
+    priceExcluding: {
+        type: Sequelize.DOUBLE,
+    },
+
 }
 );
 module.exports = prodDetails;

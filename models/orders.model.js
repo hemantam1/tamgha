@@ -8,6 +8,16 @@ const orders = connection.define('orders', {
         defaultValue: Sequelize.UUIDV4,
         primaryKey: true
     },
+    deliveryMethod: {
+        type: Sequelize.STRING,
+    },
+    paymentMethod: {
+        type: Sequelize.STRING,
+    },
+    status: {
+        type: Sequelize.ENUM,
+        values: ['succes', 'cancel']
+    },
     ordCurrency: {
         type: Sequelize.STRING,
     },
@@ -15,7 +25,7 @@ const orders = connection.define('orders', {
         type: Sequelize.STRING,
     },
     ordPrice: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.DOUBLE,
     },
     ordQuantity: {
         type: Sequelize.INTEGER,

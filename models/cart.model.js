@@ -2,18 +2,20 @@ const connection = require('../services/sequelize.service').connection();
 const Sequelize = require('sequelize');
 
 
-const measurementType = connection.define('prod_measureType', {
-    msrID: {
+const Cart = connection.define('cart', {
+    cartID: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
         primaryKey: true
     },
-    value: {
+    quantity: {
         type: Sequelize.STRING,
+        allowNull: false
     },
-    valueAr: {
+    price: {
         type: Sequelize.STRING,
+        allowNull: false
     }
 }
 );
-module.exports = measurementType;
+module.exports = Cart;

@@ -12,6 +12,10 @@ const Recipt = connection.define('recipt', {
         type: Sequelize.ENUM,
         values: ['Sold', 'Purchased']
     },
+    recpTransID: {
+        type: Sequelize.STRING,
+    }
+
 }
 );
 module.exports = Recipt;

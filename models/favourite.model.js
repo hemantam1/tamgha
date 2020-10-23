@@ -2,18 +2,12 @@ const connection = require('../services/sequelize.service').connection();
 const Sequelize = require('sequelize');
 
 
-const measurementType = connection.define('prod_measureType', {
-    msrID: {
+const Favourite = connection.define('favourite', {
+    favID: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
         primaryKey: true
-    },
-    value: {
-        type: Sequelize.STRING,
-    },
-    valueAr: {
-        type: Sequelize.STRING,
     }
 }
 );
-module.exports = measurementType;
+module.exports = Favourite;

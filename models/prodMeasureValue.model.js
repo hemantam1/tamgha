@@ -8,13 +8,13 @@ const measurementValue = connection.define('prod_measureValue', {
         defaultValue: Sequelize.UUIDV4,
         primaryKey: true
     },
-    msvMeasureType: {
+    measureType: {
         type: Sequelize.STRING,
     },
-    msvMeasureTypeAr: {
+    measureTypeAr: {
         type: Sequelize.STRING,
     },
-    msvMeasureValue: {
+    measureValue: {
         type: Sequelize.STRING,
     }
 }
