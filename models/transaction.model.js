@@ -8,17 +8,17 @@ const Transaction = connection.define('transaction', {
         defaultValue: Sequelize.UUIDV4,
         primaryKey: true
     },
-    transInvoiceID: {
+    invoiceID: {
         type: Sequelize.INTEGER,
         defaultValue: '0000'
     },
-    transSalePrice: {
+    salePrice: {
         type: Sequelize.DOUBLE,
     },
-    transPaymentGateway: {
+    paymentGateway: {
         type: Sequelize.STRING,
     },
-    transStatus: {
+    status: {
         type: Sequelize.STRING,
     },
     isSuccesfull: {
