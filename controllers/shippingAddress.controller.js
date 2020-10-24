@@ -1,37 +1,30 @@
 const Sequelize = require('sequelize');
-const Category = require('../models/category.model');
+const ShippingAddress = require('../models/shippingAddres.model');
 const config = require('../config');
 const { insertingData } = require('../utils/helperFunc')
 const { isAr } = require('../utils/verify')
-// const { getCategorySchema } = require('../utils/schema/schemas');
+// const { getShippingAddressSchema } = require('../utils/schema/schemas');
 const Serializer = require('sequelize-to-json');
 
 exports.add = (req, res) => {
     const _b = req.body;
     let payload = {
-        CatName: _b.CatName,
-        CatNameAr: _b.CatNameAr,
+        address: _b.address,
+        country: _b.country,
+        idType: _b.idType,
+        idFront: _b.idFront,
+        idBack: _b.idBack,
+        phoneNo: _b.phoneNo,
+        shiipingFrom: _b.shiipingFrom,
+        email: _b.email,
+        emailAr: _b.emailAr,
+        usr_id: _b.usr_id,
+        prod_id: _b.prod_id
+
     }
 
-    // if (isAr(_b.languageID)) {
-    //     payload = {
-    //         CategoryNameAr: _b.CategoryName,
-    //         CategoryUpgradePrice: _b.CategoryUpgradePrice,
-    //         CategoryPriceCurrencyAr: _b.CategoryPriceCurrency,
-    //         hotID: _b.hotID
-    //     }
-    // }
-    // if (req.isAdmin) {
-    //     payload = {
-    //         CategoryName: _b.CategoryName,
-    //         CategoryNameAr: _b.CategoryNameAr,
-    //         CategoryUpgradePrice: _b.CategoryUpgradePrice,
-    //         CategoryPriceCurrency: _b.CategoryPriceCurrency,
-    //         CategoryPriceCurrencyAr: _b.CategoryPriceCurrencyAr,
-    //         hotID: _b.hotID
-    //     }
-    // }
-    Category.create(payload)
+
+    ShippingAddress.create(payload)
         .then(r => {
             res.status(200).json({ status: true, result: r });
         })
@@ -47,25 +40,22 @@ exports.add = (req, res) => {
 exports.update = (req, res) => {
     const _b = req.body;
 
-    if (!_b.catID) {
-        res.status(400).json({
-            status: false, message: "catID does not exists"
-        });
+    if (!_b.adrsID) {
+        res.status(400).json({ status: false, message: "adrsID does not exists" });
         return
     }
 
-    let payload = insertingData(_b, _b.catID);
+    let payload = insertingData(_b, _b.adrsID);
 
-    Category.update(payload,
+    ShippingAddress.update(payload,
         {
             where: {
-                catID:
-                    _b.catID
+                adrsID: _b.adrsID
             }
         }
     )
         .then(c => {
-            if (!c) throw new Error('No Categories found!');
+            if (!c) throw new Error('No ShippingAddress found!');
             res.status(200).json({ status: true, category: c });
         })
         .catch(err => {
@@ -78,23 +68,21 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
     const _b = req.body;
 
-    if (!_b.catID) {
-        res.status(400).json({
-            status: false, message: "catID does not exists"
-        });
+    if (!_b.adrsID) {
+        res.status(400).json({ status: false, message: "adrsID does not exists" });
         return
     }
 
 
-    Category.destroy(
+    ShippingAddress.destroy(
         {
             where: {
-                catID: _b.catID
+                adrsID: _b.adrsID
             }
         }
     )
         .then(c => {
-            if (!c) throw new Error('No Category found!');
+            if (!c) throw new Error('No ShippingAddress found!');
             res.status(200).json({ status: true, category: c });
         })
         .catch(err => {
@@ -105,14 +93,14 @@ exports.delete = (req, res) => {
 
 exports.getAll = (req, res) => {
     const _b = req.body
-    Category.findAll()
+    ShippingAddress.findAll()
         .then(c => {
 
-            if (!c) throw new Error('No Category found!');
+            if (!c) throw new Error('No ShippingAddress found!');
 
-            // let schema = getCategorySchema(_b.languageID)
+            // let schema = getShippingAddressSchema(_b.languageID)
 
-            // let data = Serializer.serializeMany(c, Category, schema);
+            // let data = Serializer.serializeMany(c, ShippingAddress, schema);
             res.status(200).json({ status: true, data: c });
 
         })
@@ -124,13 +112,13 @@ exports.getAll = (req, res) => {
 
 
 exports.getByID = (req, res) => {
-    Category.findOne({
+    ShippingAddress.findOne({
         where: {
-            catID: req.params.catID
+            adrsID: req.params.adrsID
         }
     })
         .then(c => {
-            if (!c) throw new Error('No Category found!');
+            if (!c) throw new Error('No ShippingAddress found!');
             res.status(200).json({ status: true, data: c });
         })
         .catch(err => {

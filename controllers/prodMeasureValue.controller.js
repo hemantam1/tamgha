@@ -1,39 +1,21 @@
 const Sequelize = require('sequelize');
-const Activity = require('../models/activity.model');
+const MeasureValue = require('../models/prodMeasureValue.model');
 const config = require('../config');
 const { insertingData } = require('../utils/helperFunc')
 const { isAr } = require('../utils/verify')
-const { getActivitySchema } = require('../utils/schema/schemas');
+// const { getMeasureValueSchema } = require('../utils/schema/schemas');
 const Serializer = require('sequelize-to-json');
 
 exports.add = (req, res) => {
     const _b = req.body;
     let payload = {
-        activityName: _b.activityName,
-        activityUpgradePrice: _b.activityUpgradePrice,
-        activityPriceCurrency: _b.activityPriceCurrency,
-        hotID: _b.hotID
+        measureType: _b.measureType,
+        measureTypeAr: _b.measureTypeAr,
+        measureValue: _b.measureValue,
+        prdetail_id: _b.prdetail_id
     }
 
-    if (isAr(_b.languageID)) {
-        payload = {
-            activityNameAr: _b.activityName,
-            activityUpgradePrice: _b.activityUpgradePrice,
-            activityPriceCurrencyAr: _b.activityPriceCurrency,
-            hotID: _b.hotID
-        }
-    }
-    if (req.isAdmin) {
-        payload = {
-            activityName: _b.activityName,
-            activityNameAr: _b.activityNameAr,
-            activityUpgradePrice: _b.activityUpgradePrice,
-            activityPriceCurrency: _b.activityPriceCurrency,
-            activityPriceCurrencyAr: _b.activityPriceCurrencyAr,
-            hotID: _b.hotID
-        }
-    }
-    Activity.create(payload)
+    MeasureValue.create(payload)
         .then(r => {
             res.status(200).json({ status: true, result: r });
         })
@@ -49,22 +31,22 @@ exports.add = (req, res) => {
 exports.update = (req, res) => {
     const _b = req.body;
 
-    if (!_b.actID) {
-        res.status(400).json({ status: false, message: "actID does not exists" });
+    if (!_b.msvID) {
+        res.status(400).json({ status: false, message: "msvID does not exists" });
         return
     }
 
-    let payload = insertingData(_b, _b.actID);
+    let payload = insertingData(_b, _b.msvID);
 
-    Activity.update(payload,
+    MeasureValue.update(payload,
         {
             where: {
-                actID: _b.actID
+                msvID: _b.msvID
             }
         }
     )
         .then(c => {
-            if (!c) throw new Error('No Activities found!');
+            if (!c) throw new Error('No MeasureValues found!');
             res.status(200).json({ status: true, category: c });
         })
         .catch(err => {
@@ -77,21 +59,21 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
     const _b = req.body;
 
-    if (!_b.actID) {
-        res.status(400).json({ status: false, message: "actID does not exists" });
+    if (!_b.msvID) {
+        res.status(400).json({ status: false, message: "msvID does not exists" });
         return
     }
 
 
-    Activity.destroy(
+    MeasureValue.destroy(
         {
             where: {
-                actID: _b.actID
+                msvID: _b.msvID
             }
         }
     )
         .then(c => {
-            if (!c) throw new Error('No Activity found!');
+            if (!c) throw new Error('No MeasureValue found!');
             res.status(200).json({ status: true, category: c });
         })
         .catch(err => {
@@ -102,15 +84,15 @@ exports.delete = (req, res) => {
 
 exports.getAll = (req, res) => {
     const _b = req.body
-    Activity.findAll()
+    MeasureValue.findAll()
         .then(c => {
 
-            if (!c) throw new Error('No Activity found!');
+            if (!c) throw new Error('No MeasureValue found!');
 
-            let schema = getActivitySchema(_b.languageID)
+            // let schema = getMeasureValueSchema(_b.languageID)
 
-            let data = Serializer.serializeMany(c, Activity, schema);
-            res.status(200).json({ status: true, data });
+            // let data = Serializer.serializeMany(c, MeasureValue, schema);
+            res.status(200).json({ status: true, data: c });
 
         })
         .catch(err => {
@@ -121,13 +103,13 @@ exports.getAll = (req, res) => {
 
 
 exports.getByID = (req, res) => {
-    Activity.findOne({
+    MeasureValue.findOne({
         where: {
-            actID: req.params.actID
+            msvID: req.params.msvID
         }
     })
         .then(c => {
-            if (!c) throw new Error('No Activity found!');
+            if (!c) throw new Error('No MeasureValue found!');
             res.status(200).json({ status: true, data: c });
         })
         .catch(err => {

@@ -1,37 +1,21 @@
 const Sequelize = require('sequelize');
-const Category = require('../models/category.model');
+const SubCategory = require('../models/subCategory.model');
 const config = require('../config');
 const { insertingData } = require('../utils/helperFunc')
 const { isAr } = require('../utils/verify')
-// const { getCategorySchema } = require('../utils/schema/schemas');
+// const { getSubCategorySchema } = require('../utils/schema/schemas');
 const Serializer = require('sequelize-to-json');
 
 exports.add = (req, res) => {
     const _b = req.body;
     let payload = {
-        CatName: _b.CatName,
-        CatNameAr: _b.CatNameAr,
+        subCatName: _b.subCatName,
+        subCatNameAr: _b.subCatNameAr,
+        cat_id: _b.cat_id
     }
 
-    // if (isAr(_b.languageID)) {
-    //     payload = {
-    //         CategoryNameAr: _b.CategoryName,
-    //         CategoryUpgradePrice: _b.CategoryUpgradePrice,
-    //         CategoryPriceCurrencyAr: _b.CategoryPriceCurrency,
-    //         hotID: _b.hotID
-    //     }
-    // }
-    // if (req.isAdmin) {
-    //     payload = {
-    //         CategoryName: _b.CategoryName,
-    //         CategoryNameAr: _b.CategoryNameAr,
-    //         CategoryUpgradePrice: _b.CategoryUpgradePrice,
-    //         CategoryPriceCurrency: _b.CategoryPriceCurrency,
-    //         CategoryPriceCurrencyAr: _b.CategoryPriceCurrencyAr,
-    //         hotID: _b.hotID
-    //     }
-    // }
-    Category.create(payload)
+
+    SubCategory.create(payload)
         .then(r => {
             res.status(200).json({ status: true, result: r });
         })
@@ -47,25 +31,22 @@ exports.add = (req, res) => {
 exports.update = (req, res) => {
     const _b = req.body;
 
-    if (!_b.catID) {
-        res.status(400).json({
-            status: false, message: "catID does not exists"
-        });
+    if (!_b.subCatID) {
+        res.status(400).json({ status: false, message: "subCatID does not exists" });
         return
     }
 
-    let payload = insertingData(_b, _b.catID);
+    let payload = insertingData(_b, _b.subCatID);
 
-    Category.update(payload,
+    SubCategory.update(payload,
         {
             where: {
-                catID:
-                    _b.catID
+                subCatID: _b.subCatID
             }
         }
     )
         .then(c => {
-            if (!c) throw new Error('No Categories found!');
+            if (!c) throw new Error('No SubCategory found!');
             res.status(200).json({ status: true, category: c });
         })
         .catch(err => {
@@ -78,23 +59,21 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
     const _b = req.body;
 
-    if (!_b.catID) {
-        res.status(400).json({
-            status: false, message: "catID does not exists"
-        });
+    if (!_b.subCatID) {
+        res.status(400).json({ status: false, message: "subCatID does not exists" });
         return
     }
 
 
-    Category.destroy(
+    SubCategory.destroy(
         {
             where: {
-                catID: _b.catID
+                subCatID: _b.subCatID
             }
         }
     )
         .then(c => {
-            if (!c) throw new Error('No Category found!');
+            if (!c) throw new Error('No SubCategory found!');
             res.status(200).json({ status: true, category: c });
         })
         .catch(err => {
@@ -105,14 +84,14 @@ exports.delete = (req, res) => {
 
 exports.getAll = (req, res) => {
     const _b = req.body
-    Category.findAll()
+    SubCategory.findAll()
         .then(c => {
 
-            if (!c) throw new Error('No Category found!');
+            if (!c) throw new Error('No SubCategory found!');
 
-            // let schema = getCategorySchema(_b.languageID)
+            // let schema = getSubCategorySchema(_b.languageID)
 
-            // let data = Serializer.serializeMany(c, Category, schema);
+            // let data = Serializer.serializeMany(c, SubCategory, schema);
             res.status(200).json({ status: true, data: c });
 
         })
@@ -124,13 +103,13 @@ exports.getAll = (req, res) => {
 
 
 exports.getByID = (req, res) => {
-    Category.findOne({
+    SubCategory.findOne({
         where: {
-            catID: req.params.catID
+            subCatID: req.params.subCatID
         }
     })
         .then(c => {
-            if (!c) throw new Error('No Category found!');
+            if (!c) throw new Error('No SubCategory found!');
             res.status(200).json({ status: true, data: c });
         })
         .catch(err => {

@@ -3,7 +3,7 @@ const Likes = require('../models/likes.model');
 const config = require('../config');
 const { insertingData } = require('../utils/helperFunc')
 const { isAr } = require('../utils/verify')
-const { getLikesSchema } = require('../utils/schema/schemas');
+// const { getLikesSchema } = require('../utils/schema/schemas');
 const Serializer = require('sequelize-to-json');
 
 exports.add = (req, res) => {

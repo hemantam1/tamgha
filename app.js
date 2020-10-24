@@ -16,6 +16,7 @@ sequelize.connect();
 require('./models/associations');
 require('./services/passport.service').initialize();
 
+app.use('/', require('./routes/allRoute.router'));
 app.use('/user', require('./routes/user.router'));
 app.use('/country', require('./routes/country.router'));
 app.use('/city', require('./routes/city.router'));

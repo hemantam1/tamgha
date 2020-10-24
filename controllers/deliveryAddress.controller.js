@@ -1,5 +1,5 @@
 const Sequelize = require('sequelize');
-const Address = require('../models/addres.model');
+const DeliveryAddress = require('../models/deliveryAddres.model');
 const config = require('../config');
 const { insertingData } = require('../utils/helperFunc')
 const { isAr } = require('../utils/verify')
@@ -9,39 +9,28 @@ const Serializer = require('sequelize-to-json');
 exports.add = (req, res) => {
     const _b = req.body;
     let payload = {
-        adrsUsrType: _b.adrsUsrType,
-        adrsFirstName: _b.adrsFirstName,
-        adrsLastName: _b.adrsLastName,
-        adrsCity: _b.adrsCity,
-        adrsCountry: _b.adrsCountry,
-        adrsPhoneNo: _b.adrsPhoneNo,
-        adrsEmail: _b.adrsEmail,
-        adrsEmailAr: _b.adrsEmailAr,
-        adrsNote: _b.adrsNote,
-        adrsNoteAr: _b.adrsNoteAr,
-        usr_id: _b.usr_id,
-        prod_id: _b.prod_id
+        firstName: _b.firstName,
+        lastName: _b.lastName,
+        fullName: _b.fullName,
+        city: _b.city,
+        country: _b.country,
+        address: _b.address,
+        addressAr: _b.addressAr,
+        area: _b.area,
+        block: _b.block,
+        street: _b.street,
+        avenue: _b.avenue,
+        houseNo: _b.houseNo,
+        floorNo: _b.floorNo,
+        flatNo: _b.flatNo,
+        phoneNo: _b.phoneNo,
+        email: _b.email,
+        emailAr: _b.emailAr,
+        note: _b.note,
+        noteAr: _b.noteAr
     }
 
-    // if (isAr(_b.languageID)) {
-    //     payload = {
-    //         activityNameAr: _b.activityName,
-    //         activityUpgradePrice: _b.activityUpgradePrice,
-    //         activityPriceCurrencyAr: _b.activityPriceCurrency,
-    //         hotID: _b.hotID
-    //     }
-    // }
-    // if (req.isAdmin) {
-    //     payload = {
-    //         activityName: _b.activityName,
-    //         activityNameAr: _b.activityNameAr,
-    //         activityUpgradePrice: _b.activityUpgradePrice,
-    //         activityPriceCurrency: _b.activityPriceCurrency,
-    //         activityPriceCurrencyAr: _b.activityPriceCurrencyAr,
-    //         hotID: _b.hotID
-    //     }
-    // }
-    Address.create(payload)
+    DeliveryAddress.create(payload)
         .then(r => {
             res.status(200).json({ status: true, result: r });
         })
@@ -64,7 +53,7 @@ exports.update = (req, res) => {
 
     let payload = insertingData(_b, _b.adrsID);
 
-    Address.update(payload,
+    DeliveryAddress.update(payload,
         {
             where: {
                 adrsID: _b.adrsID
@@ -91,7 +80,7 @@ exports.delete = (req, res) => {
     }
 
 
-    Address.destroy(
+    DeliveryAddress.destroy(
         {
             where: {
                 adrsID: _b.adrsID
@@ -99,7 +88,7 @@ exports.delete = (req, res) => {
         }
     )
         .then(c => {
-            if (!c) throw new Error('No Address found!');
+            if (!c) throw new Error('No DeliveryAddress found!');
             res.status(200).json({ status: true, category: c });
         })
         .catch(err => {
@@ -110,14 +99,14 @@ exports.delete = (req, res) => {
 
 exports.getAll = (req, res) => {
     const _b = req.body
-    Address.findAll()
+    DeliveryAddress.findAll()
         .then(c => {
             // 
-            if (!c) throw new Error('No Address found!');
+            if (!c) throw new Error('No DeliveryAddress found!');
 
             // let schema = getActivitySchema(_b.languageID)
 
-            // let data = Serializer.serializeMany(c, Address, schema);
+            // let data = Serializer.serializeMany(c, DeliveryAddress, schema);
             res.status(200).json({ status: true, data: c });
             // 
         })
@@ -129,13 +118,13 @@ exports.getAll = (req, res) => {
 
 
 exports.getByID = (req, res) => {
-    Address.findOne({
+    DeliveryAddress.findOne({
         where: {
             adrsID: req.params.adrsID
         }
     })
         .then(c => {
-            if (!c) throw new Error('No Address found!');
+            if (!c) throw new Error('No DeliveryAddress found!');
             res.status(200).json({ status: true, data: c });
         })
         .catch(err => {

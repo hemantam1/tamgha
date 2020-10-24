@@ -3,7 +3,7 @@ const addressController = require('../controllers/product.controller');
 const passport = require('passport');
 
 
-router.get('/', addressController.getAll);
+// router.get('/', addressController.getByName);
 
 // router.post('/add', productController.add);
 

@@ -1,37 +1,28 @@
 const Sequelize = require('sequelize');
-const Category = require('../models/category.model');
+const Transaction = require('../models/transaction.model');
 const config = require('../config');
 const { insertingData } = require('../utils/helperFunc')
 const { isAr } = require('../utils/verify')
-// const { getCategorySchema } = require('../utils/schema/schemas');
+// const { getTransactionSchema } = require('../utils/schema/schemas');
 const Serializer = require('sequelize-to-json');
 
 exports.add = (req, res) => {
     const _b = req.body;
     let payload = {
-        CatName: _b.CatName,
-        CatNameAr: _b.CatNameAr,
+        invoiceID: _b.invoiceID,
+        salePrice: _b.salePrice,
+        paymentGateway: _b.paymentGateway,
+        status: _b.status,
+        isSuccesfull: _b.isSuccesfull,
+        isRefunded: _b.isRefunded,
+        finalAmnt: _b.finalAmnt,
+        usr_id: _b.usr_id,
+        order_id: _b.order_id
+
     }
 
-    // if (isAr(_b.languageID)) {
-    //     payload = {
-    //         CategoryNameAr: _b.CategoryName,
-    //         CategoryUpgradePrice: _b.CategoryUpgradePrice,
-    //         CategoryPriceCurrencyAr: _b.CategoryPriceCurrency,
-    //         hotID: _b.hotID
-    //     }
-    // }
-    // if (req.isAdmin) {
-    //     payload = {
-    //         CategoryName: _b.CategoryName,
-    //         CategoryNameAr: _b.CategoryNameAr,
-    //         CategoryUpgradePrice: _b.CategoryUpgradePrice,
-    //         CategoryPriceCurrency: _b.CategoryPriceCurrency,
-    //         CategoryPriceCurrencyAr: _b.CategoryPriceCurrencyAr,
-    //         hotID: _b.hotID
-    //     }
-    // }
-    Category.create(payload)
+
+    Transaction.create(payload)
         .then(r => {
             res.status(200).json({ status: true, result: r });
         })
@@ -47,25 +38,22 @@ exports.add = (req, res) => {
 exports.update = (req, res) => {
     const _b = req.body;
 
-    if (!_b.catID) {
-        res.status(400).json({
-            status: false, message: "catID does not exists"
-        });
+    if (!_b.transID) {
+        res.status(400).json({ status: false, message: "transID does not exists" });
         return
     }
 
-    let payload = insertingData(_b, _b.catID);
+    let payload = insertingData(_b, _b.transID);
 
-    Category.update(payload,
+    Transaction.update(payload,
         {
             where: {
-                catID:
-                    _b.catID
+                transID: _b.transID
             }
         }
     )
         .then(c => {
-            if (!c) throw new Error('No Categories found!');
+            if (!c) throw new Error('No Transaction found!');
             res.status(200).json({ status: true, category: c });
         })
         .catch(err => {
@@ -78,23 +66,21 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
     const _b = req.body;
 
-    if (!_b.catID) {
-        res.status(400).json({
-            status: false, message: "catID does not exists"
-        });
+    if (!_b.transID) {
+        res.status(400).json({ status: false, message: "transID does not exists" });
         return
     }
 
 
-    Category.destroy(
+    Transaction.destroy(
         {
             where: {
-                catID: _b.catID
+                transID: _b.transID
             }
         }
     )
         .then(c => {
-            if (!c) throw new Error('No Category found!');
+            if (!c) throw new Error('No Transaction found!');
             res.status(200).json({ status: true, category: c });
         })
         .catch(err => {
@@ -105,14 +91,14 @@ exports.delete = (req, res) => {
 
 exports.getAll = (req, res) => {
     const _b = req.body
-    Category.findAll()
+    Transaction.findAll()
         .then(c => {
 
-            if (!c) throw new Error('No Category found!');
+            if (!c) throw new Error('No Transaction found!');
 
-            // let schema = getCategorySchema(_b.languageID)
+            // let schema = getTransactionSchema(_b.languageID)
 
-            // let data = Serializer.serializeMany(c, Category, schema);
+            // let data = Serializer.serializeMany(c, Transaction, schema);
             res.status(200).json({ status: true, data: c });
 
         })
@@ -124,13 +110,13 @@ exports.getAll = (req, res) => {
 
 
 exports.getByID = (req, res) => {
-    Category.findOne({
+    Transaction.findOne({
         where: {
-            catID: req.params.catID
+            transID: req.params.transID
         }
     })
         .then(c => {
-            if (!c) throw new Error('No Category found!');
+            if (!c) throw new Error('No Transaction found!');
             res.status(200).json({ status: true, data: c });
         })
         .catch(err => {
