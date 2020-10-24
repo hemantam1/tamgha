@@ -15,6 +15,7 @@ const Likes = require('./likes.model');
 const Comment = require('./comment.model');
 const ShippingAddress = require('./shippingAddres.model');
 const DeliveryAddress = require('./deliveryAddres.model')
+const PrivateMessage = require('./privateMessage.model');
 const Transaction = require('./transaction.model')
 const Favourite = require('./favourite.model');
 const Cart = require('./cart.model');
@@ -53,6 +54,13 @@ Transaction.belongsTo(User, { foreignKey: 'usr_id' })
 
 User.hasMany(Favourite, { foreignKey: 'usr_id', onDelete: 'CASCADE' })
 Favourite.belongsTo(User, { foreignKey: 'usr_id' })
+
+//PrivateMessages
+User.hasMany(PrivateMessage, { foreignKey: 'usr_id', onDelete: 'CASCADE' })
+PrivateMessage.belongsTo(User, { foreignKey: 'usr_id' })
+
+User.hasMany(PrivateMessage, { foreignKey: 'msg_usrID', onDelete: 'CASCADE' })
+PrivateMessage.belongsTo(User, { foreignKey: 'msg_usrID' })
 
 // Categories
 Category.hasMany(SubCategory, { foreignKey: 'cat_id', onDelete: 'CASCADE' })
@@ -121,6 +129,7 @@ module.exports = {
     ProdMeasureType,
     ProductDetails,
     MeasureValue,
+    PrivateMessage,
     Likes,
     Followers,
     Orders,
