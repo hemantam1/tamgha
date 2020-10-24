@@ -38,6 +38,15 @@ const user = connection.define('user', {
     usrAddressAr: {
         type: Sequelize.STRING,
     },
+    usrIdType: {
+        type: Sequelize.STRING,
+    },
+    idFront: {
+        type: Sequelize.STRING,
+    },
+    idBack: {
+        type: Sequelize.STRING,
+    },
     emailVerified: {
         type: Sequelize.BOOLEAN,
         defaultValue: false
