@@ -8,36 +8,42 @@ const ShippingAddress = connection.define('address', {
         defaultValue: Sequelize.UUIDV4,
         primaryKey: true
     },
-    adrsUsrType: {
+    usrType: {
         type: Sequelize.ENUM,
         values: ['Buyer', 'Seller'],
         defaultValue: 'Buyer'
     },
-    adrsFirstName: {
+    firstName: {
         type: Sequelize.STRING,
     },
-    adrsLastName: {
+    lastName: {
         type: Sequelize.STRING,
     },
-    adrsCity: {
+    city: {
         type: Sequelize.STRING,
     },
-    adrsCountry: {
+    country: {
         type: Sequelize.STRING
     },
-    adrsPhoneNo: {
+    address: {
+        type: Sequelize.STRING,
+    },
+    addressAr: {
+        type: Sequelize.STRING,
+    },
+    phoneNo: {
         type: Sequelize.STRING
     },
-    adrsEmail: {
+    email: {
         type: Sequelize.STRING
     },
-    adrsEmailAr: {
+    emailAr: {
         type: Sequelize.STRING
     },
-    adrsNote: {
+    note: {
         type: Sequelize.STRING
     },
-    adrsNoteAr: {
+    noteAr: {
         type: Sequelize.STRING
     },
 }

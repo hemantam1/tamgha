@@ -7,39 +7,34 @@ const user = connection.define('user', {
         defaultValue: Sequelize.UUIDV4,
         primaryKey: true
     },
-    usrEmail: {
+    email: {
         type: Sequelize.STRING,
         unique: true
     },
-    usrPassword: {
+    password: {
         type: Sequelize.STRING,
     },
-    usrFirstName: {
+    firstName: {
         type: Sequelize.STRING,
     },
-    usrFirstNameAr: {
+    firstNameAr: {
         type: Sequelize.STRING,
     },
-    usrLastName: {
+    lastName: {
         type: Sequelize.STRING,
     },
-    usrLastNameAr: {
+    lastNameAr: {
         type: Sequelize.STRING,
     },
-    usrPhoneNo: {
+    phoneNo: {
         type: Sequelize.STRING,
     },
-    usrCountry: {
+    country: {
         type: Sequelize.STRING,
     },
-    usrAddress: {
-        type: Sequelize.STRING,
-    },
-    usrAddressAr: {
-        type: Sequelize.STRING,
-    },
-    usrIdType: {
-        type: Sequelize.STRING,
+    idType: {
+        type: Sequelize.ENUM,
+        values: ['Passport', 'Civil']
     },
     idFront: {
         type: Sequelize.STRING,
