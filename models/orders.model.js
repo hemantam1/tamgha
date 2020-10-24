@@ -16,7 +16,7 @@ const orders = connection.define('orders', {
     },
     status: {
         type: Sequelize.ENUM,
-        values: ['succes', 'cancel']
+        values: ['succes', 'pending', 'cancel']
     },
     ordCurrency: {
         type: Sequelize.STRING,

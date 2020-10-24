@@ -9,12 +9,12 @@ const Cart = connection.define('cart', {
         primaryKey: true
     },
     quantity: {
-        type: Sequelize.STRING,
-        allowNull: false
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        defaultValue: 1
     },
     price: {
-        type: Sequelize.STRING,
-        allowNull: false
+        type: Sequelize.DOUBLE,
     }
 }
 );

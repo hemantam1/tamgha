@@ -20,10 +20,19 @@ const product = connection.define('product', {
     prodDescriptionAr: {
         type: Sequelize.STRING,
     },
-    prodCategory: {
-        type: Sequelize.ENUM,
-        values: ['Men', 'Women']
+    priceCurrency: {
+        type: Sequelize.STRING,
     },
+    priceCurrencyAr: {
+        type: Sequelize.STRING,
+    },
+    price: {
+        type: Sequelize.DOUBLE,
+    },
+    isAvailable: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: true
+    }
 }
 );
 module.exports = product;

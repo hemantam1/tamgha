@@ -13,7 +13,8 @@ const Recipt = require('./recipts.model');
 const Followers = require('./followers.model');
 const Likes = require('./likes.model');
 const Comment = require('./comment.model');
-const ShippingAddress = require('./addres.model');
+const ShippingAddress = require('./shippingAddres.model');
+const DeliveryAddress = require('./deliveryAddres.model')
 const Transaction = require('./transaction.model')
 const Favourite = require('./favourite.model');
 const Cart = require('./cart.model');
@@ -96,8 +97,8 @@ Orders.belongsTo(Product, { foreignKey: 'prod_id' })
 ProductDetails.hasMany(Orders, { foreignKey: 'prdetail_id', onDelete: 'CASCADE' })
 Orders.belongsTo(ProductDetails, { foreignKey: 'prdetail_id' })
 
-ShippingAddress.hasMany(Orders, { foreignKey: 'address_id', onDelete: 'CASCADE' })
-Orders.belongsTo(ShippingAddress, { foreignKey: 'address_id' })
+DeliveryAddress.hasMany(Orders, { foreignKey: 'del_address', onDelete: 'CASCADE' })
+Orders.belongsTo(DeliveryAddress, { foreignKey: 'del_address' })
 
 // // Recipt
 Orders.hasOne(Recipt, { foreignKey: 'ord_id', onDelete: 'CASCADE' })
@@ -126,6 +127,7 @@ module.exports = {
     Comment,
     Recipt,
     ShippingAddress,
+    DeliveryAddress,
     Favourite,
     Recipt,
     Transaction

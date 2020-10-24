@@ -14,6 +14,13 @@ const user = connection.define('user', {
     password: {
         type: Sequelize.STRING,
     },
+    usrName: {
+        type: Sequelize.STRING,
+
+    },
+    profilePhoto: {
+        type: Sequelize.STRING,
+    },
     firstName: {
         type: Sequelize.STRING,
     },
@@ -30,16 +37,6 @@ const user = connection.define('user', {
         type: Sequelize.STRING,
     },
     country: {
-        type: Sequelize.STRING,
-    },
-    idType: {
-        type: Sequelize.ENUM,
-        values: ['Passport', 'Civil']
-    },
-    idFront: {
-        type: Sequelize.STRING,
-    },
-    idBack: {
         type: Sequelize.STRING,
     },
     emailVerified: {

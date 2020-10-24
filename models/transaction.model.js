@@ -28,10 +28,10 @@ const Transaction = connection.define('transaction', {
         type: Sequelize.STRING,
     },
     collectedAmnt: {
-        type: Sequelize.STRING,
+        type: Sequelize.DOUBLE,
     },
     finalAmnt: {
-        type: Sequelize.STRING,
+        type: Sequelize.DOUBLE,
     }
 }
 );

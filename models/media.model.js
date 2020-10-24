@@ -10,7 +10,8 @@ const media = connection.define('prod_media', {
     },
     medType: {
         type: Sequelize.ENUM,
-        values: ['Image', 'Video']
+        values: ['Image', 'Video'],
+        defaultValue: 'Image'
     },
     medValue: {
         type: Sequelize.STRING,

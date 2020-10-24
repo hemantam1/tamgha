@@ -126,7 +126,24 @@ exports.login = (req, res) => {
 };
 
 
+exports.suggestAll = (req, res) => {
 
+    const _b = req.body;
+    sequelize.query(
+        `SELECT DISTINCT  users.usrID, users.profilePhoto, users.usrName FROM products INNER JOIN users on products.usr_id = users.usrID LEFT JOIN categories on categories.catID = products.subCat_id
+        `)
+        .then(e =>
+            res.status(200).json({
+                status: true, data: e
+            }))
+        .catch(e => {
+            console.error(e);
+            res.status(400).json({
+                status: false,
+                message: "internal error"
+            });
+        });
+}
 
 
 

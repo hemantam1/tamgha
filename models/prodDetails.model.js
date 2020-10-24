@@ -23,7 +23,7 @@ const prodDetails = connection.define('prod_details', {
     priceCurrencyAr: {
         type: Sequelize.STRING,
     },
-    price: {
+    totalPrice: {
         type: Sequelize.DOUBLE,
     },
     isFaltDiscount: {
