@@ -1,9 +1,9 @@
 const router = require('express').Router();
-const productController = require('../controllers/product.controller');
+const productMVController = require('../controllers/prodMeasureValue.controller');
 const passport = require('passport');
 
 
-router.get('/', productController.getAll);
+router.get('/', productMVController.getAll);
 // router.post('/add', productController.add);
 
 

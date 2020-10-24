@@ -1,9 +1,9 @@
 const router = require('express').Router();
-const addressController = require('../controllers/product.controller');
+const categoryController = require('../controllers/category.controller');
 const passport = require('passport');
 
 
-// router.get('/', addressController.getAll);
+// router.get('/', categoryController.getAll);
 
 // router.post('/add', productController.add);
 
