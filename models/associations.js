@@ -111,7 +111,9 @@ Recipt.belongsTo(User, { foreignKey: 'usr_id' })
 module.exports = {
     Country,
     City,
+    Cart,
     User,
+    Category,
     SubCategory,
     Media,
     Product,
@@ -123,5 +125,8 @@ module.exports = {
     Orders,
     Comment,
     Recipt,
-    ShippingAddress
+    ShippingAddress,
+    Favourite,
+    Recipt,
+    Transaction
 };
