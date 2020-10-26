@@ -87,13 +87,7 @@ exports.delete = (req, res) => {
 
 exports.getAll = (req, res) => {
 
-    Country.findAll({
-        include: [
-            {
-                model: Continent
-            }
-        ],
-    })
+    Country.findAll({})
         .then(c => {
             if (!c) throw new Error('No country found!');
             res.status(200).json({ status: true, data: c });
