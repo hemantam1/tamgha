@@ -17,7 +17,8 @@ exports.add = (req, res) => {
         ordQuantity: _b.ordQuantity,
         prod_id: _b.prod_id,
         prdetail_id: _b.prdetail_id,
-        del_address: _b.del_address
+        del_address: _b.del_address,
+        usr_id: _b.usr_id
     }
 
     Orders.create(payload)
