@@ -11,6 +11,7 @@ exports.add = (req, res) => {
     let payload = {
         deliveryMethod: _b.deliveryMethod,
         paymentMethod: _b.paymentMethod,
+        status: _b.status,
         ordCurrency: _b.ordCurrency,
         ordCurrencyAr: _b.ordCurrencyAr,
         ordPrice: _b.ordPrice,
