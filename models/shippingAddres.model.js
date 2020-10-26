@@ -11,11 +11,18 @@ const ShippingAddress = connection.define('shipping_address', {
     country: {
         type: Sequelize.STRING,
     },
+    countryAr: {
+        type: Sequelize.STRING,
+    },
     address: {
         type: Sequelize.STRING,
     },
-    idType: {
+    addressAr: {
         type: Sequelize.STRING,
+    },
+    idType: {
+        type: Sequelize.ENUM,
+        values: ['Passport', 'Civil']
     },
     idFront: {
         type: Sequelize.STRING,
@@ -26,7 +33,10 @@ const ShippingAddress = connection.define('shipping_address', {
     phoneNo: {
         type: Sequelize.STRING,
     },
-    shiipingFrom: {
+    shipingFrom: {
+        type: Sequelize.STRING,
+    },
+    shipingFromAR: {
         type: Sequelize.STRING,
     },
     email: {

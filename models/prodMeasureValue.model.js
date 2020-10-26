@@ -15,7 +15,7 @@ const measurementValue = connection.define('prod_meas_value', {
         type: Sequelize.STRING,
     },
     measureValue: {
-        type: Sequelize.STRING,
+        type: Sequelize.DOUBLE,
     }
 }
 );
