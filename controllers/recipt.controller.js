@@ -1,16 +1,21 @@
 const Sequelize = require('sequelize');
-const Country = require('../models/country.model');
+const Recipts = require('../models/recipts.model');
 const config = require('../config');
+const { insertingData } = require('../utils/helperFunc')
+const { isAr } = require('../utils/verify')
+// const { getReciptsSchema } = require('../utils/schema/schemas');
+const Serializer = require('sequelize-to-json');
 
 exports.add = (req, res) => {
     const _b = req.body;
+    let payload = {
+        recpType: _b.recpType,
+        ord_id: _b.ord_id,
+        usr_id: _b.usr_id
+    }
 
-    Country.create({
-        ctryName: _b.ctryName,
-        ctryNameAr: _b.ctryNameAr,
-        id_cont: _b.contID
 
-    })
+    Recipts.create(payload)
         .then(r => {
             res.status(200).json({ status: true, result: r });
         })
@@ -25,31 +30,23 @@ exports.add = (req, res) => {
 
 exports.update = (req, res) => {
     const _b = req.body;
-    let payload = {};
 
-    if (!_b.ctryID) {
-        res.status(400).json({ status: false, message: "ctryID does not exists" });
+    if (!_b.recpID) {
+        res.status(400).json({ status: false, message: "recpID does not exists" });
         return
     }
 
-    if (_b.ctryName)
-        payload.ctryName = _b.ctryName
+    let payload = insertingData(_b, _b.recpID);
 
-    if (_b.ctryNameAr)
-        payload.ctryNameAr = _b.ctryNameAr
-
-    if (_b.contID)
-        payload.id_cont = _b.contID
-
-    Country.update(payload,
+    Recipts.update(payload,
         {
             where: {
-                ctryID: _b.ctryID
+                recpID: _b.recpID
             }
         }
     )
         .then(c => {
-            if (!c) throw new Error('No countryt found!');
+            if (!c) throw new Error('No Recipts found!');
             res.status(200).json({ status: true, category: c });
         })
         .catch(err => {
@@ -62,21 +59,21 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
     const _b = req.body;
 
-    if (!_b.ctryID) {
-        res.status(400).json({ status: false, message: "ctryID does not exists" });
+    if (!_b.recpID) {
+        res.status(400).json({ status: false, message: "recpID does not exists" });
         return
     }
 
 
-    Country.destroy(
+    Recipts.destroy(
         {
             where: {
-                ctryID: _b.ctryID
+                recpID: _b.recpID
             }
         }
     )
         .then(c => {
-            if (!c) throw new Error('No country found!');
+            if (!c) throw new Error('No Recipts found!');
             res.status(200).json({ status: true, category: c });
         })
         .catch(err => {
@@ -86,11 +83,17 @@ exports.delete = (req, res) => {
 };
 
 exports.getAll = (req, res) => {
-
-    Country.findAll({})
+    const _b = req.body
+    Recipts.findAll()
         .then(c => {
-            if (!c) throw new Error('No country found!');
+
+            if (!c) throw new Error('No Recipts found!');
+
+            // let schema = getReciptsSchema(_b.languageID)
+
+            // let data = Serializer.serializeMany(c, Recipts, schema);
             res.status(200).json({ status: true, data: c });
+
         })
         .catch(err => {
             console.error(err);
@@ -100,18 +103,13 @@ exports.getAll = (req, res) => {
 
 
 exports.getByID = (req, res) => {
-    Country.findOne({
-        include: [
-            {
-                model: Continent
-            }
-        ],
+    Recipts.findOne({
         where: {
-            ctryID: req.params.ctryID
+            recpID: req.params.recpID
         }
     })
         .then(c => {
-            if (!c) throw new Error('No country found!');
+            if (!c) throw new Error('No Recipts found!');
             res.status(200).json({ status: true, data: c });
         })
         .catch(err => {
@@ -119,4 +117,3 @@ exports.getByID = (req, res) => {
             res.status(400).json({ status: false });
         });
 };
-

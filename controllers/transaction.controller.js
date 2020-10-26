@@ -1,13 +1,28 @@
 const Sequelize = require('sequelize');
-const Continent = require('../models/continent.model');
+const Transaction = require('../models/transaction.model');
 const config = require('../config');
+const { insertingData } = require('../utils/helperFunc')
+const { isAr } = require('../utils/verify')
+// const { getTransactionSchema } = require('../utils/schema/schemas');
+const Serializer = require('sequelize-to-json');
 
 exports.add = (req, res) => {
     const _b = req.body;
-    Continent.create({
-        contName: _b.contName,
-        contNameAr: _b.contNameAr
-    })
+    let payload = {
+        invoiceID: _b.invoiceID,
+        salePrice: _b.salePrice,
+        paymentGateway: _b.paymentGateway,
+        status: _b.status,
+        isSuccesfull: _b.isSuccesfull,
+        isRefunded: _b.isRefunded,
+        finalAmnt: _b.finalAmnt,
+        usr_id: _b.usr_id,
+        order_id: _b.order_id
+
+    }
+
+
+    Transaction.create(payload)
         .then(r => {
             res.status(200).json({ status: true, result: r });
         })
@@ -22,28 +37,23 @@ exports.add = (req, res) => {
 
 exports.update = (req, res) => {
     const _b = req.body;
-    let payload = {};
 
-    if (!_b.contID) {
-        res.status(400).json({ status: false, message: "contID does not exists" });
+    if (!_b.transID) {
+        res.status(400).json({ status: false, message: "transID does not exists" });
         return
     }
 
-    if (_b.contName)
-        payload.contName = _b.contName
+    let payload = insertingData(_b, _b.transID);
 
-    if (_b.contNameAr)
-        payload.contNameAr = _b.contNameAr
-
-    Continent.update(payload,
+    Transaction.update(payload,
         {
             where: {
-                contID: _b.contID
+                transID: _b.transID
             }
         }
     )
         .then(c => {
-            if (!c) throw new Error('No continent found!');
+            if (!c) throw new Error('No Transaction found!');
             res.status(200).json({ status: true, category: c });
         })
         .catch(err => {
@@ -56,21 +66,21 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
     const _b = req.body;
 
-    if (!_b.contID) {
-        res.status(400).json({ status: false, message: "contID does not exists" });
+    if (!_b.transID) {
+        res.status(400).json({ status: false, message: "transID does not exists" });
         return
     }
 
 
-    Continent.destroy(
+    Transaction.destroy(
         {
             where: {
-                contID: _b.contID
+                transID: _b.transID
             }
         }
     )
         .then(c => {
-            if (!c) throw new Error('No continent found!');
+            if (!c) throw new Error('No Transaction found!');
             res.status(200).json({ status: true, category: c });
         })
         .catch(err => {
@@ -80,11 +90,17 @@ exports.delete = (req, res) => {
 };
 
 exports.getAll = (req, res) => {
-
-    Continent.findAll()
+    const _b = req.body
+    Transaction.findAll()
         .then(c => {
-            if (!c) throw new Error('No continent found!');
+
+            if (!c) throw new Error('No Transaction found!');
+
+            // let schema = getTransactionSchema(_b.languageID)
+
+            // let data = Serializer.serializeMany(c, Transaction, schema);
             res.status(200).json({ status: true, data: c });
+
         })
         .catch(err => {
             console.error(err);
@@ -94,13 +110,13 @@ exports.getAll = (req, res) => {
 
 
 exports.getByID = (req, res) => {
-    Continent.findOne({
+    Transaction.findOne({
         where: {
-            contID: req.params.contID
+            transID: req.params.transID
         }
     })
         .then(c => {
-            if (!c) throw new Error('No continent found!');
+            if (!c) throw new Error('No Transaction found!');
             res.status(200).json({ status: true, data: c });
         })
         .catch(err => {

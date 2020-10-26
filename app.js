@@ -16,10 +16,27 @@ sequelize.connect();
 require('./models/associations');
 require('./services/passport.service').initialize();
 
-app.use('/user', require('./routes/user.router'));
-app.use('/continents', require('./routes/continent.router'));
-app.use('/country', require('./routes/country.router'));
+app.use('/', require('./routes/allRoute.router'));
+app.use('/category', require('./routes/category.router'));
 app.use('/city', require('./routes/city.router'));
+app.use('/comment', require('./routes/comment.router'));
+app.use('/country', require('./routes/country.router'));
+app.use('/deliveryAddress', require('./routes/deliveryAddress.router'));
+app.use('/follower', require('./routes/follower.router'));
+app.use('/like', require('./routes/likes.router'));
+app.use('/media', require('./routes/media.router'));
+app.use('/order', require('./routes/orders.router'));
+app.use('/privateMessage', require('./routes/privateMessage.router'));
+app.use('/productDetail', require('./routes/prodDetails.router'));
+app.use('/size', require('./routes/prodMeasureValue.router'));
+app.use('/product', require('./routes/product.router'));
+app.use('/sizeType', require('./routes/productMeasureType.router'));
+app.use('/recipt', require('./routes/recipt.router'));
+app.use('/shippingAddress', require('./routes/shippingAddress.router'));
+app.use('/subCategory', require('./routes/subCategory.router'));
+app.use('/transaction', require('./routes/transaction.router'));
+app.use('/user', require('./routes/user.router'));
+
 
 
 sequelize.connection()

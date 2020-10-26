@@ -4,10 +4,10 @@ const countryController = require('../controllers/country.controller');
 const passport = require('passport');
 
 
-router.post('/add', countryController.add);
-router.post('/update', countryController.update);
-router.post('/delete', countryController.delete);
-router.get('/getAll', countryController.getAll);
+router.post('/', countryController.add);
+router.put('/', countryController.update);
+router.delete('/', countryController.delete);
+router.get('/', countryController.getAll);
 router.get('/:ctryID', countryController.getByID);
 
 

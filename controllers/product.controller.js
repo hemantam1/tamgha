@@ -1,16 +1,26 @@
 const Sequelize = require('sequelize');
-const Country = require('../models/country.model');
+const Product = require('../models/product.model');
 const config = require('../config');
+const { insertingData } = require('../utils/helperFunc')
+const { isAr } = require('../utils/verify')
+// const { getProductSchema } = require('../utils/schema/schemas');
+const Serializer = require('sequelize-to-json');
 
 exports.add = (req, res) => {
     const _b = req.body;
+    let payload = {
+        prodName: _b.prodName,
+        prodNameAr: _b.prodNameAr,
+        prodDescription: _b.prodDescription,
+        prodDescriptionAr: _b.prodDescriptionAr,
+        priceCurrencyAr: _b.priceCurrencyAr,
+        price: _b.price,
+        isAvailable: _b.isAvailable,
+        usr_id: _b.usr_id,
+        subCat_id: _b.subCat_id
+    }
 
-    Country.create({
-        ctryName: _b.ctryName,
-        ctryNameAr: _b.ctryNameAr,
-        id_cont: _b.contID
-
-    })
+    Product.create(payload)
         .then(r => {
             res.status(200).json({ status: true, result: r });
         })
@@ -25,31 +35,23 @@ exports.add = (req, res) => {
 
 exports.update = (req, res) => {
     const _b = req.body;
-    let payload = {};
 
-    if (!_b.ctryID) {
-        res.status(400).json({ status: false, message: "ctryID does not exists" });
+    if (!_b.prodID) {
+        res.status(400).json({ status: false, message: "prodID does not exists" });
         return
     }
 
-    if (_b.ctryName)
-        payload.ctryName = _b.ctryName
+    let payload = insertingData(_b, _b.prodID);
 
-    if (_b.ctryNameAr)
-        payload.ctryNameAr = _b.ctryNameAr
-
-    if (_b.contID)
-        payload.id_cont = _b.contID
-
-    Country.update(payload,
+    Product.update(payload,
         {
             where: {
-                ctryID: _b.ctryID
+                prodID: _b.prodID
             }
         }
     )
         .then(c => {
-            if (!c) throw new Error('No countryt found!');
+            if (!c) throw new Error('No Products found!');
             res.status(200).json({ status: true, category: c });
         })
         .catch(err => {
@@ -62,21 +64,21 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
     const _b = req.body;
 
-    if (!_b.ctryID) {
-        res.status(400).json({ status: false, message: "ctryID does not exists" });
+    if (!_b.prodID) {
+        res.status(400).json({ status: false, message: "prodID does not exists" });
         return
     }
 
 
-    Country.destroy(
+    Product.destroy(
         {
             where: {
-                ctryID: _b.ctryID
+                prodID: _b.prodID
             }
         }
     )
         .then(c => {
-            if (!c) throw new Error('No country found!');
+            if (!c) throw new Error('No Product found!');
             res.status(200).json({ status: true, category: c });
         })
         .catch(err => {
@@ -86,11 +88,17 @@ exports.delete = (req, res) => {
 };
 
 exports.getAll = (req, res) => {
-
-    Country.findAll({})
+    const _b = req.body
+    Product.findAll()
         .then(c => {
-            if (!c) throw new Error('No country found!');
+
+            if (!c) throw new Error('No Product found!');
+
+            // let schema = getProductSchema(_b.languageID)
+
+            // let data = Serializer.serializeMany(c, Product, schema);
             res.status(200).json({ status: true, data: c });
+
         })
         .catch(err => {
             console.error(err);
@@ -100,18 +108,13 @@ exports.getAll = (req, res) => {
 
 
 exports.getByID = (req, res) => {
-    Country.findOne({
-        include: [
-            {
-                model: Continent
-            }
-        ],
+    Product.findOne({
         where: {
-            ctryID: req.params.ctryID
+            prodID: req.params.prodID
         }
     })
         .then(c => {
-            if (!c) throw new Error('No country found!');
+            if (!c) throw new Error('No Product found!');
             res.status(200).json({ status: true, data: c });
         })
         .catch(err => {
@@ -119,4 +122,3 @@ exports.getByID = (req, res) => {
             res.status(400).json({ status: false });
         });
 };
-

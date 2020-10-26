@@ -3,8 +3,11 @@ const userController = require('../controllers/user.controller');
 const passport = require('passport');
 
 
-router.post('/register', userController.register);
-router.post('/login', userController.login);
+router.post('/signUp', userController.register);
+router.post('/signIn', userController.login);
+
+// router.post('/details', userController.detail);
+// router.post('/products', userController.detail);
 
 
 //update user profile

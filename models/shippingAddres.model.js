@@ -1,40 +1,12 @@
 const connection = require('../services/sequelize.service').connection();
 const Sequelize = require('sequelize');
 
-const user = connection.define('user', {
-    usrID: {
+
+const ShippingAddress = connection.define('shipping_address', {
+    adrsID: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
         primaryKey: true
-    },
-    email: {
-        type: Sequelize.STRING,
-        unique: true
-    },
-    password: {
-        type: Sequelize.STRING,
-    },
-    usrName: {
-        type: Sequelize.STRING,
-
-    },
-    profilePhoto: {
-        type: Sequelize.STRING,
-    },
-    firstName: {
-        type: Sequelize.STRING,
-    },
-    firstNameAr: {
-        type: Sequelize.STRING,
-    },
-    lastName: {
-        type: Sequelize.STRING,
-    },
-    lastNameAr: {
-        type: Sequelize.STRING,
-    },
-    phoneNo: {
-        type: Sequelize.STRING,
     },
     country: {
         type: Sequelize.STRING,
@@ -42,11 +14,37 @@ const user = connection.define('user', {
     countryAr: {
         type: Sequelize.STRING,
     },
-    emailVerified: {
-        type: Sequelize.BOOLEAN,
-        defaultValue: false
+    address: {
+        type: Sequelize.STRING,
+    },
+    addressAr: {
+        type: Sequelize.STRING,
+    },
+    idType: {
+        type: Sequelize.ENUM,
+        values: ['Passport', 'Civil']
+    },
+    idFront: {
+        type: Sequelize.STRING,
+    },
+    idBack: {
+        type: Sequelize.STRING,
+    },
+    phoneNo: {
+        type: Sequelize.STRING,
+    },
+    shipingFrom: {
+        type: Sequelize.STRING,
+    },
+    shipingFromAR: {
+        type: Sequelize.STRING,
+    },
+    email: {
+        type: Sequelize.STRING
+    },
+    emailAr: {
+        type: Sequelize.STRING
     }
 }
 );
-
-module.exports = user;
+module.exports = ShippingAddress;

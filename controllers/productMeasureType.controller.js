@@ -1,16 +1,20 @@
 const Sequelize = require('sequelize');
-const Country = require('../models/country.model');
+const ProductMeasureType = require('../models/prodMeasureType.model');
 const config = require('../config');
+const { insertingData } = require('../utils/helperFunc')
+const { isAr } = require('../utils/verify')
+// const { getProductMeasureTypeSchema } = require('../utils/schema/schemas');
+const Serializer = require('sequelize-to-json');
 
 exports.add = (req, res) => {
     const _b = req.body;
+    let payload = {
+        value: _b.value,
+        valueAr: _b.valueAr,
+        prod_id: _b.prod_id
+    }
 
-    Country.create({
-        ctryName: _b.ctryName,
-        ctryNameAr: _b.ctryNameAr,
-        id_cont: _b.contID
-
-    })
+    ProductMeasureType.create(payload)
         .then(r => {
             res.status(200).json({ status: true, result: r });
         })
@@ -25,31 +29,23 @@ exports.add = (req, res) => {
 
 exports.update = (req, res) => {
     const _b = req.body;
-    let payload = {};
 
-    if (!_b.ctryID) {
-        res.status(400).json({ status: false, message: "ctryID does not exists" });
+    if (!_b.msrID) {
+        res.status(400).json({ status: false, message: "msrID does not exists" });
         return
     }
 
-    if (_b.ctryName)
-        payload.ctryName = _b.ctryName
+    let payload = insertingData(_b, _b.msrID);
 
-    if (_b.ctryNameAr)
-        payload.ctryNameAr = _b.ctryNameAr
-
-    if (_b.contID)
-        payload.id_cont = _b.contID
-
-    Country.update(payload,
+    ProductMeasureType.update(payload,
         {
             where: {
-                ctryID: _b.ctryID
+                msrID: _b.msrID
             }
         }
     )
         .then(c => {
-            if (!c) throw new Error('No countryt found!');
+            if (!c) throw new Error('No MeasureTypes found!');
             res.status(200).json({ status: true, category: c });
         })
         .catch(err => {
@@ -62,21 +58,21 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
     const _b = req.body;
 
-    if (!_b.ctryID) {
-        res.status(400).json({ status: false, message: "ctryID does not exists" });
+    if (!_b.msrID) {
+        res.status(400).json({ status: false, message: "msrID does not exists" });
         return
     }
 
 
-    Country.destroy(
+    ProductMeasureType.destroy(
         {
             where: {
-                ctryID: _b.ctryID
+                msrID: _b.msrID
             }
         }
     )
         .then(c => {
-            if (!c) throw new Error('No country found!');
+            if (!c) throw new Error('No ProductMeasureType found!');
             res.status(200).json({ status: true, category: c });
         })
         .catch(err => {
@@ -86,11 +82,17 @@ exports.delete = (req, res) => {
 };
 
 exports.getAll = (req, res) => {
-
-    Country.findAll({})
+    const _b = req.body
+    ProductMeasureType.findAll()
         .then(c => {
-            if (!c) throw new Error('No country found!');
+
+            if (!c) throw new Error('No ProductMeasureType found!');
+
+            // let schema = getProductMeasureTypeSchema(_b.languageID)
+
+            // let data = Serializer.serializeMany(c, ProductMeasureType, schema);
             res.status(200).json({ status: true, data: c });
+
         })
         .catch(err => {
             console.error(err);
@@ -100,18 +102,13 @@ exports.getAll = (req, res) => {
 
 
 exports.getByID = (req, res) => {
-    Country.findOne({
-        include: [
-            {
-                model: Continent
-            }
-        ],
+    ProductMeasureType.findOne({
         where: {
-            ctryID: req.params.ctryID
+            msrID: req.params.msrID
         }
     })
         .then(c => {
-            if (!c) throw new Error('No country found!');
+            if (!c) throw new Error('No ProductMeasureType found!');
             res.status(200).json({ status: true, data: c });
         })
         .catch(err => {
@@ -119,4 +116,3 @@ exports.getByID = (req, res) => {
             res.status(400).json({ status: false });
         });
 };
-

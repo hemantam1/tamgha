@@ -2,21 +2,20 @@ const connection = require('../services/sequelize.service').connection();
 const Sequelize = require('sequelize');
 
 
-const continent = connection.define('continent', {
-    contID: {
+const media = connection.define('prod_media', {
+    medID: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
         primaryKey: true
     },
-    contName: {
-        type: Sequelize.STRING,
-        unique: true
+    medType: {
+        type: Sequelize.ENUM,
+        values: ['Image', 'Video'],
+        defaultValue: 'Image'
     },
-    contNameAr: {
+    medValue: {
         type: Sequelize.STRING,
-        unique: true
     }
-
 }
 );
-module.exports = continent;
+module.exports = media;
