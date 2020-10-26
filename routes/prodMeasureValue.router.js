@@ -5,6 +5,8 @@ const passport = require('passport');
 
 router.get('/', productMVController.getAll);
 router.post('/', productMVController.add);
+router.put('/', productMVController.update);
+router.delete('/', productMVController.delete);
 
 
 

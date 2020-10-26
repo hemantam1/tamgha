@@ -6,6 +6,9 @@ const passport = require('passport');
 router.get('/', categoryController.getAll);
 
 router.post('/', categoryController.add);
+router.put('/', categoryController.update);
+router.delete('/', categoryController.delete);
+
 
 
 

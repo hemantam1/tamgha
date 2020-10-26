@@ -7,6 +7,8 @@ const passport = require('passport');
 router.get('/', deliveryAddressController.getAll);
 
 router.post('/', deliveryAddressController.add);
+router.put('/', deliveryAddressController.update);
+router.delete('/', deliveryAddressController.delete);
 
 
 
