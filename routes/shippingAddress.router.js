@@ -4,7 +4,9 @@ const passport = require('passport');
 
 
 router.get('/', shippingAddressController.getAll);
-router.get('/', shippingAddressController.add);
+router.post('/', shippingAddressController.add);
+router.put('/', shippingAddressController.update);
+router.delete('/', shippingAddressController.delete);
 
 
 

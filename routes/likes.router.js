@@ -5,6 +5,8 @@ const passport = require('passport');
 
 router.get('/', likesController.getAll);
 router.post('/', likesController.add);
+router.put('/', likesController.update);
+router.delete('/', likesController.delete);
 
 
 

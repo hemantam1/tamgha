@@ -5,6 +5,8 @@ const passport = require('passport');
 
 router.get('/', mediaController.getAll);
 router.post('/', mediaController.add);
+router.put('/', mediaController.update);
+router.delete('/', mediaController.delete);
 
 
 

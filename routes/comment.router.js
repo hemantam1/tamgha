@@ -5,6 +5,8 @@ const passport = require('passport');
 
 router.get('/', commentController.getAll);
 router.post('/', commentController.add);
+router.put('/', commentController.update);
+router.delete('/', commentController.delete);
 
 
 
