@@ -4,7 +4,7 @@ const passport = require('passport');
 
 
 router.get('/', subCategoryController.getAll);
-router.post('/add', subCategoryController.add);
+router.post('/', subCategoryController.add);
 
 
 

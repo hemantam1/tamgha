@@ -5,7 +5,7 @@ const passport = require('passport');
 
 router.get('/', reciptController.getAll);
 
-router.post('/add', reciptController.add);
+router.post('/', reciptController.add);
 
 
 

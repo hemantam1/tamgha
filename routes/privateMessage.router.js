@@ -4,7 +4,7 @@ const passport = require('passport');
 
 
 router.get('/', privateMsgController.getAll);
-router.post('/add', privateMsgController.add);
+router.post('/', privateMsgController.add);
 
 
 

@@ -4,7 +4,7 @@ const passport = require('passport');
 
 
 router.get('/', commentController.getAll);
-router.post('/add', commentController.add);
+router.post('/', commentController.add);
 
 
 

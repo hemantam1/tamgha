@@ -4,7 +4,7 @@ const passport = require('passport');
 
 
 router.get('/', mediaController.getAll);
-router.post('/add', mediaController.add);
+router.post('/', mediaController.add);
 
 
 
