@@ -49,6 +49,9 @@ Likes.belongsTo(Product, { foreignKey: 'prod_id' })
 User.hasMany(Comment, { foreignKey: 'usr_id', onDelete: 'CASCADE' })
 Comment.belongsTo(User, { foreignKey: 'usr_id' })
 
+User.hasMany(Orders, { foreignKey: 'usr_id', onDelete: 'CASCADE' })
+Orders.belongsTo(User, { foreignKey: 'usr_id' })
+
 User.hasMany(Transaction, { foreignKey: 'usr_id', onDelete: 'CASCADE' })
 Transaction.belongsTo(User, { foreignKey: 'usr_id' })
 

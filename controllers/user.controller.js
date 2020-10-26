@@ -23,7 +23,7 @@ exports.register = (req, res) => {
     else {
         User.findOne({
             where: {
-                usrEmail: _b.email
+                email: _b.email
             },
             attributes: ['usrID']
         })
@@ -36,13 +36,13 @@ exports.register = (req, res) => {
                 }
                 else {
                     User.create({
-                        usrEmail: _b.email,
-                        usrPassword: bcrypt.hashSync(_b.password, 0),
+                        email: _b.email,
+                        password: bcrypt.hashSync(_b.password, 0),
                         usrName: _b.usrName,
-                        usrFirstName: _b.firstName,
-                        usrLastName: _b.lastName,
-                        usrPhoneNo: _b.phoneNo,
-                        usrCountry: _b.country,
+                        firstName: _b.firstName,
+                        lastName: _b.lastName,
+                        phoneNo: _b.phoneNo,
+                        country: _b.country,
                         emailVerified: true // set to false in production
                     })
                         .then(data => {
@@ -82,7 +82,7 @@ exports.login = (req, res) => {
     else {
         User.findOne({
             where: {
-                usrEmail: _b.email
+                email: _b.email
             }
         })
             .then(u => {
@@ -93,7 +93,7 @@ exports.login = (req, res) => {
                             message: "Email not Verified"
                         });
                     }
-                    else if (!bcrypt.compareSync(_b.password, u.usrPassword)) {
+                    else if (!bcrypt.compareSync(_b.password, u.password)) {
                         res.status(401).json({
                             status: false,
                             message: "wrong password"
