@@ -11,16 +11,33 @@ const DeliveryAddress = connection.define('delivery_address', {
     firstName: {
         type: Sequelize.STRING,
     },
+    firstNameAr: {
+        type: Sequelize.STRING,
+    },
     lastName: {
+        type: Sequelize.STRING,
+    },
+    lastNameAr: {
         type: Sequelize.STRING,
     },
     fullName: {
         type: Sequelize.STRING,
     },
+    fullNameAr: {
+        type: Sequelize.STRING,
+    },
+
     city: {
         type: Sequelize.STRING,
     },
+    cityAr: {
+        type: Sequelize.STRING,
+    },
+
     country: {
+        type: Sequelize.STRING
+    },
+    countryAr: {
         type: Sequelize.STRING
     },
     address: {
@@ -32,13 +49,25 @@ const DeliveryAddress = connection.define('delivery_address', {
     area: {
         type: Sequelize.STRING,
     },
+    areaAr: {
+        type: Sequelize.STRING,
+    },
     block: {
+        type: Sequelize.STRING,
+    },
+    blockAr: {
         type: Sequelize.STRING,
     },
     street: {
         type: Sequelize.STRING,
     },
+    streetAr: {
+        type: Sequelize.STRING,
+    },
     avenue: {
+        type: Sequelize.STRING,
+    },
+    avenueAr: {
         type: Sequelize.STRING,
     },
     houseNo: {

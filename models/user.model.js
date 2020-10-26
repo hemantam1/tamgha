@@ -39,6 +39,9 @@ const user = connection.define('user', {
     country: {
         type: Sequelize.STRING,
     },
+    countryAr: {
+        type: Sequelize.STRING,
+    },
     emailVerified: {
         type: Sequelize.BOOLEAN,
         defaultValue: false
