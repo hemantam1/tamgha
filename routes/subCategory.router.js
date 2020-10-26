@@ -3,9 +3,8 @@ const subCategoryController = require('../controllers/subCategory.controller');
 const passport = require('passport');
 
 
-// router.get('/', subCategoryController.getByName);
-
-// router.post('/add', productController.add);
+router.get('/', subCategoryController.getAll);
+router.post('/add', subCategoryController.add);
 
 
 

@@ -3,9 +3,9 @@ const transactionController = require('../controllers/transaction.controller');
 const passport = require('passport');
 
 
-// router.get('/', transactionController.getByName);
+router.get('/', transactionController.getAll);
 
-// router.post('/add', productController.add);
+router.post('/add', transactionController.add);
 
 
 

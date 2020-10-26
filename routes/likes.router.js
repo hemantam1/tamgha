@@ -4,7 +4,7 @@ const passport = require('passport');
 
 
 router.get('/', likesController.getAll);
-// router.post('/add', productController.add);
+router.post('/add', likesController.add);
 
 
 

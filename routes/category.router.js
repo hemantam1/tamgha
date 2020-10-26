@@ -3,9 +3,9 @@ const categoryController = require('../controllers/category.controller');
 const passport = require('passport');
 
 
-// router.get('/', categoryController.getAll);
+router.get('/', categoryController.getAll);
 
-// router.post('/add', productController.add);
+router.post('/add', categoryController.add);
 
 
 

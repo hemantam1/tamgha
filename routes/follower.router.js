@@ -4,7 +4,7 @@ const passport = require('passport');
 
 
 router.get('/', followersController.getAll);
-// router.post('/add', productController.add);
+router.post('/add', followersController.add);
 
 
 

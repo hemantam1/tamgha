@@ -3,9 +3,10 @@ const deliveryAddressController = require('../controllers/deliveryAddress.contro
 const passport = require('passport');
 
 
-// router.get('/', deliveryAddressController.getByName);
 
-// router.post('/add', productController.add);
+router.get('/', deliveryAddressController.getAll);
+
+router.post('/add', deliveryAddressController.add);
 
 
 

@@ -5,9 +5,9 @@ const prDetailController = require('../controllers/prodDetails.controller');
 const passport = require('passport');
 
 
-// router.get('/suggest', userController.suggestAll);
+router.get('/suggest', userController.suggestAll);
 
-// router.get('/explore', prDetailController.getAll);
+router.get('/explore', prDetailController.getAll);
 
 // router.get('/feed', addressController.getAll);
 
