@@ -14,7 +14,7 @@ const Cart = connection.define('cart', {
         defaultValue: 1
     },
     price: {
-        type: Sequelize.DOUBLE,
+        type: Sequelize.DOUBLE(8, 2),
     }
 }
 );

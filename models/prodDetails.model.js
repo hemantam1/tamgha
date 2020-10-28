@@ -24,14 +24,14 @@ const prodDetails = connection.define('prod_details', {
         type: Sequelize.STRING,
     },
     totalPrice: {
-        type: Sequelize.DOUBLE,
+        type: Sequelize.DOUBLE(6, 2),
     },
     isFaltDiscount: {
         type: Sequelize.BOOLEAN,
         defaultValue: false
     },
     priceExcluding: {
-        type: Sequelize.DOUBLE,
+        type: Sequelize.DOUBLE(6, 2),
     },
 
 }

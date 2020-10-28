@@ -1,5 +1,5 @@
 const Sequelize = require('sequelize');
-const Category = require('../models/category.model');
+const UsrCategory = require('../models/userCategory.model');
 const config = require('../config');
 const { insertingData } = require('../utils/helperFunc')
 const { isAr } = require('../utils/verify')
@@ -9,11 +9,11 @@ const Serializer = require('sequelize-to-json');
 exports.add = (req, res) => {
     const _b = req.body;
     let payload = {
-        CatName: _b.CatName,
-        CatNameAr: _b.CatNameAr,
+        usrCatName: _b.usrCatName,
+        usrCatNameAr: _b.usrCatNameAr,
     }
 
-    Category.create(payload)
+    UsrCategory.create(payload)
         .then(r => {
             res.status(200).json({ status: true, result: r });
         })
@@ -29,20 +29,19 @@ exports.add = (req, res) => {
 exports.update = (req, res) => {
     const _b = req.body;
 
-    if (!_b.catID) {
+    if (!_b.usrCatID) {
         res.status(400).json({
-            status: false, message: "catID does not exists"
+            status: false, message: "usrCatID does not exists"
         });
         return
     }
 
-    let payload = insertingData(_b, _b.catID);
+    let payload = insertingData(_b, _b.usrCatID);
 
-    Category.update(payload,
+    UsrCategory.update(payload,
         {
             where: {
-                catID:
-                    _b.catID
+                usrCatID: _b.usrCatID
             }
         }
     )
@@ -60,23 +59,23 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
     const _b = req.body;
 
-    if (!_b.catID) {
+    if (!_b.usrCatID) {
         res.status(400).json({
-            status: false, message: "catID does not exists"
+            status: false, message: "usrCatID does not exists"
         });
         return
     }
 
 
-    Category.destroy(
+    UsrCategory.destroy(
         {
             where: {
-                catID: _b.catID
+                usrCatID: _b.usrCatID
             }
         }
     )
         .then(c => {
-            if (!c) throw new Error('No Category found!');
+            if (!c) throw new Error('No UsrCategory found!');
             res.status(200).json({ status: true, category: c });
         })
         .catch(err => {
@@ -87,14 +86,14 @@ exports.delete = (req, res) => {
 
 exports.getAll = (req, res) => {
     const _b = req.body
-    Category.findAll()
+    UsrCategory.findAll()
         .then(c => {
 
-            if (!c) throw new Error('No Category found!');
+            if (!c) throw new Error('No UsrCategory found!');
 
             // let schema = getCategorySchema(_b.languageID)
 
-            // let data = Serializer.serializeMany(c, Category, schema);
+            // let data = Serializer.serializeMany(c, UsrCategory, schema);
             res.status(200).json({ status: true, data: c });
 
         })
@@ -106,13 +105,13 @@ exports.getAll = (req, res) => {
 
 
 exports.getByID = (req, res) => {
-    Category.findOne({
+    UsrCategory.findOne({
         where: {
-            catID: req.params.catID
+            usrCatID: req.params.usrCatID
         }
     })
         .then(c => {
-            if (!c) throw new Error('No Category found!');
+            if (!c) throw new Error('No UsrCategory found!');
             res.status(200).json({ status: true, data: c });
         })
         .catch(err => {

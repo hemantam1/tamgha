@@ -19,6 +19,8 @@ const PrivateMessage = require('./privateMessage.model');
 const Transaction = require('./transaction.model')
 const Favourite = require('./favourite.model');
 const Cart = require('./cart.model');
+const UsrCategory = require('./userCategory.model');
+const ShipingDetails = require('./shippingDetails.model');
 
 
 Country.hasMany(City, { foreignKey: 'id_country', onDelete: 'CASCADE' });
@@ -64,6 +66,13 @@ PrivateMessage.belongsTo(User, { foreignKey: 'usr_id' })
 
 User.hasMany(PrivateMessage, { foreignKey: 'msg_usrID', onDelete: 'CASCADE' })
 PrivateMessage.belongsTo(User, { foreignKey: 'msg_usrID' })
+
+UsrCategory.hasMany(User, { foreignKey: 'usr_catID' })
+User.belongsTo(UsrCategory, { foreignKey: 'usr_catID' })
+
+
+User.hasOne(Cart, { foreignKey: 'usr_id', onDelete: 'CASCADE' })
+Cart.belongsTo(User, { foreignKey: 'usr_id' })
 
 // Categories
 Category.hasMany(SubCategory, { foreignKey: 'cat_id', onDelete: 'CASCADE' })
@@ -140,6 +149,8 @@ module.exports = {
     Recipt,
     ShippingAddress,
     DeliveryAddress,
+    UsrCategory,
+    ShipingDetails,
     Favourite,
     Recipt,
     Transaction

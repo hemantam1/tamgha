@@ -14,7 +14,7 @@ const media = connection.define('prod_media', {
         defaultValue: 'Image'
     },
     medValue: {
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT,
     }
 }
 );

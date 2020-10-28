@@ -2,21 +2,20 @@ const connection = require('../services/sequelize.service').connection();
 const Sequelize = require('sequelize');
 
 
-const measurementValue = connection.define('prod_meas_value', {
-    msvID: {
+const UsrCategory = connection.define('usr_category', {
+    usrCatID: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
         primaryKey: true
     },
-    measureType: {
+    usrCatName: {
         type: Sequelize.STRING,
+        unique: true
     },
-    measureTypeAr: {
+    usrCatNameAr: {
         type: Sequelize.STRING,
-    },
-    measureValue: {
-        type: Sequelize.DOUBLE(4, 2),
+        unique: true
     }
 }
 );
-module.exports = measurementValue;
+module.exports = UsrCategory;

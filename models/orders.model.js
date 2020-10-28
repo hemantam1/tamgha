@@ -25,7 +25,7 @@ const orders = connection.define('orders', {
         type: Sequelize.STRING,
     },
     ordPrice: {
-        type: Sequelize.DOUBLE,
+        type: Sequelize.DOUBLE(8, 2),
     },
     ordQuantity: {
         type: Sequelize.INTEGER,

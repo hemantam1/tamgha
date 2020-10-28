@@ -20,6 +20,10 @@ const ShippingAddress = connection.define('shipping_address', {
     addressAr: {
         type: Sequelize.STRING,
     },
+    isTamghaShipping: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false
+    },
     idType: {
         type: Sequelize.ENUM,
         values: ['Passport', 'Civil']

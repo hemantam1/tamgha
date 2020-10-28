@@ -13,7 +13,7 @@ const Transaction = connection.define('transaction', {
         defaultValue: '0000'
     },
     salePrice: {
-        type: Sequelize.DOUBLE,
+        type: Sequelize.DOUBLE(8, 2),
     },
     paymentGateway: {
         type: Sequelize.STRING,
@@ -28,10 +28,10 @@ const Transaction = connection.define('transaction', {
         type: Sequelize.STRING,
     },
     collectedAmnt: {
-        type: Sequelize.DOUBLE,
+        type: Sequelize.DOUBLE(8, 2),
     },
     finalAmnt: {
-        type: Sequelize.DOUBLE,
+        type: Sequelize.DOUBLE(8, 2),
     }
 }
 );

@@ -1,19 +1,20 @@
 const Sequelize = require('sequelize');
-const Category = require('../models/category.model');
+const Cart = require('../models/cart.model');
 const config = require('../config');
 const { insertingData } = require('../utils/helperFunc')
 const { isAr } = require('../utils/verify')
-// const { getCategorySchema } = require('../utils/schema/schemas');
+// const { getCartSchema } = require('../utils/schema/schemas');
 const Serializer = require('sequelize-to-json');
 
 exports.add = (req, res) => {
     const _b = req.body;
     let payload = {
-        CatName: _b.CatName,
-        CatNameAr: _b.CatNameAr,
+        quantity: _b.quantity,
+        price: _b.price,
+        prod_id: _b.prod_id,
     }
 
-    Category.create(payload)
+    Cart.create(payload)
         .then(r => {
             res.status(200).json({ status: true, result: r });
         })
@@ -29,26 +30,25 @@ exports.add = (req, res) => {
 exports.update = (req, res) => {
     const _b = req.body;
 
-    if (!_b.catID) {
+    if (!_b.cartID) {
         res.status(400).json({
-            status: false, message: "catID does not exists"
+            status: false, message: "cartID does not exists"
         });
         return
     }
 
-    let payload = insertingData(_b, _b.catID);
+    let payload = insertingData(_b, _b.cartID);
 
-    Category.update(payload,
+    Cart.update(payload,
         {
             where: {
-                catID:
-                    _b.catID
+                cartID: _b.cartID
             }
         }
     )
         .then(c => {
-            if (!c) throw new Error('No Categories found!');
-            res.status(200).json({ status: true, category: c });
+            if (!c) throw new Error('No Carts found!');
+            res.status(200).json({ status: true, Cart: c });
         })
         .catch(err => {
             console.error(err);
@@ -60,24 +60,22 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
     const _b = req.body;
 
-    if (!_b.catID) {
+    if (!_b.cartID) {
         res.status(400).json({
-            status: false, message: "catID does not exists"
+            status: false, message: "cartID does not exists"
         });
         return
     }
 
 
-    Category.destroy(
-        {
-            where: {
-                catID: _b.catID
-            }
+    Cart.destroy({
+        where: {
+            cartID: _b.cartID
         }
-    )
+    })
         .then(c => {
-            if (!c) throw new Error('No Category found!');
-            res.status(200).json({ status: true, category: c });
+            if (!c) throw new Error('No Cart found!');
+            res.status(200).json({ status: true, Cart: c });
         })
         .catch(err => {
             console.error(err);
@@ -87,14 +85,14 @@ exports.delete = (req, res) => {
 
 exports.getAll = (req, res) => {
     const _b = req.body
-    Category.findAll()
+    Cart.findAll()
         .then(c => {
 
-            if (!c) throw new Error('No Category found!');
+            if (!c) throw new Error('No Cart found!');
 
-            // let schema = getCategorySchema(_b.languageID)
+            // let schema = getCartSchema(_b.languageID)
 
-            // let data = Serializer.serializeMany(c, Category, schema);
+            // let data = Serializer.serializeMany(c, Cart, schema);
             res.status(200).json({ status: true, data: c });
 
         })
@@ -106,13 +104,13 @@ exports.getAll = (req, res) => {
 
 
 exports.getByID = (req, res) => {
-    Category.findOne({
+    Cart.findOne({
         where: {
-            catID: req.params.catID
+            cartID: req.params.cartID
         }
     })
         .then(c => {
-            if (!c) throw new Error('No Category found!');
+            if (!c) throw new Error('No Cart found!');
             res.status(200).json({ status: true, data: c });
         })
         .catch(err => {

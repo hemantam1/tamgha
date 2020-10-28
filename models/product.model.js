@@ -27,7 +27,7 @@ const product = connection.define('product', {
         type: Sequelize.STRING,
     },
     price: {
-        type: Sequelize.DOUBLE,
+        type: Sequelize.DOUBLE(6, 2),
     },
     isAvailable: {
         type: Sequelize.BOOLEAN,

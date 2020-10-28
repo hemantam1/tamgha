@@ -1,19 +1,19 @@
 const Sequelize = require('sequelize');
-const Category = require('../models/category.model');
+const ShippingDetails = require('../models/shippingDetails.model');
 const config = require('../config');
 const { insertingData } = require('../utils/helperFunc')
 const { isAr } = require('../utils/verify')
-// const { getCategorySchema } = require('../utils/schema/schemas');
+// const { getShippingDetailsSchema } = require('../utils/schema/schemas');
 const Serializer = require('sequelize-to-json');
 
 exports.add = (req, res) => {
     const _b = req.body;
     let payload = {
-        CatName: _b.CatName,
-        CatNameAr: _b.CatNameAr,
+        weight: _b.weight,
+        price: _b.price,
     }
 
-    Category.create(payload)
+    ShippingDetails.create(payload)
         .then(r => {
             res.status(200).json({ status: true, result: r });
         })
@@ -29,26 +29,25 @@ exports.add = (req, res) => {
 exports.update = (req, res) => {
     const _b = req.body;
 
-    if (!_b.catID) {
+    if (!_b.shdID) {
         res.status(400).json({
-            status: false, message: "catID does not exists"
+            status: false, message: "shdID does not exists"
         });
         return
     }
 
-    let payload = insertingData(_b, _b.catID);
+    let payload = insertingData(_b, _b.shdID);
 
-    Category.update(payload,
+    ShippingDetails.update(payload,
         {
             where: {
-                catID:
-                    _b.catID
+                shdID: _b.shdID
             }
         }
     )
         .then(c => {
-            if (!c) throw new Error('No Categories found!');
-            res.status(200).json({ status: true, category: c });
+            if (!c) throw new Error('No Details found!');
+            res.status(200).json({ status: true, ShippingDetails: c });
         })
         .catch(err => {
             console.error(err);
@@ -60,24 +59,24 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
     const _b = req.body;
 
-    if (!_b.catID) {
+    if (!_b.shdID) {
         res.status(400).json({
-            status: false, message: "catID does not exists"
+            status: false, message: "shdID does not exists"
         });
         return
     }
 
 
-    Category.destroy(
+    ShippingDetails.destroy(
         {
             where: {
-                catID: _b.catID
+                shdID: _b.shdID
             }
         }
     )
         .then(c => {
-            if (!c) throw new Error('No Category found!');
-            res.status(200).json({ status: true, category: c });
+            if (!c) throw new Error('No ShippingDetails found!');
+            res.status(200).json({ status: true, ShippingDetails: c });
         })
         .catch(err => {
             console.error(err);
@@ -87,14 +86,14 @@ exports.delete = (req, res) => {
 
 exports.getAll = (req, res) => {
     const _b = req.body
-    Category.findAll()
+    ShippingDetails.findAll()
         .then(c => {
 
-            if (!c) throw new Error('No Category found!');
+            if (!c) throw new Error('No ShippingDetails found!');
 
-            // let schema = getCategorySchema(_b.languageID)
+            // let schema = getShippingDetailsSchema(_b.languageID)
 
-            // let data = Serializer.serializeMany(c, Category, schema);
+            // let data = Serializer.serializeMany(c, ShippingDetails, schema);
             res.status(200).json({ status: true, data: c });
 
         })
@@ -106,13 +105,13 @@ exports.getAll = (req, res) => {
 
 
 exports.getByID = (req, res) => {
-    Category.findOne({
+    ShippingDetails.findOne({
         where: {
-            catID: req.params.catID
+            shdID: req.params.shdID
         }
     })
         .then(c => {
-            if (!c) throw new Error('No Category found!');
+            if (!c) throw new Error('No ShippingDetails found!');
             res.status(200).json({ status: true, data: c });
         })
         .catch(err => {

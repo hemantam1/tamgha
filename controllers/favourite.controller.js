@@ -1,19 +1,19 @@
 const Sequelize = require('sequelize');
-const Category = require('../models/category.model');
+const Favourite = require('../models/favourite.model');
 const config = require('../config');
 const { insertingData } = require('../utils/helperFunc')
 const { isAr } = require('../utils/verify')
-// const { getCategorySchema } = require('../utils/schema/schemas');
+// const { getFavouriteSchema } = require('../utils/schema/schemas');
 const Serializer = require('sequelize-to-json');
 
 exports.add = (req, res) => {
     const _b = req.body;
     let payload = {
-        CatName: _b.CatName,
-        CatNameAr: _b.CatNameAr,
+        usr_id: _b.usr_id,
+        prod_id: _b.prod_id,
     }
 
-    Category.create(payload)
+    Favourite.create(payload)
         .then(r => {
             res.status(200).json({ status: true, result: r });
         })
@@ -29,26 +29,25 @@ exports.add = (req, res) => {
 exports.update = (req, res) => {
     const _b = req.body;
 
-    if (!_b.catID) {
+    if (!_b.favID) {
         res.status(400).json({
-            status: false, message: "catID does not exists"
+            status: false, message: "favID does not exists"
         });
         return
     }
 
-    let payload = insertingData(_b, _b.catID);
+    let payload = insertingData(_b, _b.favID);
 
-    Category.update(payload,
+    Favourite.update(payload,
         {
             where: {
-                catID:
-                    _b.catID
+                favID: _b.favID
             }
         }
     )
         .then(c => {
-            if (!c) throw new Error('No Categories found!');
-            res.status(200).json({ status: true, category: c });
+            if (!c) throw new Error('No Favourites found!');
+            res.status(200).json({ status: true, Favourite: c });
         })
         .catch(err => {
             console.error(err);
@@ -60,24 +59,24 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
     const _b = req.body;
 
-    if (!_b.catID) {
+    if (!_b.favID) {
         res.status(400).json({
-            status: false, message: "catID does not exists"
+            status: false, message: "favID does not exists"
         });
         return
     }
 
 
-    Category.destroy(
+    Favourite.destroy(
         {
             where: {
-                catID: _b.catID
+                favID: _b.favID
             }
         }
     )
         .then(c => {
-            if (!c) throw new Error('No Category found!');
-            res.status(200).json({ status: true, category: c });
+            if (!c) throw new Error('No Favourite found!');
+            res.status(200).json({ status: true, Favourite: c });
         })
         .catch(err => {
             console.error(err);
@@ -87,14 +86,14 @@ exports.delete = (req, res) => {
 
 exports.getAll = (req, res) => {
     const _b = req.body
-    Category.findAll()
+    Favourite.findAll()
         .then(c => {
 
-            if (!c) throw new Error('No Category found!');
+            if (!c) throw new Error('No Favourite found!');
 
-            // let schema = getCategorySchema(_b.languageID)
+            // let schema = getFavouriteSchema(_b.languageID)
 
-            // let data = Serializer.serializeMany(c, Category, schema);
+            // let data = Serializer.serializeMany(c, Favourite, schema);
             res.status(200).json({ status: true, data: c });
 
         })
@@ -106,13 +105,13 @@ exports.getAll = (req, res) => {
 
 
 exports.getByID = (req, res) => {
-    Category.findOne({
+    Favourite.findOne({
         where: {
-            catID: req.params.catID
+            favID: req.params.favID
         }
     })
         .then(c => {
-            if (!c) throw new Error('No Category found!');
+            if (!c) throw new Error('No Favourite found!');
             res.status(200).json({ status: true, data: c });
         })
         .catch(err => {

@@ -42,6 +42,14 @@ const user = connection.define('user', {
     countryAr: {
         type: Sequelize.STRING,
     },
+    categorySelected: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false
+    },
+    isCivilUpload: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false
+    },
     emailVerified: {
         type: Sequelize.BOOLEAN,
         defaultValue: false

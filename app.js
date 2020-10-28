@@ -36,6 +36,10 @@ app.use('/shippingAddress', require('./routes/shippingAddress.router'));
 app.use('/subCategory', require('./routes/subCategory.router'));
 app.use('/transaction', require('./routes/transaction.router'));
 app.use('/user', require('./routes/user.router'));
+app.use('/cart', require('./routes/cart.router'));
+app.use('/favourite', require('./routes/favourite.router'));
+app.use('/usrCategory', require('./routes/userCategory.router'));
+app.use('/tamghaShip', require('./routes/shippingDetail.router'));
 
 
 
