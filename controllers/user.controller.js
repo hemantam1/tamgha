@@ -38,7 +38,7 @@ exports.register = (req, res) => {
                     let payload = {
                         email: _b.email,
                         password: bcrypt.hashSync(_b.password, 0),
-                        usrName: _b.userName,
+                        userName: _b.userName,
                         firstName: _b.firstName,
                         lastName: _b.lastName,
                         phoneNo: _b.phoneNo,
