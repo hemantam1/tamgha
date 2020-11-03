@@ -2,7 +2,7 @@ const connection = require('../services/sequelize.service').connection();
 const Sequelize = require('sequelize');
 
 const user = connection.define('user', {
-    usrID: {
+    userId: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
         primaryKey: true
@@ -14,7 +14,7 @@ const user = connection.define('user', {
     password: {
         type: Sequelize.STRING,
     },
-    usrName: {
+    userName: {
         type: Sequelize.STRING,
 
     },

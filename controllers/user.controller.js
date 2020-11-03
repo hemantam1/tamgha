@@ -17,7 +17,7 @@ exports.register = (req, res) => {
     else if (!_b.password) {
         res.status(400).send({ message: "Password cannot be null" });
     }
-    else if (!_b.usrName) {
+    else if (!_b.userName) {
         res.status(400).send({ message: "user name cannot be null" });
     }
     else {
@@ -25,7 +25,7 @@ exports.register = (req, res) => {
             where: {
                 email: _b.email
             },
-            attributes: ['usrID']
+            attributes: ['userId']
         })
             .then(u => {
                 if (u) {
@@ -35,22 +35,24 @@ exports.register = (req, res) => {
                     });
                 }
                 else {
-                    User.create({
+                    let payload = {
                         email: _b.email,
                         password: bcrypt.hashSync(_b.password, 0),
-                        usrName: _b.usrName,
+                        usrName: _b.userName,
                         firstName: _b.firstName,
                         lastName: _b.lastName,
                         phoneNo: _b.phoneNo,
                         country: _b.country,
                         emailVerified: true // set to false in production
-                    })
+                    }
+                    User.create(payload)
                         .then(data => {
-                            const auth = `bearer ${jwt.sign(data.usrID, config.passport.jwtSecret)}`;
+                            const auth = `bearer ${jwt.sign(data.userId, config.passport.jwtSecret)}`;
                             // mailer(auth);
                             res.status(200).send({
                                 status: true,
-                                message: "Registered Successfully"
+                                auth,
+                                data
                             });
                         })
                         .catch(e => {
@@ -100,7 +102,7 @@ exports.login = (req, res) => {
                         });
                     }
                     else {
-                        const auth = `bearer ${jwt.sign(u.usrID, config.passport.jwtSecret)}`;
+                        const auth = `bearer ${jwt.sign(u.userId, config.passport.jwtSecret)}`;
                         res.status(200).json({
                             ...u.dataValues,
                             auth: auth,
