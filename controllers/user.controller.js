@@ -75,8 +75,8 @@ exports.register = (req, res) => {
 
 exports.login = (req, res) => {
     const _b = req.body;
-    if (!_b.email) {
-        res.status(400).send({ message: "Email cannot be null" });
+    if (!_b.userName) {
+        res.status(400).send({ message: "UserNAme cannot be null" });
     }
     else if (!_b.password) {
         res.status(400).send({ message: "Password cannot be null" });
@@ -84,7 +84,7 @@ exports.login = (req, res) => {
     else {
         User.findOne({
             where: {
-                email: _b.email
+                userName: _b.userName
             }
         })
             .then(u => {
