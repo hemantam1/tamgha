@@ -8,6 +8,9 @@ const prodDetails = connection.define('prod_details', {
         defaultValue: Sequelize.UUIDV4,
         primaryKey: true
     },
+    name: {
+        type: Sequelize.STRING,
+    },
     available: {
         type: Sequelize.INTEGER,
     },
