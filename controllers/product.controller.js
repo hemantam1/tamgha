@@ -204,20 +204,6 @@ exports.upload = (req, res) => {
 
     // }
 
-    let shippingAddresPayload = {
-        address: _b.address,
-        country: _b.country,
-        idType: _b.idType,
-        idFront: _b.idFront,
-        idBack: _b.idBack,
-        isTamghaShipping: false,
-        phoneNo: _b.phoneNo,
-        shipingFrom: _b.shipingFrom,
-        email: _b.email,
-        emailAr: _b.emailAr,
-        usr_id: _b.user_id,
-        // prod_id: _b.prod_id
-    }
     Product.create(productPayload)
         .then(c => {
 
@@ -244,14 +230,15 @@ exports.upload = (req, res) => {
                 }
                 try {
                     for (let j = 0; j < _b.sizes.length; j++) {
+                        let additionalPrice = parseInt(_b.sizes[j].additionalPrice) + parseInt(_b.price)
                         let productDetailsPayload = {
-                            name: _b.sizes[j],
-                            available: _b.available,
-                            color: _b.color,
+                            name: _b.sizes[j].size,
+                            available: _b.sizes[j].available,
+                            color: _b.sizes[j].color,
                             colorAr: _b.colorAr,
                             priceCurrency: _b.priceCurrency,
                             priceCurrencyAr: _b.priceCurrencyAr,
-                            totalPrice: _b.totalPrice,
+                            totalPrice: additionalPrice,
                             isFaltDiscount: _b.isFaltDiscount,
                             priceExcluding: _b.priceExcluding,
                             prod_id: productID
@@ -260,6 +247,21 @@ exports.upload = (req, res) => {
                     }
                 } catch (err) { console.log(err) }
                 try {
+
+                    let shippingAddresPayload = {
+                        address: _b.address,
+                        country: _b.country,
+                        idType: _b.idType,
+                        idFront: _b.idFront,
+                        idBack: _b.idBack,
+                        isTamghaShipping: false,
+                        phoneNo: _b.phoneNo,
+                        shipingFrom: _b.shipingFrom,
+                        email: _b.email,
+                        emailAr: _b.emailAr,
+                        usr_id: _b.user_id,
+                        prod_id: productID
+                    }
                     ShippingAddress.create(shippingAddresPayload)
                         .then(s => res.json({
                             status: true,
