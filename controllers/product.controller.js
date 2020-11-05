@@ -114,7 +114,7 @@ exports.getAll = (req, res) => {
 
             let data = Serializer.serializeMany(c, Product, schema);
             console.log(data)
-            res.status(200).json({ status: true, data: c });
+            res.status(200).json({ status: true, data });
 
         })
         .catch(err => {
