@@ -3,21 +3,21 @@ const Sequelize = require('sequelize');
 
 
 const product = connection.define('product', {
-    prodID: {
+    productID: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
         primaryKey: true
     },
-    prodName: {
+    productName: {
         type: Sequelize.STRING,
     },
-    prodNameAr: {
+    productNameAr: {
         type: Sequelize.STRING,
     },
-    prodDescription: {
+    productDescription: {
         type: Sequelize.STRING,
     },
-    prodDescriptionAr: {
+    productDescriptionAr: {
         type: Sequelize.STRING,
     },
     priceCurrency: {
