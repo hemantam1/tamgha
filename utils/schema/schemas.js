@@ -8,51 +8,57 @@ function getConstant(languageID) {
         return arbConstant
     } return engConstant
 }
-function categorySchema(category) {
+function userCategorySchema(constant) {
     return {
-        include: [],
-        as: {}
+        include: [constant.usrCatName],
+        as: { usrCatNameAr: 'usrCatName' }
     }
 }
 function userSchema(constant) {
     return {
-        include: [],
-        as: {},
+        include: ['userId', 'userName', 'profilePhoto', constant.firstName, constant.lastName, 'phoneNo', constant.country, 'user_category'],
+        as: { firstNameAr: 'firstName', lastNameAr: "lastName", countryAr: "country" },
         assoc: {
-            user_category: "",
+            user_category: userCategorySchema(constant),
         }
     }
 }
+function categorySchema(constant) {
+    return {
+        include: ['catID', constant.catName],
+        as: { catNameAr: 'catName' },
+    }
 
+}
+function subCategorySchema(constant) {
+    return {
+        include: ['subCatID', constant.subCatName, 'category'],
+        as: { subCatNameAr: 'subCatName' },
+        assoc: {
+            category: categorySchema(constant)
+        }
+    }
+}
 function productSchema(constant) {
     return {
-        include: ['productID', constant.product, constant.productDescription, constant.productCurrency, 'price'],
+        include: ['productID', constant.product, constant.productDescription, constant.productCurrency, 'price', 'user', 'sub_category'],
         as: { productNameAr: "productName", productDescriptionAr: "productDescription", priceCurrencyAr: "priceCurrency" },
         assoc: {
-            users: userSchema(constant),
-            sub_categories: subCategorySchema(constant)
+            user: userSchema(constant),
+            sub_category: subCategorySchema(constant)
         }
     }
 }
 
 
-function getMealSchema(languageID) {
-    return mealSchema(getConstant(languageID))
+// function getMealSchema(languageID) {
+//     return mealSchema(getConstant(languageID))
+// }
+function getProductSchema(languageID) {
+    return productSchema(getConstant(languageID))
 }
 
 
 module.exports = {
-    getActivitySchema,
-    getAirwaySchema,
-    getBaggageSchema,
-    getCitySchema,
-    getCountrySchema,
-    getContinentSchema,
-    getTripTypeSchema,
-    getPackageSchema,
-    getFlightSchema,
-    getHotelSchema,
-    getMealSchema,
-    getRoomSchema,
-    getTravelAgencySchema
+    getProductSchema,
 }

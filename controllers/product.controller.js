@@ -10,6 +10,9 @@ const { isAr } = require('../utils/verify')
 const Serializer = require('sequelize-to-json');
 // const { Media, ProductDetails } = require('../models/associations');
 const sequelizeService = require('../services/sequelize.service');
+const { getProductSchema } = require('../utils/schema/schemas');
+const { User } = require('../models/associations');
+const SubCategory = require('../models/subCategory.model');
 
 exports.add = (req, res) => {
     const _b = req.body;
@@ -94,14 +97,23 @@ exports.delete = (req, res) => {
 
 exports.getAll = (req, res) => {
     const _b = req.body
-    Product.findAll()
+    Product.findAll({
+        include: [
+            {
+                model: User
+            }, {
+                model: SubCategory
+            }
+        ]
+    })
         .then(c => {
 
             if (!c) throw new Error('No Product found!');
 
-            // let schema = getProductSchema(_b.languageID)
+            let schema = getProductSchema(_b.languageID)
 
-            // let data = Serializer.serializeMany(c, Product, schema);
+            let data = Serializer.serializeMany(c, Product, schema);
+            console.log(data)
             res.status(200).json({ status: true, data: c });
 
         })
