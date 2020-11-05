@@ -208,12 +208,6 @@ exports.upload = (req, res) => {
         .then(c => {
 
             if (!c) throw new Error('No Product found!');
-
-            // let schema = getProductSchema(_b.languageID)
-
-            // let data = Serializer.serializeMany(c, Product, schema);
-            // res.status(200).json({ status: true, data: c });
-            // console.log(c.dataValues.prodID)
             let productID = c.dataValues.prodID
             if (productID) {
                 for (let i = 0; i < _b.photos.length; i++) {
@@ -226,7 +220,10 @@ exports.upload = (req, res) => {
                         }
                         Media.create(mediaPayload)
                     }
-                    catch (err) { console.log(err) }
+                    catch (err) {
+                        console.error(err);
+                        res.status(400).json({ status: false });
+                    }
                 }
                 try {
                     for (let j = 0; j < _b.sizes.length; j++) {
@@ -245,7 +242,10 @@ exports.upload = (req, res) => {
                         }
                         ProductDetails.create(productDetailsPayload)
                     }
-                } catch (err) { console.log(err) }
+                } catch (err) {
+                    console.error(err);
+                    res.status(400).json({ status: false });
+                }
                 try {
 
                     let shippingAddresPayload = {
@@ -272,7 +272,10 @@ exports.upload = (req, res) => {
                         })
                         )
                 }
-                catch (err) { console.log(err) }
+                catch (err) {
+                    console.error(err);
+                    res.status(400).json({ status: false });
+                }
             }
 
         })
