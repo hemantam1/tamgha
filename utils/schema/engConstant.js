@@ -1,17 +1,7 @@
 module.exports = {
-    // Package
-    pack: "packTitle", packDesc: "packDescription", packcurrency: "packPriceCurrency",
+    // Product
+    product: "productName", productDescription: "productDescription", productCurrency: "priceCurrency",
     // City
-    city: "citName", country: "ctryName", continent: "contName",
-    // Flight
-    flicurrency: "fliPriceCurrency",
-    // agency
-    agency: "agencyName", agencyaddress: "agencyAddress",
-    // Hotel
-    hotel: "hotName", hotcurrency: "hotPriceCurrency", hotaddress: "hotAddress", hotemail: "hotContactEmail",
-    roomType: "roomTypeName", roomCurrency: "roomTypeCurrency",
-    mealType: "mealTypeAr", mealName: "mealNameAr", mealCurrency: "mealCurrencyAr",
-    activity: "activityName", activitycurrency: "activityPriceCurrency",
-    // TripType
-    tripType: "typeName"
+    city: "citName", country: "ctryName",
+
 }

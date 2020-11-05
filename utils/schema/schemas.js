@@ -8,17 +8,29 @@ function getConstant(languageID) {
         return arbConstant
     } return engConstant
 }
-
+function categorySchema(category) {
+    return {
+        include: [],
+        as: {}
+    }
+}
+function userSchema(constant) {
+    return {
+        include: [],
+        as: {},
+        assoc: {
+            user_category: "",
+        }
+    }
+}
 
 function productSchema(constant) {
     return {
-        include: ['prodID', constant.hotel, 'hotPricePerNight', constant.hotcurrency, constant.hotaddress, 'hotTelephoneNo',
-            constant.hotemail, 'ratings', 'hot_rooms', 'hot_meals', 'hot_activities'],
-        as: { prodID: "productId", hotNameAr: "hotName", hotPriceCurrencyAr: 'hotPriceCurrency', hotAddressAr: "hotAddress" },
+        include: ['productID', constant.product, constant.productDescription, constant.productCurrency, 'price'],
+        as: { productNameAr: "productName", productDescriptionAr: "productDescription", priceCurrencyAr: "priceCurrency" },
         assoc: {
-            hot_rooms: roomSchema(constant),
-            hot_meals: mealSchema(constant),
-            hot_activities: activitySchema(constant)
+            users: userSchema(constant),
+            sub_categories: subCategorySchema(constant)
         }
     }
 }
