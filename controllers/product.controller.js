@@ -41,17 +41,17 @@ exports.add = (req, res) => {
 exports.update = (req, res) => {
     const _b = req.body;
 
-    if (!_b.prodID) {
-        res.status(400).json({ status: false, message: "prodID does not exists" });
+    if (!_b.productID) {
+        res.status(400).json({ status: false, message: "productID does not exists" });
         return
     }
 
-    let payload = insertingData(_b, _b.prodID);
+    let payload = insertingData(_b, _b.productID);
 
     Product.update(payload,
         {
             where: {
-                prodID: _b.prodID
+                productID: _b.productID
             }
         }
     )
@@ -69,8 +69,8 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
     const _b = req.body;
 
-    if (!_b.prodID) {
-        res.status(400).json({ status: false, message: "prodID does not exists" });
+    if (!_b.productID) {
+        res.status(400).json({ status: false, message: "productID does not exists" });
         return
     }
 
@@ -78,7 +78,7 @@ exports.delete = (req, res) => {
     Product.destroy(
         {
             where: {
-                prodID: _b.prodID
+                productID: _b.productID
             }
         }
     )
@@ -115,7 +115,7 @@ exports.getAll = (req, res) => {
 exports.getByID = (req, res) => {
     Product.findOne({
         where: {
-            prodID: req.params.prodID
+            productID: req.params.productID
         }
     })
         .then(c => {
@@ -150,7 +150,7 @@ exports.uploadPhotos = (req, res, next) => {
 
     // Product.findOne({
     //     where: {
-    //         prodID: req.params.prodID
+    //         productID: req.params.productID
     //     }
     // })
     //     .then(c => {
@@ -175,10 +175,10 @@ exports.upload = (req, res) => {
         })
     }
     let productPayload = {
-        prodName: _b.productName,
-        prodNameAr: _b.productNameAr,
-        prodDescription: _b.productDescription,
-        prodDescriptionAr: _b.productDescriptionAr,
+        productName: _b.productName,
+        productNameAr: _b.productNameAr,
+        productDescription: _b.productDescription,
+        productDescriptionAr: _b.productDescriptionAr,
         priceCurrency: _b.priceCurrency,
         priceCurrencyAr: _b.priceCurrencyAr,
         price: _b.price,
@@ -208,7 +208,7 @@ exports.upload = (req, res) => {
         .then(c => {
 
             if (!c) throw new Error('No Product found!');
-            let productID = c.dataValues.prodID
+            let productID = c.dataValues.productID
             if (productID) {
                 for (let i = 0; i < _b.photos.length; i++) {
 
