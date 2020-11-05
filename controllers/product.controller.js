@@ -175,10 +175,10 @@ exports.upload = (req, res) => {
         })
     }
     let productPayload = {
-        prodName: _b.prodName,
-        prodNameAr: _b.prodNameAr,
-        prodDescription: _b.prodDescription,
-        prodDescriptionAr: _b.prodDescriptionAr,
+        prodName: _b.productName,
+        prodNameAr: _b.productNameAr,
+        prodDescription: _b.productDescription,
+        prodDescriptionAr: _b.productDescriptionAr,
         priceCurrency: _b.priceCurrency,
         priceCurrencyAr: _b.priceCurrencyAr,
         price: _b.price,
