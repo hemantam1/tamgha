@@ -249,14 +249,17 @@ exports.upload = (req, res) => {
                 try {
 
                     let shippingAddresPayload = {
-                        address: _b.address,
+                        address: _b.locationTitle,
+                        area: _b.locationArea,
                         country: _b.country,
+                        city: _b.locationCity,
+                        pinCode: _b.locationCode,
+                        state: _b.locationState,
                         idType: _b.idType,
                         idFront: _b.idFront,
                         idBack: _b.idBack,
                         isTamghaShipping: false,
                         phoneNo: _b.phoneNo,
-                        shipingFrom: _b.shipingFrom,
                         email: _b.email,
                         emailAr: _b.emailAr,
                         usr_id: _b.user_id,

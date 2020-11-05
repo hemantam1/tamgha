@@ -26,8 +26,11 @@ const ShipingDetails = require('./shippingDetails.model');
 Country.hasMany(City, { foreignKey: 'id_country', onDelete: 'CASCADE' });
 City.belongsTo(Country, { foreignKey: 'id_country' });
 
-// Country.hasMany(User, { foreignKey: 'id_country', onDelete: 'CASCADE' });
-// User.belongsTo(Country, { foreignKey: 'id_country' });
+// Country.hasMany(User, { foreignKey: 'id_ctry', onDelete: 'CASCADE' });
+// User.belongsTo(Country, { foreignKey: 'id_ctry' });
+
+// City.hasMany(ShippingAddress, { foreignKey: 'city_id', onDelete: 'CASCADE' });
+// ShippingAddress.belongsTo(City, { foreignKey: 'city_id' });
 
 // User
 User.hasMany(Product, { foreignKey: 'usr_id', onDelete: 'CASCADE' })

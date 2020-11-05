@@ -20,6 +20,27 @@ const ShippingAddress = connection.define('shipping_address', {
     addressAr: {
         type: Sequelize.STRING,
     },
+    city: {
+        type: Sequelize.STRING,
+    },
+    cityAr: {
+        type: Sequelize.STRING,
+    },
+    area: {
+        type: Sequelize.STRING,
+    },
+    areaAr: {
+        type: Sequelize.STRING,
+    },
+    pinCode: {
+        type: Sequelize.INTEGER,
+    },
+    state: {
+        type: Sequelize.STRING,
+    },
+    stateAr: {
+        type: Sequelize.STRING,
+    },
     isTamghaShipping: {
         type: Sequelize.BOOLEAN,
         defaultValue: false
