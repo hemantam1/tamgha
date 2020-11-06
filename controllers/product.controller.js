@@ -113,7 +113,7 @@ exports.getAll = (req, res) => {
             let schema = getProductSchema(_b.languageID)
 
             let data = Serializer.serializeMany(c, Product, schema);
-            console.log(data)
+            // console.log(data)
             res.status(200).json({ status: true, data });
 
         })
