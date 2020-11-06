@@ -11,7 +11,7 @@ const passport = require('passport');
 
 
 router.get('/explore', productController.explore);
-router.get('/feed', userController.suggestAll);
+router.get('/feed', productController.explore);
 
 // router.get('/feed', addressController.getAll);
 
