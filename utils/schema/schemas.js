@@ -50,7 +50,11 @@ function productSchema(constant) {
     }
 }
 
-
+function getExploreSchema() {
+    return {
+        include: ['productID']
+    }
+}
 // function getMealSchema(languageID) {
 //     return mealSchema(getConstant(languageID))
 // }
@@ -61,4 +65,5 @@ function getProductSchema(languageID) {
 
 module.exports = {
     getProductSchema,
+    getExploreSchema
 }

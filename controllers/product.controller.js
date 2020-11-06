@@ -10,7 +10,7 @@ const { isAr } = require('../utils/verify')
 const Serializer = require('sequelize-to-json');
 // const { Media, ProductDetails } = require('../models/associations');
 const sequelizeService = require('../services/sequelize.service');
-const { getProductSchema } = require('../utils/schema/schemas');
+const { getProductSchema, getExploreSchema } = require('../utils/schema/schemas');
 const { User } = require('../models/associations');
 const SubCategory = require('../models/subCategory.model');
 
@@ -289,6 +289,29 @@ exports.upload = (req, res) => {
                     res.status(400).json({ status: false });
                 }
             }
+
+        })
+        .catch(err => {
+            console.error(err);
+            res.status(400).json({ status: false });
+        });
+};
+
+
+
+exports.explore = (req, res) => {
+    // const _b = req.body
+    // write a condition for products having more no of likes
+    Product.findAll()
+        .then(c => {
+
+            if (!c) throw new Error('No Product found!');
+
+            let schema = getExploreSchema()
+
+            let data = Serializer.serializeMany(c, Product, schema);
+            // console.log(data)
+            res.status(200).json({ status: true, data });
 
         })
         .catch(err => {

@@ -10,7 +10,7 @@ const passport = require('passport');
 // });
 
 
-router.get('/explore', productController.getAll);
+router.get('/explore', productController.explore);
 router.get('/feed', userController.suggestAll);
 
 // router.get('/feed', addressController.getAll);
