@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const productMVController = require('../controllers/prodMeasureValue.controller');
 const passport = require('passport');
+const { user, admin, guest } = require('../middlewares/auth')
 
 
 router.get('/', productMVController.getAll);

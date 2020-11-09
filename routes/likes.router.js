@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const likesController = require('../controllers/likes.controller');
 const passport = require('passport');
+const { user, admin, guest } = require('../middlewares/auth')
 
 
 router.get('/', likesController.getAll);

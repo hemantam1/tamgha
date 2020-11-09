@@ -4,6 +4,8 @@ const JwtStrategy = require('passport-jwt').Strategy,
 const User = require('../models/user.model');
 const passportService = require('passport');
 const config = require('../config');
+var passport = require('passport')
+    , LocalStrategy = require('passport-local').Strategy;
 
 
 const opts = {
@@ -26,7 +28,7 @@ module.exports = {
         passportService.use(new JwtStrategy(opts.jwt, function (jwt_payload, done) {
             User.findOne({
                 where: {
-                    usrID: jwt_payload
+                    userID: jwt_payload.sub
                 }
             })
                 .then(u => {
@@ -55,6 +57,21 @@ module.exports = {
         //             return done(e, false);
         //         })
         // }));
+
+        passport.use(new LocalStrategy(
+            function (username, password, done) {
+                User.findOne({ username: username }, function (err, user) {
+                    if (err) { return done(err); }
+                    if (!user) {
+                        return done(null, false, { message: 'Incorrect username.' });
+                    }
+                    if (!user.validPassword(password)) {
+                        return done(null, false, { message: 'Incorrect password.' });
+                    }
+                    return done(null, user);
+                });
+            }
+        ));
 
     },
     pass: () => { return passportService }

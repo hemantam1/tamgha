@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const ordersController = require('../controllers/orders.controller');
 const passport = require('passport');
+const { user, admin, guest } = require('../middlewares/auth')
 
 
 router.get('/', ordersController.getAll);

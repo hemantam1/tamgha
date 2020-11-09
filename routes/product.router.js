@@ -1,6 +1,8 @@
 const router = require('express').Router();
 const productController = require('../controllers/product.controller');
 const passport = require('passport');
+const { user, admin, guest } = require('../middlewares/auth')
+
 // var multer = require('multer')
 // // SET STORAGE
 // var storage = multer.diskStorage({
@@ -24,7 +26,6 @@ router.delete('/', productController.delete);
 
 
 router.use('/category', require('./category.router'));
-router.use('/subCategory', require('./subCategory.router'));
 router.use('/media', require('./media.router'));
 router.use('/sizeType', require('./productMeasureType.router'));
 

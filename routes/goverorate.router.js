@@ -4,6 +4,7 @@
 
 const router = require('express').Router();
 const governorateController = require('../controllers/governorate.controller');
+const { user, admin, guest } = require('../middlewares/auth')
 
 const passport = require('passport');
 

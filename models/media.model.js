@@ -8,13 +8,14 @@ const media = connection.define('prod_media', {
         defaultValue: Sequelize.UUIDV4,
         primaryKey: true
     },
-    mediaType: {
-        type: Sequelize.ENUM,
-        values: ['Image', 'Video'],
-        defaultValue: 'Image'
-    },
-    mediaLink: {
+    url: {
         type: Sequelize.TEXT,
+    },
+    ext: {
+        type: Sequelize.STRING,
+    },
+    format: {
+        type: Sequelize.STRING,
     }
 }
 );
