@@ -17,7 +17,6 @@ require('./models/associations');
 require('./services/passport.service').initialize();
 
 app.use('/', require('./routes/allRoute.router'));
-app.use('/city', require('./routes/city.router'));
 app.use('/country', require('./routes/country.router'));
 app.use('/user', require('./routes/user.router'));
 app.use('/product', require('./routes/product.router'));

@@ -3,6 +3,8 @@ const categoryController = require('../controllers/category.controller');
 const passport = require('passport');
 
 
+router.use('/subCategory', require('./subCategory.router'));
+
 router.get('/', categoryController.getAll);
 
 router.post('/', categoryController.add);

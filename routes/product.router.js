@@ -1,18 +1,19 @@
 const router = require('express').Router();
 const productController = require('../controllers/product.controller');
 const passport = require('passport');
-var multer = require('multer')
-// SET STORAGE
-var storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, 'temp/')
-    },
-    filename: function (req, file, cb) {
-        cb(null, file.fieldname + '-' + Date.now())
-    }
-})
+// var multer = require('multer')
+// // SET STORAGE
+// var storage = multer.diskStorage({
+//     destination: function (req, file, cb) {
+//         cb(null, 'temp/')
+//     },
+//     filename: function (req, file, cb) {
+//         cb(null, file.fieldname + '-' + Date.now())
+//     }
+// })
 
-var upload = multer({ storage: storage })
+// var upload = multer({ storage: storage })
+// router.post('/photos/upload', upload.array('photos', 12), productController.uploadPhotos);
 
 
 router.get('/', productController.getAll);
@@ -20,7 +21,6 @@ router.post('/upload', productController.upload);
 router.post('/', productController.add);
 router.put('/', productController.update);
 router.delete('/', productController.delete);
-router.post('/photos/upload', upload.array('photos', 12), productController.uploadPhotos);
 
 
 router.use('/category', require('./category.router'));

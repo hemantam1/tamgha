@@ -8,7 +8,7 @@ router.post('/', cityController.add);
 router.put('/', cityController.update);
 router.delete('/', cityController.delete);
 router.get('/', cityController.getAll);
-router.get('/:contID', cityController.getByID);
+router.get('/:cityID', cityController.getByID);
 
 
 module.exports = router;
