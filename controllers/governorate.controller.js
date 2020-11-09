@@ -1,20 +1,14 @@
 const Sequelize = require('sequelize');
-const Media = require('../models/media.model');
+const State = require('../models/governorate.model');
 const config = require('../config');
-const { insertingData } = require('../utils/helperFunc')
-const { isAr } = require('../utils/verify')
-// const { getMediaSchema } = require('../utils/schema/schemas');
-const Serializer = require('sequelize-to-json');
 
 exports.add = (req, res) => {
     const _b = req.body;
-    let payload = {
-        mediaType: _b.mediaType,
-        mediaLink: _b.mediaLink,
-        product_id: _b.product_id
-    }
-
-    Media.create(payload)
+    State.create({
+        state: _b.state,
+        stateAr: _b.stateAr,
+        country_id: _b.country_id
+    })
         .then(r => {
             res.status(200).json({ status: true, result: r });
         })
@@ -29,23 +23,28 @@ exports.add = (req, res) => {
 
 exports.update = (req, res) => {
     const _b = req.body;
+    let payload = {};
 
-    if (!_b.mediaID) {
-        res.status(400).json({ status: false, message: "mediaID does not exists" });
+    if (!_b.stateID) {
+        res.status(400).json({ status: false, message: "stateID does not exists" });
         return
     }
 
-    let payload = insertingData(_b, _b.mediaID);
+    if (_b.state)
+        payload.state = _b.state
 
-    Media.update(payload,
+    if (_b.stateAr)
+        payload.stateAr = _b.stateAr
+
+    State.update(payload,
         {
             where: {
-                mediaID: _b.mediaID
+                stateID: _b.stateID
             }
         }
     )
         .then(c => {
-            if (!c) throw new Error('No Media found!');
+            if (!c) throw new Error('No State found!');
             res.status(200).json({ status: true, category: c });
         })
         .catch(err => {
@@ -58,21 +57,20 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
     const _b = req.body;
 
-    if (!_b.mediaID) {
-        res.status(400).json({ status: false, message: "mediaID does not exists" });
+    if (!_b.stateID) {
+        res.status(400).json({ status: false, message: "stateID does not exists" });
         return
     }
 
-
-    Media.destroy(
+    State.destroy(
         {
             where: {
-                mediaID: _b.mediaID
+                stateID: _b.stateID
             }
         }
     )
         .then(c => {
-            if (!c) throw new Error('No Media found!');
+            if (!c) throw new Error('No State found!');
             res.status(200).json({ status: true, category: c });
         })
         .catch(err => {
@@ -82,17 +80,11 @@ exports.delete = (req, res) => {
 };
 
 exports.getAll = (req, res) => {
-    const _b = req.body
-    Media.findAll()
+
+    State.findAll()
         .then(c => {
-
-            if (!c) throw new Error('No Media found!');
-
-            // let schema = getMediaSchema(_b.languageID)
-
-            // let data = Serializer.serializeMany(c, Media, schema);
+            if (!c) throw new Error('No State found!');
             res.status(200).json({ status: true, data: c });
-
         })
         .catch(err => {
             console.error(err);
@@ -102,13 +94,13 @@ exports.getAll = (req, res) => {
 
 
 exports.getByID = (req, res) => {
-    Media.findOne({
+    State.findOne({
         where: {
-            mediaID: req.params.mediaID
+            stateID: req.params.stateID
         }
     })
         .then(c => {
-            if (!c) throw new Error('No Media found!');
+            if (!c) throw new Error('No State found!');
             res.status(200).json({ status: true, data: c });
         })
         .catch(err => {

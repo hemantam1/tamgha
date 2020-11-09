@@ -10,8 +10,8 @@ exports.add = (req, res) => {
     const _b = req.body;
     let payload = {
         message: _b.message,
-        usr_id: _b.usr_id,
-        msg_usrID: _b.msg_usrID
+        user_id: _b.user_id,
+        to_user_id: _b.to_user_id
     }
 
     PrivateMessage.create(payload)
@@ -30,17 +30,17 @@ exports.add = (req, res) => {
 exports.update = (req, res) => {
     const _b = req.body;
 
-    if (!_b.msgID) {
-        res.status(400).json({ status: false, message: "msgID does not exists" });
+    if (!_b.messageID) {
+        res.status(400).json({ status: false, message: "messageID does not exists" });
         return
     }
 
-    let payload = insertingData(_b, _b.msgID);
+    let payload = insertingData(_b, _b.messageID);
 
     PrivateMessage.update(payload,
         {
             where: {
-                msgID: _b.msgID
+                messageID: _b.messageID
             }
         }
     )
@@ -58,8 +58,8 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
     const _b = req.body;
 
-    if (!_b.msgID) {
-        res.status(400).json({ status: false, message: "msgID does not exists" });
+    if (!_b.messageID) {
+        res.status(400).json({ status: false, message: "messageID does not exists" });
         return
     }
 
@@ -67,7 +67,7 @@ exports.delete = (req, res) => {
     PrivateMessage.destroy(
         {
             where: {
-                msgID: _b.msgID
+                messageID: _b.messageID
             }
         }
     )
@@ -104,7 +104,7 @@ exports.getAll = (req, res) => {
 exports.getByID = (req, res) => {
     PrivateMessage.findOne({
         where: {
-            msgID: req.params.msgID
+            messageID: req.params.messageID
         }
     })
         .then(c => {

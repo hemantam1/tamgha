@@ -9,8 +9,8 @@ const Serializer = require('sequelize-to-json');
 exports.add = (req, res) => {
     const _b = req.body;
     let payload = {
-        usr_id: _b.usr_id,
-        fol_usrID: _b.fol_usrID
+        user_id: _b.user_id,
+        follower_user_id: _b.follower_user_id
     }
     Followers.create(payload)
         .then(r => {
@@ -28,17 +28,17 @@ exports.add = (req, res) => {
 exports.update = (req, res) => {
     const _b = req.body;
 
-    if (!_b.folID) {
-        res.status(400).json({ status: false, message: "folID does not exists" });
+    if (!_b.followerID) {
+        res.status(400).json({ status: false, message: "followerID does not exists" });
         return
     }
 
-    let payload = insertingData(_b, _b.folID);
+    let payload = insertingData(_b, _b.followerID);
 
     Followers.update(payload,
         {
             where: {
-                folID: _b.folID
+                followerID: _b.followerID
             }
         }
     )
@@ -56,8 +56,8 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
     const _b = req.body;
 
-    if (!_b.folID) {
-        res.status(400).json({ status: false, message: "folID does not exists" });
+    if (!_b.followerID) {
+        res.status(400).json({ status: false, message: "followerID does not exists" });
         return
     }
 
@@ -65,7 +65,7 @@ exports.delete = (req, res) => {
     Followers.destroy(
         {
             where: {
-                folID: _b.folID
+                followerID: _b.followerID
             }
         }
     )
@@ -102,7 +102,7 @@ exports.getAll = (req, res) => {
 exports.getByID = (req, res) => {
     Followers.findOne({
         where: {
-            folID: req.params.folID
+            followerID: req.params.followerID
         }
     })
         .then(c => {

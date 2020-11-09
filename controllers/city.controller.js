@@ -5,9 +5,9 @@ const config = require('../config');
 exports.add = (req, res) => {
     const _b = req.body;
     City.create({
-        citName: _b.citName,
-        citNameAr: _b.citNameAr,
-        id_country: _b.ctryID
+        city: _b.city,
+        cityAr: _b.cityAr,
+        state_id: _b.state_id
     })
         .then(r => {
             res.status(200).json({ status: true, result: r });
@@ -25,21 +25,21 @@ exports.update = (req, res) => {
     const _b = req.body;
     let payload = {};
 
-    if (!_b.citID) {
-        res.status(400).json({ status: false, message: "citID does not exists" });
+    if (!_b.cityID) {
+        res.status(400).json({ status: false, message: "cityID does not exists" });
         return
     }
 
-    if (_b.citName)
-        payload.citName = _b.citName
+    if (_b.city)
+        payload.city = _b.city
 
-    if (_b.citNameAr)
-        payload.citNameAr = _b.citNameAr
+    if (_b.cityAr)
+        payload.cityAr = _b.cityAr
 
     City.update(payload,
         {
             where: {
-                citID: _b.citID
+                cityID: _b.cityID
             }
         }
     )
@@ -57,16 +57,15 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
     const _b = req.body;
 
-    if (!_b.citID) {
-        res.status(400).json({ status: false, message: "citID does not exists" });
+    if (!_b.cityID) {
+        res.status(400).json({ status: false, message: "cityID does not exists" });
         return
     }
-
 
     City.destroy(
         {
             where: {
-                citID: _b.citID
+                cityID: _b.cityID
             }
         }
     )
@@ -97,7 +96,7 @@ exports.getAll = (req, res) => {
 exports.getByID = (req, res) => {
     City.findOne({
         where: {
-            citID: req.params.citID
+            cityID: req.params.cityID
         }
     })
         .then(c => {

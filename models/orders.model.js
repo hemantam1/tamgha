@@ -3,7 +3,7 @@ const Sequelize = require('sequelize');
 
 
 const orders = connection.define('orders', {
-    ordID: {
+    orderID: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
         primaryKey: true
@@ -18,16 +18,16 @@ const orders = connection.define('orders', {
         type: Sequelize.ENUM,
         values: ['succes', 'pending', 'cancel']
     },
-    ordCurrency: {
+    orderCurrency: {
         type: Sequelize.STRING,
     },
-    ordCurrencyAr: {
+    orderCurrencyAr: {
         type: Sequelize.STRING,
     },
-    ordPrice: {
+    orderPrice: {
         type: Sequelize.DOUBLE(8, 2),
     },
-    ordQuantity: {
+    orderQuantity: {
         type: Sequelize.INTEGER,
     }
 }

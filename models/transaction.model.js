@@ -3,16 +3,24 @@ const Sequelize = require('sequelize');
 
 
 const Transaction = connection.define('transaction', {
-    transID: {
+    transactionID: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
         primaryKey: true
     },
-    invoiceID: {
-        type: Sequelize.INTEGER,
-        defaultValue: '0000'
+    transactionDetails: {
+        type: Sequelize.TEXT,
     },
-    salePrice: {
+    transactionDetailsAr: {
+        type: Sequelize.TEXT,
+    },
+    currency: {
+        type: Sequelize.STRING
+    },
+    currencyAr: {
+        type: Sequelize.STRING
+    },
+    salesPrice: {
         type: Sequelize.DOUBLE(8, 2),
     },
     paymentGateway: {
@@ -27,10 +35,10 @@ const Transaction = connection.define('transaction', {
     isRefunded: {
         type: Sequelize.STRING,
     },
-    collectedAmnt: {
+    collectedAmmount: {
         type: Sequelize.DOUBLE(8, 2),
     },
-    finalAmnt: {
+    finalAmmount: {
         type: Sequelize.DOUBLE(8, 2),
     }
 }

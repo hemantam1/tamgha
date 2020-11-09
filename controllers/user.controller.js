@@ -25,7 +25,7 @@ exports.register = (req, res) => {
             where: {
                 email: _b.email
             },
-            attributes: ['userId']
+            attributes: ['userID']
         })
             .then(u => {
                 if (u) {
@@ -102,7 +102,7 @@ exports.login = (req, res) => {
                         });
                     }
                     else {
-                        const auth = `bearer ${jwt.sign(u.userId, config.passport.jwtSecret)}`;
+                        const auth = `bearer ${jwt.sign(u.userID, config.passport.jwtSecret)}`;
                         res.status(200).json({
                             ...u.dataValues,
                             auth: auth,

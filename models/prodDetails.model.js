@@ -3,12 +3,15 @@ const Sequelize = require('sequelize');
 
 
 const prodDetails = connection.define('prod_details', {
-    prdID: {
+    productDetailID: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
         primaryKey: true
     },
-    name: {
+    size: {
+        type: Sequelize.STRING,
+    },
+    sizeAr: {
         type: Sequelize.STRING,
     },
     available: {

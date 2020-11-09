@@ -15,11 +15,10 @@ exports.add = (req, res) => {
         idFront: _b.idFront,
         idBack: _b.idBack,
         phoneNo: _b.phoneNo,
-        shiipingFrom: _b.shiipingFrom,
         email: _b.email,
         emailAr: _b.emailAr,
-        usr_id: _b.usr_id,
-        prod_id: _b.prod_id
+        user_id: _b.user_id,
+        product_id: _b.product_id
 
     }
 
@@ -40,17 +39,17 @@ exports.add = (req, res) => {
 exports.update = (req, res) => {
     const _b = req.body;
 
-    if (!_b.adrsID) {
-        res.status(400).json({ status: false, message: "adrsID does not exists" });
+    if (!_b.addressID) {
+        res.status(400).json({ status: false, message: "addressID does not exists" });
         return
     }
 
-    let payload = insertingData(_b, _b.adrsID);
+    let payload = insertingData(_b, _b.addressID);
 
     ShippingAddress.update(payload,
         {
             where: {
-                adrsID: _b.adrsID
+                addressID: _b.addressID
             }
         }
     )
@@ -68,8 +67,8 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
     const _b = req.body;
 
-    if (!_b.adrsID) {
-        res.status(400).json({ status: false, message: "adrsID does not exists" });
+    if (!_b.addressID) {
+        res.status(400).json({ status: false, message: "addressID does not exists" });
         return
     }
 
@@ -77,7 +76,7 @@ exports.delete = (req, res) => {
     ShippingAddress.destroy(
         {
             where: {
-                adrsID: _b.adrsID
+                addressID: _b.addressID
             }
         }
     )
@@ -114,7 +113,7 @@ exports.getAll = (req, res) => {
 exports.getByID = (req, res) => {
     ShippingAddress.findOne({
         where: {
-            adrsID: req.params.adrsID
+            addressID: req.params.addressID
         }
     })
         .then(c => {

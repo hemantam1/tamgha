@@ -17,15 +17,15 @@ const SubCategory = require('../models/subCategory.model');
 exports.add = (req, res) => {
     const _b = req.body;
     let payload = {
-        prodName: _b.prodName,
-        prodNameAr: _b.prodNameAr,
-        prodDescription: _b.prodDescription,
-        prodDescriptionAr: _b.prodDescriptionAr,
+        productName: _b.productName,
+        productName: _b.productName,
+        productDescription: _b.productDescription,
+        productDescriptionAr: _b.productDescriptionAr,
         priceCurrencyAr: _b.priceCurrencyAr,
         price: _b.price,
         isAvailable: _b.isAvailable,
-        usr_id: _b.usr_id,
-        subCat_id: _b.subCat_id
+        user_id: _b.user_id,
+        subCategory_id: _b.subCategory_id
     }
 
     Product.create(payload)
@@ -195,8 +195,8 @@ exports.upload = (req, res) => {
         priceCurrencyAr: _b.priceCurrencyAr,
         price: _b.price,
         isAvailable: _b.isAvailable,
-        usr_id: _b.user_id,
-        subCat_id: _b.subCat_id
+        user_id: _b.user_id,
+        subCategory_id: _b.subCategory_id
     }
     // let mediaPayload = {
     //     medType: _b.medType,
@@ -226,9 +226,9 @@ exports.upload = (req, res) => {
 
                     try {
                         let mediaPayload = {
-                            medType: _b.medType,
-                            medValue: _b.photos[i],
-                            prod_id: productID
+                            mediaType: _b.mediaType,
+                            mediaLink: _b.photos[i],
+                            product_id: productID
                         }
                         Media.create(mediaPayload)
                     }
@@ -241,7 +241,7 @@ exports.upload = (req, res) => {
                     for (let j = 0; j < _b.sizes.length; j++) {
                         let additionalPrice = parseInt(_b.sizes[j].additionalPrice) + parseInt(_b.price)
                         let productDetailsPayload = {
-                            name: _b.sizes[j].size,
+                            size: _b.sizes[j].size,
                             available: _b.sizes[j].available,
                             color: _b.sizes[j].color,
                             colorAr: _b.colorAr,
@@ -250,7 +250,7 @@ exports.upload = (req, res) => {
                             totalPrice: additionalPrice,
                             isFaltDiscount: _b.isFaltDiscount,
                             priceExcluding: _b.priceExcluding,
-                            prod_id: productID
+                            product_id: productID
                         }
                         ProductDetails.create(productDetailsPayload)
                     }
@@ -274,8 +274,8 @@ exports.upload = (req, res) => {
                         phoneNo: _b.phoneNo,
                         email: _b.email,
                         emailAr: _b.emailAr,
-                        usr_id: _b.user_id,
-                        prod_id: productID
+                        user_id: _b.user_id,
+                        product_id: productID
                     }
                     ShippingAddress.create(shippingAddresPayload)
                         .then(s => res.json({

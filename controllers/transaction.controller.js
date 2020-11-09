@@ -9,14 +9,13 @@ const Serializer = require('sequelize-to-json');
 exports.add = (req, res) => {
     const _b = req.body;
     let payload = {
-        invoiceID: _b.invoiceID,
         salePrice: _b.salePrice,
         paymentGateway: _b.paymentGateway,
         status: _b.status,
         isSuccesfull: _b.isSuccesfull,
         isRefunded: _b.isRefunded,
-        finalAmnt: _b.finalAmnt,
-        usr_id: _b.usr_id,
+        finalAmmount: _b.finalAmmount,
+        user_id: _b.user_id,
         order_id: _b.order_id
 
     }
@@ -38,17 +37,17 @@ exports.add = (req, res) => {
 exports.update = (req, res) => {
     const _b = req.body;
 
-    if (!_b.transID) {
-        res.status(400).json({ status: false, message: "transID does not exists" });
+    if (!_b.transactionID) {
+        res.status(400).json({ status: false, message: "transactionID does not exists" });
         return
     }
 
-    let payload = insertingData(_b, _b.transID);
+    let payload = insertingData(_b, _b.transactionID);
 
     Transaction.update(payload,
         {
             where: {
-                transID: _b.transID
+                transactionID: _b.transactionID
             }
         }
     )
@@ -66,8 +65,8 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
     const _b = req.body;
 
-    if (!_b.transID) {
-        res.status(400).json({ status: false, message: "transID does not exists" });
+    if (!_b.transactionID) {
+        res.status(400).json({ status: false, message: "transactionID does not exists" });
         return
     }
 
@@ -75,7 +74,7 @@ exports.delete = (req, res) => {
     Transaction.destroy(
         {
             where: {
-                transID: _b.transID
+                transactionID: _b.transactionID
             }
         }
     )
@@ -112,7 +111,7 @@ exports.getAll = (req, res) => {
 exports.getByID = (req, res) => {
     Transaction.findOne({
         where: {
-            transID: req.params.transID
+            transactionID: req.params.transactionID
         }
     })
         .then(c => {

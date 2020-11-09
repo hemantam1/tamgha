@@ -46,22 +46,22 @@ exports.add = (req, res) => {
 exports.update = (req, res) => {
     const _b = req.body;
 
-    if (!_b.adrsID) {
-        res.status(400).json({ status: false, message: "adrsID does not exists" });
+    if (!_b.addressID) {
+        res.status(400).json({ status: false, message: "addressID does not exists" });
         return
     }
 
-    let payload = insertingData(_b, _b.adrsID);
+    let payload = insertingData(_b, _b.addressID);
 
     DeliveryAddress.update(payload,
         {
             where: {
-                adrsID: _b.adrsID
+                addressID: _b.addressID
             }
         }
     )
         .then(c => {
-            if (!c) throw new Error('No Activities found!');
+            if (!c) throw new Error('No Address found!');
             res.status(200).json({ status: true, category: c });
         })
         .catch(err => {
@@ -74,8 +74,8 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
     const _b = req.body;
 
-    if (!_b.adrsID) {
-        res.status(400).json({ status: false, message: "adrsID does not exists" });
+    if (!_b.addressID) {
+        res.status(400).json({ status: false, message: "addressID does not exists" });
         return
     }
 
@@ -83,7 +83,7 @@ exports.delete = (req, res) => {
     DeliveryAddress.destroy(
         {
             where: {
-                adrsID: _b.adrsID
+                addressID: _b.addressID
             }
         }
     )
@@ -120,7 +120,7 @@ exports.getAll = (req, res) => {
 exports.getByID = (req, res) => {
     DeliveryAddress.findOne({
         where: {
-            adrsID: req.params.adrsID
+            addressID: req.params.addressID
         }
     })
         .then(c => {

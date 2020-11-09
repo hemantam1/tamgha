@@ -3,16 +3,16 @@ const Sequelize = require('sequelize');
 
 
 const SubCategory = connection.define('sub_category', {
-    subCatID: {
+    subCategoryID: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
         primaryKey: true
     },
-    subCatName: {
+    subCategory: {
         type: Sequelize.STRING,
         unique: true
     },
-    subCatNameAr: {
+    subCategoryAr: {
         type: Sequelize.STRING,
         unique: true
     }

@@ -9,8 +9,8 @@ const Serializer = require('sequelize-to-json');
 exports.add = (req, res) => {
     const _b = req.body;
     let payload = {
-        usr_id: _b.usr_id,
-        like_usrID: _b.like_usrID
+        user_id: _b.user_id,
+        product_id: _b.product_id
     }
 
     Likes.create(payload)
@@ -29,22 +29,22 @@ exports.add = (req, res) => {
 exports.update = (req, res) => {
     const _b = req.body;
 
-    if (!_b.likID) {
-        res.status(400).json({ status: false, message: "likID does not exists" });
+    if (!_b.likeID) {
+        res.status(400).json({ status: false, message: "likeID does not exists" });
         return
     }
 
-    let payload = insertingData(_b, _b.likID);
+    let payload = insertingData(_b, _b.likeID);
 
     Likes.update(payload,
         {
             where: {
-                likID: _b.likID
+                likeID: _b.likeID
             }
         }
     )
         .then(c => {
-            if (!c) throw new Error('No Activities found!');
+            if (!c) throw new Error('No LIKES found!');
             res.status(200).json({ status: true, category: c });
         })
         .catch(err => {
@@ -57,8 +57,8 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
     const _b = req.body;
 
-    if (!_b.likID) {
-        res.status(400).json({ status: false, message: "likID does not exists" });
+    if (!_b.likeID) {
+        res.status(400).json({ status: false, message: "likeID does not exists" });
         return
     }
 
@@ -66,7 +66,7 @@ exports.delete = (req, res) => {
     Likes.destroy(
         {
             where: {
-                likID: _b.likID
+                likeID: _b.likeID
             }
         }
     )
@@ -103,7 +103,7 @@ exports.getAll = (req, res) => {
 exports.getByID = (req, res) => {
     Likes.findOne({
         where: {
-            likID: req.params.likID
+            likeID: req.params.likeID
         }
     })
         .then(c => {

@@ -9,8 +9,8 @@ const Serializer = require('sequelize-to-json');
 exports.add = (req, res) => {
     const _b = req.body;
     let payload = {
-        usrCatName: _b.usrCatName,
-        usrCatNameAr: _b.usrCatNameAr,
+        userCategory: _b.userCategory,
+        userCategoryAr: _b.userCategoryAr,
     }
 
     UsrCategory.create(payload)
@@ -29,19 +29,19 @@ exports.add = (req, res) => {
 exports.update = (req, res) => {
     const _b = req.body;
 
-    if (!_b.usrCatID) {
+    if (!_b.userCategoryID) {
         res.status(400).json({
-            status: false, message: "usrCatID does not exists"
+            status: false, message: "userCategoryID does not exists"
         });
         return
     }
 
-    let payload = insertingData(_b, _b.usrCatID);
+    let payload = insertingData(_b, _b.userCategoryID);
 
     UsrCategory.update(payload,
         {
             where: {
-                usrCatID: _b.usrCatID
+                userCategoryID: _b.userCategoryID
             }
         }
     )
@@ -59,9 +59,9 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
     const _b = req.body;
 
-    if (!_b.usrCatID) {
+    if (!_b.userCategoryID) {
         res.status(400).json({
-            status: false, message: "usrCatID does not exists"
+            status: false, message: "userCategoryID does not exists"
         });
         return
     }
@@ -70,7 +70,7 @@ exports.delete = (req, res) => {
     UsrCategory.destroy(
         {
             where: {
-                usrCatID: _b.usrCatID
+                userCategoryID: _b.userCategoryID
             }
         }
     )
@@ -107,7 +107,7 @@ exports.getAll = (req, res) => {
 exports.getByID = (req, res) => {
     UsrCategory.findOne({
         where: {
-            usrCatID: req.params.usrCatID
+            userCategoryID: req.params.userCategoryID
         }
     })
         .then(c => {

@@ -9,9 +9,9 @@ const Serializer = require('sequelize-to-json');
 exports.add = (req, res) => {
     const _b = req.body;
     let payload = {
-        value: _b.value,
-        valueAr: _b.valueAr,
-        prod_id: _b.prod_id
+        type: _b.type,
+        typeAr: _b.typeAr,
+        product_id: _b.product_id
     }
 
     ProductMeasureType.create(payload)
@@ -30,22 +30,22 @@ exports.add = (req, res) => {
 exports.update = (req, res) => {
     const _b = req.body;
 
-    if (!_b.msrID) {
-        res.status(400).json({ status: false, message: "msrID does not exists" });
+    if (!_b.typeID) {
+        res.status(400).json({ status: false, message: "typeID does not exists" });
         return
     }
 
-    let payload = insertingData(_b, _b.msrID);
+    let payload = insertingData(_b, _b.typeID);
 
     ProductMeasureType.update(payload,
         {
             where: {
-                msrID: _b.msrID
+                typeID: _b.typeID
             }
         }
     )
         .then(c => {
-            if (!c) throw new Error('No MeasureTypes found!');
+            if (!c) throw new Error('No MeasurementTypes found!');
             res.status(200).json({ status: true, category: c });
         })
         .catch(err => {
@@ -58,8 +58,8 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
     const _b = req.body;
 
-    if (!_b.msrID) {
-        res.status(400).json({ status: false, message: "msrID does not exists" });
+    if (!_b.typeID) {
+        res.status(400).json({ status: false, message: "typeID does not exists" });
         return
     }
 
@@ -67,12 +67,12 @@ exports.delete = (req, res) => {
     ProductMeasureType.destroy(
         {
             where: {
-                msrID: _b.msrID
+                typeID: _b.typeID
             }
         }
     )
         .then(c => {
-            if (!c) throw new Error('No ProductMeasureType found!');
+            if (!c) throw new Error('No ProductMeasurementType found!');
             res.status(200).json({ status: true, category: c });
         })
         .catch(err => {
@@ -86,7 +86,7 @@ exports.getAll = (req, res) => {
     ProductMeasureType.findAll()
         .then(c => {
 
-            if (!c) throw new Error('No ProductMeasureType found!');
+            if (!c) throw new Error('No ProductMeasurementType found!');
 
             // let schema = getProductMeasureTypeSchema(_b.languageID)
 
@@ -104,11 +104,11 @@ exports.getAll = (req, res) => {
 exports.getByID = (req, res) => {
     ProductMeasureType.findOne({
         where: {
-            msrID: req.params.msrID
+            typeID: req.params.typeID
         }
     })
         .then(c => {
-            if (!c) throw new Error('No ProductMeasureType found!');
+            if (!c) throw new Error('No ProductMeasurementType found!');
             res.status(200).json({ status: true, data: c });
         })
         .catch(err => {

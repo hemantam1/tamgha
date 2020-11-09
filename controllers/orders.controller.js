@@ -12,14 +12,14 @@ exports.add = (req, res) => {
         deliveryMethod: _b.deliveryMethod,
         paymentMethod: _b.paymentMethod,
         status: _b.status,
-        ordCurrency: _b.ordCurrency,
-        ordCurrencyAr: _b.ordCurrencyAr,
-        ordPrice: _b.ordPrice,
-        ordQuantity: _b.ordQuantity,
-        prod_id: _b.prod_id,
-        prdetail_id: _b.prdetail_id,
-        del_address: _b.del_address,
-        usr_id: _b.usr_id
+        orderCurrency: _b.orderCurrency,
+        orderCurrencyAr: _b.orderCurrencyAr,
+        orderPrice: _b.orderPrice,
+        orderQuantity: _b.orderQuantity,
+        product_id: _b.product_id,
+        productDetail_id: _b.productDetail_id,
+        address_id: _b.address_id,
+        user_id: _b.user_id
     }
 
     Orders.create(payload)
@@ -38,17 +38,17 @@ exports.add = (req, res) => {
 exports.update = (req, res) => {
     const _b = req.body;
 
-    if (!_b.ordID) {
-        res.status(400).json({ status: false, message: "ordID does not exists" });
+    if (!_b.orderID) {
+        res.status(400).json({ status: false, message: "orderID does not exists" });
         return
     }
 
-    let payload = insertingData(_b, _b.ordID);
+    let payload = insertingData(_b, _b.orderID);
 
     Orders.update(payload,
         {
             where: {
-                ordID: _b.ordID
+                orderID: _b.orderID
             }
         }
     )
@@ -66,8 +66,8 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
     const _b = req.body;
 
-    if (!_b.ordID) {
-        res.status(400).json({ status: false, message: "ordID does not exists" });
+    if (!_b.orderID) {
+        res.status(400).json({ status: false, message: "orderID does not exists" });
         return
     }
 
@@ -75,7 +75,7 @@ exports.delete = (req, res) => {
     Orders.destroy(
         {
             where: {
-                ordID: _b.ordID
+                orderID: _b.orderID
             }
         }
     )
@@ -112,7 +112,7 @@ exports.getAll = (req, res) => {
 exports.getByID = (req, res) => {
     Orders.findOne({
         where: {
-            ordID: req.params.ordID
+            orderID: req.params.orderID
         }
     })
         .then(c => {

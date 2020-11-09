@@ -1,21 +1,21 @@
 const Sequelize = require('sequelize');
-const MeasureValue = require('../models/prodMeasureValue.model');
+const MeasurementValue = require('../models/prodMeasureValue.model');
 const config = require('../config');
 const { insertingData } = require('../utils/helperFunc')
 const { isAr } = require('../utils/verify')
-// const { getMeasureValueSchema } = require('../utils/schema/schemas');
+// const { getMeasurementValueSchema } = require('../utils/schema/schemas');
 const Serializer = require('sequelize-to-json');
 
 exports.add = (req, res) => {
     const _b = req.body;
     let payload = {
-        measureType: _b.measureType,
-        measureTypeAr: _b.measureTypeAr,
-        measureValue: _b.measureValue,
-        prdetail_id: _b.prdetail_id
+        measurementType: _b.measurementType,
+        measurementTypeAr: _b.measurementTypeAr,
+        measurementValue: _b.measurementValue,
+        productDetail_id: _b.productDetail_id
     }
 
-    MeasureValue.create(payload)
+    MeasurementValue.create(payload)
         .then(r => {
             res.status(200).json({ status: true, result: r });
         })
@@ -31,22 +31,22 @@ exports.add = (req, res) => {
 exports.update = (req, res) => {
     const _b = req.body;
 
-    if (!_b.msvID) {
-        res.status(400).json({ status: false, message: "msvID does not exists" });
+    if (!_b.measurementID) {
+        res.status(400).json({ status: false, message: "measurementID does not exists" });
         return
     }
 
-    let payload = insertingData(_b, _b.msvID);
+    let payload = insertingData(_b, _b.measurementID);
 
-    MeasureValue.update(payload,
+    MeasurementValue.update(payload,
         {
             where: {
-                msvID: _b.msvID
+                measurementID: _b.measurementID
             }
         }
     )
         .then(c => {
-            if (!c) throw new Error('No MeasureValues found!');
+            if (!c) throw new Error('No MeasurementValues found!');
             res.status(200).json({ status: true, category: c });
         })
         .catch(err => {
@@ -59,21 +59,21 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
     const _b = req.body;
 
-    if (!_b.msvID) {
-        res.status(400).json({ status: false, message: "msvID does not exists" });
+    if (!_b.measurementID) {
+        res.status(400).json({ status: false, message: "measurementID does not exists" });
         return
     }
 
 
-    MeasureValue.destroy(
+    MeasurementValue.destroy(
         {
             where: {
-                msvID: _b.msvID
+                measurementID: _b.measurementID
             }
         }
     )
         .then(c => {
-            if (!c) throw new Error('No MeasureValue found!');
+            if (!c) throw new Error('No MeasurementValue found!');
             res.status(200).json({ status: true, category: c });
         })
         .catch(err => {
@@ -84,14 +84,14 @@ exports.delete = (req, res) => {
 
 exports.getAll = (req, res) => {
     const _b = req.body
-    MeasureValue.findAll()
+    MeasurementValue.findAll()
         .then(c => {
 
-            if (!c) throw new Error('No MeasureValue found!');
+            if (!c) throw new Error('No MeasurementValue found!');
 
-            // let schema = getMeasureValueSchema(_b.languageID)
+            // let schema = getMeasurementValueSchema(_b.languageID)
 
-            // let data = Serializer.serializeMany(c, MeasureValue, schema);
+            // let data = Serializer.serializeMany(c, MeasurementValue, schema);
             res.status(200).json({ status: true, data: c });
 
         })
@@ -103,13 +103,13 @@ exports.getAll = (req, res) => {
 
 
 exports.getByID = (req, res) => {
-    MeasureValue.findOne({
+    MeasurementValue.findOne({
         where: {
-            msvID: req.params.msvID
+            measurementID: req.params.measurementID
         }
     })
         .then(c => {
-            if (!c) throw new Error('No MeasureValue found!');
+            if (!c) throw new Error('No MeasurementValue found!');
             res.status(200).json({ status: true, data: c });
         })
         .catch(err => {

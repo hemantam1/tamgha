@@ -9,9 +9,9 @@ const Serializer = require('sequelize-to-json');
 exports.add = (req, res) => {
     const _b = req.body;
     let payload = {
-        recpType: _b.recpType,
-        ord_id: _b.ord_id,
-        usr_id: _b.usr_id
+        reciptType: _b.reciptType,
+        order_id: _b.order_id,
+        user_id: _b.user_id
     }
 
 
@@ -31,17 +31,17 @@ exports.add = (req, res) => {
 exports.update = (req, res) => {
     const _b = req.body;
 
-    if (!_b.recpID) {
-        res.status(400).json({ status: false, message: "recpID does not exists" });
+    if (!_b.reciptID) {
+        res.status(400).json({ status: false, message: "reciptID does not exists" });
         return
     }
 
-    let payload = insertingData(_b, _b.recpID);
+    let payload = insertingData(_b, _b.reciptID);
 
     Recipts.update(payload,
         {
             where: {
-                recpID: _b.recpID
+                reciptID: _b.reciptID
             }
         }
     )
@@ -59,8 +59,8 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
     const _b = req.body;
 
-    if (!_b.recpID) {
-        res.status(400).json({ status: false, message: "recpID does not exists" });
+    if (!_b.reciptID) {
+        res.status(400).json({ status: false, message: "reciptID does not exists" });
         return
     }
 
@@ -68,7 +68,7 @@ exports.delete = (req, res) => {
     Recipts.destroy(
         {
             where: {
-                recpID: _b.recpID
+                reciptID: _b.reciptID
             }
         }
     )
@@ -105,7 +105,7 @@ exports.getAll = (req, res) => {
 exports.getByID = (req, res) => {
     Recipts.findOne({
         where: {
-            recpID: req.params.recpID
+            reciptID: req.params.reciptID
         }
     })
         .then(c => {

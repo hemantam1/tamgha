@@ -3,7 +3,7 @@ const Sequelize = require('sequelize');
 
 
 const DeliveryAddress = connection.define('delivery_address', {
-    adrsID: {
+    addressID: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
         primaryKey: true
@@ -27,19 +27,19 @@ const DeliveryAddress = connection.define('delivery_address', {
         type: Sequelize.STRING,
     },
 
-    city: {
-        type: Sequelize.STRING,
-    },
-    cityAr: {
-        type: Sequelize.STRING,
-    },
+    // city: {
+    //     type: Sequelize.STRING,
+    // },
+    // cityAr: {
+    //     type: Sequelize.STRING,
+    // },
 
-    country: {
-        type: Sequelize.STRING
-    },
-    countryAr: {
-        type: Sequelize.STRING
-    },
+    // country: {
+    //     type: Sequelize.STRING
+    // },
+    // countryAr: {
+    //     type: Sequelize.STRING
+    // },
     address: {
         type: Sequelize.STRING,
     },

@@ -3,7 +3,7 @@ const Sequelize = require('sequelize');
 
 
 const PrivateMessage = connection.define('private_messages', {
-    msgID: {
+    messageID: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
         primaryKey: true

@@ -9,6 +9,7 @@ const Serializer = require('sequelize-to-json');
 exports.add = (req, res) => {
     const _b = req.body;
     let payload = {
+        size: _b.size,
         available: _b.available,
         color: _b.color,
         colorAr: _b.colorAr,
@@ -17,7 +18,7 @@ exports.add = (req, res) => {
         totalPrice: _b.totalPrice,
         isFaltDiscount: _b.isFaltDiscount,
         priceExcluding: _b.priceExcluding,
-        prod_id: _b.prod_id
+        product_id: _b.product_id
     }
 
     ProdDetail.create(payload)
@@ -36,17 +37,17 @@ exports.add = (req, res) => {
 exports.update = (req, res) => {
     const _b = req.body;
 
-    if (!_b.prdID) {
-        res.status(400).json({ status: false, message: "prdID does not exists" });
+    if (!_b.productDetailID) {
+        res.status(400).json({ status: false, message: "productDetailID does not exists" });
         return
     }
 
-    let payload = insertingData(_b, _b.prdID);
+    let payload = insertingData(_b, _b.productDetailID);
 
     ProdDetail.update(payload,
         {
             where: {
-                prdID: _b.prdID
+                productDetailID: _b.productDetailID
             }
         }
     )
@@ -64,8 +65,8 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
     const _b = req.body;
 
-    if (!_b.prdID) {
-        res.status(400).json({ status: false, message: "prdID does not exists" });
+    if (!_b.productDetailID) {
+        res.status(400).json({ status: false, message: "productDetailID does not exists" });
         return
     }
 
@@ -73,7 +74,7 @@ exports.delete = (req, res) => {
     ProdDetail.destroy(
         {
             where: {
-                prdID: _b.prdID
+                productDetailID: _b.productDetailID
             }
         }
     )
@@ -110,7 +111,7 @@ exports.getAll = (req, res) => {
 exports.getByID = (req, res) => {
     ProdDetail.findOne({
         where: {
-            prdID: req.params.prdID
+            productDetailID: req.params.productDetailID
         }
     })
         .then(c => {
