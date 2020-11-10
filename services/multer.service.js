@@ -1,6 +1,6 @@
 const multerService = require('multer');
 const uuid = require('uuid').v4;
-const server = require('../config/env').server
+const server = require('../config/index.js')
 
 const storage = multerService({
     storage: multerService.diskStorage({

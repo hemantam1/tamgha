@@ -4,9 +4,7 @@ const JwtStrategy = require('passport-jwt').Strategy,
 const User = require('../models/user.model');
 const passportService = require('passport');
 const config = require('../config');
-var passport = require('passport')
-    , LocalStrategy = require('passport-local').Strategy;
-
+const { Op } = require("sequelize");
 
 const opts = {
     jwt: {
@@ -25,10 +23,26 @@ const opts = {
 module.exports = {
     initialize: () => {
         //PassportJs JWT strategy for normal registration and login 
-        passportService.use(new JwtStrategy(opts.jwt, function (jwt_payload, done) {
+        passportService.use('admin',new JwtStrategy(opts.jwt, function (jwt_payload, done) {
             User.findOne({
                 where: {
-                    userID: jwt_payload.sub
+                    [Op.and]: [
+                        {userID: jwt_payload},
+                        { userType: 'Admin' }
+                    ]
+                }
+            })
+                .then(u => {
+                    
+                    if (u) done(null, u);
+                    else done(null, false);
+                })
+                .catch(e => done(e, false));
+        }));
+         passportService.use('user',new JwtStrategy(opts.jwt, function (jwt_payload, done) {
+            User.findOne({
+                where: {
+                    userID: jwt_payload
                 }
             })
                 .then(u => {
@@ -58,21 +72,7 @@ module.exports = {
         //         })
         // }));
 
-        passport.use(new LocalStrategy(
-            function (username, password, done) {
-                User.findOne({ username: username }, function (err, user) {
-                    if (err) { return done(err); }
-                    if (!user) {
-                        return done(null, false, { message: 'Incorrect username.' });
-                    }
-                    if (!user.validPassword(password)) {
-                        return done(null, false, { message: 'Incorrect password.' });
-                    }
-                    return done(null, user);
-                });
-            }
-        ));
-
+        
     },
     pass: () => { return passportService }
 };

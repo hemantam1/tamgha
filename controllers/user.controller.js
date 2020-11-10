@@ -35,19 +35,21 @@ exports.register = (req, res) => {
                     });
                 }
                 else {
-                    let payload = {
+                    User.create({
                         email: _b.email,
                         password: bcrypt.hashSync(_b.password, 0),
                         userName: _b.userName,
                         firstName: _b.firstName,
                         lastName: _b.lastName,
                         phoneNo: _b.phoneNo,
-                        country: _b.country,
+                        country_id: _b.country_id,
+                        isCivilIdUpload:false,
+                        categorySelected:false,
                         emailVerified: true // set to false in production
-                    }
-                    User.create(payload)
+                    })
                         .then(data => {
-                            const auth = `bearer ${jwt.sign(data.userId, config.passport.jwtSecret)}`;
+                            const token = jwt.sign(data.userID, config.passport.jwtSecret)
+                            const auth = `bearer ${token}`;
                             // mailer(auth);
                             res.status(200).send({
                                 status: true,
