@@ -42,7 +42,8 @@ exports.register = (req, res) => {
                         firstName: _b.firstName,
                         lastName: _b.lastName,
                         phoneNo: _b.phoneNo,
-                        country: _b.country,
+                        // country: _b.country,
+                        isCivilUpload: false,
                         emailVerified: true // set to false in production
                     }
                     User.create(payload)

@@ -46,7 +46,7 @@ const user = connection.define('user', {
         type: Sequelize.BOOLEAN,
         defaultValue: false
     },
-    isCivilUpload: {
+    isCivilIdUpload: {
         type: Sequelize.BOOLEAN,
         defaultValue: false
     },
