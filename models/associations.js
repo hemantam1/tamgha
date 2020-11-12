@@ -52,6 +52,9 @@ Media.belongsTo(User, { foreignKey: 'user_id' })
 User.hasMany(ShippingAddress, { foreignKey: 'user_id', onDelete: 'CASCADE' })
 ShippingAddress.belongsTo(User, { foreignKey: 'user_id' })
 
+User.hasMany(DeliveryAddress, { foreignKey: 'user_id', onDelete: 'CASCADE' })
+DeliveryAddress.belongsTo(User, { foreignKey: 'user_id' })
+
 // Followers
 User.hasMany(Followers, { foreignKey: 'user_id', onDelete: 'CASCADE' })
 Followers.belongsTo(User, { foreignKey: 'user_id' })

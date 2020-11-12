@@ -43,8 +43,8 @@ exports.register = (req, res) => {
                         lastName: _b.lastName,
                         phoneNo: _b.phoneNo,
                         country_id: _b.country_id,
-                        isCivilIdUpload:false,
-                        categorySelected:false,
+                        isCivilIdUpload: false,
+                        categorySelected: false,
                         emailVerified: true // set to false in production
                     })
                         .then(data => {
@@ -77,8 +77,8 @@ exports.register = (req, res) => {
 
 exports.login = (req, res) => {
     const _b = req.body;
-    if (!_b.userName) {
-        res.status(400).send({ message: "UserNAme cannot be null" });
+    if (!_b.email) {
+        res.status(400).send({ message: "email cannot be null" });
     }
     else if (!_b.password) {
         res.status(400).send({ message: "Password cannot be null" });
@@ -86,7 +86,7 @@ exports.login = (req, res) => {
     else {
         User.findOne({
             where: {
-                userName: _b.userName
+                email: _b.email
             }
         })
             .then(u => {
