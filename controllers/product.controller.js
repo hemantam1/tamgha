@@ -180,12 +180,7 @@ exports.uploadPhotos = (req, res, next) => {
 
 exports.upload = (req, res) => {
     const _b = req.body
-    if (!_b.photos && _b.photos.length <= 0) {
-        res.json({
-            status: false,
-            message: "image != Array"
-        })
-    }
+
     let productPayload = {
         productName: _b.productName,
         productNameAr: _b.productNameAr,
@@ -198,23 +193,6 @@ exports.upload = (req, res) => {
         user_id: _b.user_id,
         subCategory_id: _b.subCategory_id
     }
-    // let mediaPayload = {
-    //     medType: _b.medType,
-    //     medValue: _b.medValue,
-    //     // prod_id: _b.prod_id
-    // }
-    // let productDetailsPayload = {
-    //     available: _b.available,
-    //     color: _b.color,
-    //     colorAr: _b.colorAr,
-    //     priceCurrency: _b.priceCurrency,
-    //     priceCurrencyAr: _b.priceCurrencyAr,
-    //     totalPrice: _b.totalPrice,
-    //     isFaltDiscount: _b.isFaltDiscount,
-    //     priceExcluding: _b.priceExcluding,
-    //     // prod_id: _b.prod_id
-
-    // }
 
     Product.create(productPayload)
         .then(c => {
@@ -222,26 +200,23 @@ exports.upload = (req, res) => {
             if (!c) throw new Error('No Product found!');
             let productID = c.dataValues.productID
             if (productID) {
-                for (let i = 0; i < _b.photos.length; i++) {
-
-                    try {
-                        let mediaPayload = {
-                            mediaType: _b.mediaType,
-                            mediaLink: _b.photos[i],
-                            product_id: productID
-                        }
-                        Media.create(mediaPayload)
-                    }
-                    catch (err) {
-                        console.error(err);
-                        res.status(400).json({ status: false });
-                    }
+                const files = req.dir;
+                if (files) {
+                    console.log(files)
+                    Media.bulkCreate(files)
+                        .then((media) => {
+                            console.log(media);
+                            return
+                        })
+                        .catch((err) => reject(res, err));
                 }
+
                 try {
                     for (let j = 0; j < _b.sizes.length; j++) {
                         let additionalPrice = parseInt(_b.sizes[j].additionalPrice) + parseInt(_b.price)
                         let productDetailsPayload = {
                             size: _b.sizes[j].size,
+                            sizeAr: _b.sizes[j].sizeAr,
                             available: _b.sizes[j].available,
                             color: _b.sizes[j].color,
                             colorAr: _b.colorAr,
@@ -263,17 +238,12 @@ exports.upload = (req, res) => {
                     let shippingAddresPayload = {
                         address: _b.locationTitle,
                         area: _b.locationArea,
-                        country: _b.country,
-                        city: _b.locationCity,
                         pinCode: _b.locationCode,
-                        state: _b.locationState,
-                        idType: _b.idType,
-                        idFront: _b.idFront,
-                        idBack: _b.idBack,
                         isTamghaShipping: false,
                         phoneNo: _b.phoneNo,
                         email: _b.email,
                         emailAr: _b.emailAr,
+                        city_id: _b.city_id,
                         user_id: _b.user_id,
                         product_id: productID
                     }

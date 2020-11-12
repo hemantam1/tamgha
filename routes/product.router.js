@@ -1,7 +1,8 @@
 const router = require('express').Router();
 const productController = require('../controllers/product.controller');
 const passport = require('passport');
-const { user, admin, guest } = require('../middlewares/auth')
+const { user, admin, guest } = require('../middlewares/auth');
+const multer = require('../services/multer.service');
 
 // var multer = require('multer')
 // // SET STORAGE
@@ -19,7 +20,7 @@ const { user, admin, guest } = require('../middlewares/auth')
 
 
 router.get('/', productController.getAll);
-router.post('/upload', productController.upload);
+router.post('/upload', multer.array("files"), productController.upload);
 router.post('/', productController.add);
 router.put('/', productController.update);
 router.delete('/', productController.delete);
