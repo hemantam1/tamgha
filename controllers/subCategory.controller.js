@@ -14,6 +14,7 @@ exports.add = (req, res) => {
         category_id: _b.category_id
     }
 
+    const { isAdmin, userId } = getUserDetails(req.user)
 
     SubCategory.create(payload)
         .then(r => {
@@ -35,6 +36,7 @@ exports.update = (req, res) => {
         res.status(400).json({ status: false, message: "subCategoryID does not exists" });
         return
     }
+    const { isAdmin, userId } = getUserDetails(req.user)
 
     let payload = insertingData(_b, _b.subCategoryID);
 
@@ -63,6 +65,7 @@ exports.delete = (req, res) => {
         res.status(400).json({ status: false, message: "subCategoryID does not exists" });
         return
     }
+    const { isAdmin, userId } = getUserDetails(req.user)
 
 
     SubCategory.destroy(
@@ -84,6 +87,8 @@ exports.delete = (req, res) => {
 
 exports.getAll = (req, res) => {
     const _b = req.body
+    const { isAdmin, userId } = getUserDetails(req.user)
+
     SubCategory.findAll()
         .then(c => {
 
@@ -103,6 +108,8 @@ exports.getAll = (req, res) => {
 
 
 exports.getByID = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
+
     SubCategory.findOne({
         where: {
             subCategoryID: req.params.subCategoryID

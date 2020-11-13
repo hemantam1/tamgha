@@ -12,6 +12,7 @@ exports.add = (req, res) => {
         user_id: _b.user_id,
         product_id: _b.product_id
     }
+    const { isAdmin, userId } = getUserDetails(req.user)
 
     Likes.create(payload)
         .then(r => {
@@ -33,6 +34,7 @@ exports.update = (req, res) => {
         res.status(400).json({ status: false, message: "likeID does not exists" });
         return
     }
+    const { isAdmin, userId } = getUserDetails(req.user)
 
     let payload = insertingData(_b, _b.likeID);
 
@@ -61,6 +63,7 @@ exports.delete = (req, res) => {
         res.status(400).json({ status: false, message: "likeID does not exists" });
         return
     }
+    const { isAdmin, userId } = getUserDetails(req.user)
 
 
     Likes.destroy(
@@ -82,6 +85,8 @@ exports.delete = (req, res) => {
 
 exports.getAll = (req, res) => {
     const _b = req.body
+    const { isAdmin, userId } = getUserDetails(req.user)
+
     Likes.findAll()
         .then(c => {
 
@@ -101,6 +106,8 @@ exports.getAll = (req, res) => {
 
 
 exports.getByID = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
+
     Likes.findOne({
         where: {
             likeID: req.params.likeID

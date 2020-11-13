@@ -14,6 +14,7 @@ exports.add = (req, res) => {
         currencyAr: _b.currencyAr,
         price: _b.price,
     }
+    const { isAdmin, userId } = getUserDetails(req.user)
 
     ShippingDetails.create(payload)
         .then(r => {
@@ -37,6 +38,7 @@ exports.update = (req, res) => {
         });
         return
     }
+    const { isAdmin, userId } = getUserDetails(req.user)
 
     let payload = insertingData(_b, _b.shipID);
 
@@ -67,6 +69,7 @@ exports.delete = (req, res) => {
         });
         return
     }
+    const { isAdmin, userId } = getUserDetails(req.user)
 
 
     ShippingDetails.destroy(
@@ -88,6 +91,8 @@ exports.delete = (req, res) => {
 
 exports.getAll = (req, res) => {
     const _b = req.body
+    const { isAdmin, userId } = getUserDetails(req.user)
+
     ShippingDetails.findAll()
         .then(c => {
 
@@ -107,6 +112,8 @@ exports.getAll = (req, res) => {
 
 
 exports.getByID = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
+
     ShippingDetails.findOne({
         where: {
             shipID: req.params.shipID

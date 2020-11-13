@@ -13,6 +13,7 @@ exports.add = (req, res) => {
         user_id: _b.user_id,
         to_user_id: _b.to_user_id
     }
+    const { isAdmin, userId } = getUserDetails(req.user)
 
     PrivateMessage.create(payload)
         .then(r => {
@@ -34,6 +35,7 @@ exports.update = (req, res) => {
         res.status(400).json({ status: false, message: "messageID does not exists" });
         return
     }
+    const { isAdmin, userId } = getUserDetails(req.user)
 
     let payload = insertingData(_b, _b.messageID);
 
@@ -62,6 +64,7 @@ exports.delete = (req, res) => {
         res.status(400).json({ status: false, message: "messageID does not exists" });
         return
     }
+    const { isAdmin, userId } = getUserDetails(req.user)
 
 
     PrivateMessage.destroy(
@@ -83,6 +86,8 @@ exports.delete = (req, res) => {
 
 exports.getAll = (req, res) => {
     const _b = req.body
+    const { isAdmin, userId } = getUserDetails(req.user)
+
     PrivateMessage.findAll()
         .then(c => {
 
@@ -102,6 +107,8 @@ exports.getAll = (req, res) => {
 
 
 exports.getByID = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
+
     PrivateMessage.findOne({
         where: {
             messageID: req.params.messageID

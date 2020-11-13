@@ -4,6 +4,8 @@ const config = require('../config');
 
 exports.add = (req, res) => {
     const _b = req.body;
+    const { isAdmin, userId } = getUserDetails(req.user)
+
     City.create({
         city: _b.city,
         cityAr: _b.cityAr,
@@ -35,6 +37,7 @@ exports.update = (req, res) => {
 
     if (_b.cityAr)
         payload.cityAr = _b.cityAr
+    const { isAdmin, userId } = getUserDetails(req.user)
 
     City.update(payload,
         {
@@ -61,6 +64,7 @@ exports.delete = (req, res) => {
         res.status(400).json({ status: false, message: "cityID does not exists" });
         return
     }
+    const { isAdmin, userId } = getUserDetails(req.user)
 
     City.destroy(
         {
@@ -80,6 +84,7 @@ exports.delete = (req, res) => {
 };
 
 exports.getAll = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
 
     City.findAll()
         .then(c => {
@@ -94,6 +99,8 @@ exports.getAll = (req, res) => {
 
 
 exports.getByID = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
+
     City.findOne({
         where: {
             cityID: req.params.cityID

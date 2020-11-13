@@ -12,6 +12,7 @@ exports.add = (req, res) => {
         category: _b.category,
         categoryAr: _b.categoryAr,
     }
+    const { isAdmin, userId } = getUserDetails(req.user)
 
     Category.create(payload)
         .then(r => {
@@ -35,6 +36,7 @@ exports.update = (req, res) => {
         });
         return
     }
+    const { isAdmin, userId } = getUserDetails(req.user)
 
     let payload = insertingData(_b, _b.categoryID);
 
@@ -66,6 +68,7 @@ exports.delete = (req, res) => {
         return
     }
 
+    const { isAdmin, userId } = getUserDetails(req.user)
 
     Category.destroy(
         {
@@ -86,6 +89,8 @@ exports.delete = (req, res) => {
 
 exports.getAll = (req, res) => {
     const _b = req.body
+    const { isAdmin, userId } = getUserDetails(req.user)
+
     Category.findAll()
         .then(c => {
 
@@ -105,6 +110,8 @@ exports.getAll = (req, res) => {
 
 
 exports.getByID = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
+
     Category.findOne({
         where: {
             categoryID: req.params.categoryID

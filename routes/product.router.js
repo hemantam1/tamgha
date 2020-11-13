@@ -28,7 +28,7 @@ router.delete('/', productController.delete);
 
 router.use('/category', require('./category.router'));
 router.use('/media', require('./media.router'));
-router.use('/sizeType', require('./productMeasureType.router'));
+router.use('/measurementType', require('./productMeasureType.router'));
 
 router.use('/productDetail', require('./prodDetails.router'));
 router.use('/shippingAddress', require('./shippingAddress.router'));

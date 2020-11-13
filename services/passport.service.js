@@ -23,31 +23,34 @@ const opts = {
 module.exports = {
     initialize: () => {
         //PassportJs JWT strategy for normal registration and login 
-        passportService.use('admin',new JwtStrategy(opts.jwt, function (jwt_payload, done) {
+        passportService.use('admin', new JwtStrategy(opts.jwt, function (jwt_payload, done) {
             User.findOne({
                 where: {
                     [Op.and]: [
-                        {userID: jwt_payload},
+                        { userID: jwt_payload },
                         { userType: 'Admin' }
                     ]
                 }
             })
                 .then(u => {
-                    
+
                     if (u) done(null, u);
                     else done(null, false);
                 })
                 .catch(e => done(e, false));
         }));
-         passportService.use('user',new JwtStrategy(opts.jwt, function (jwt_payload, done) {
+        passportService.use('user', new JwtStrategy(opts.jwt, (jwt_payload, done) => {
             User.findOne({
                 where: {
                     userID: jwt_payload
                 }
             })
                 .then(u => {
-                    if (u) done(null, u);
-                    else done(null, false);
+
+                    if (u) {
+                        // req.body['user'] = u
+                        done(null, u);
+                    } else done(null, false);
                 })
                 .catch(e => done(e, false));
         }));
@@ -72,7 +75,7 @@ module.exports = {
         //         })
         // }));
 
-        
+
     },
     pass: () => { return passportService }
 };

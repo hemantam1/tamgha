@@ -12,6 +12,7 @@ exports.add = (req, res) => {
         userCategory: _b.userCategory,
         userCategoryAr: _b.userCategoryAr,
     }
+    const { isAdmin, userId } = getUserDetails(req.user)
 
     UsrCategory.create(payload)
         .then(r => {
@@ -35,6 +36,7 @@ exports.update = (req, res) => {
         });
         return
     }
+    const { isAdmin, userId } = getUserDetails(req.user)
 
     let payload = insertingData(_b, _b.userCategoryID);
 
@@ -66,6 +68,7 @@ exports.delete = (req, res) => {
         return
     }
 
+    const { isAdmin, userId } = getUserDetails(req.user)
 
     UsrCategory.destroy(
         {
@@ -86,6 +89,8 @@ exports.delete = (req, res) => {
 
 exports.getAll = (req, res) => {
     const _b = req.body
+    const { isAdmin, userId } = getUserDetails(req.user)
+
     UsrCategory.findAll()
         .then(c => {
 
@@ -105,6 +110,8 @@ exports.getAll = (req, res) => {
 
 
 exports.getByID = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
+
     UsrCategory.findOne({
         where: {
             userCategoryID: req.params.userCategoryID

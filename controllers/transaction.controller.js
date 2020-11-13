@@ -20,6 +20,7 @@ exports.add = (req, res) => {
 
     }
 
+    const { isAdmin, userId } = getUserDetails(req.user)
 
     Transaction.create(payload)
         .then(r => {
@@ -41,6 +42,7 @@ exports.update = (req, res) => {
         res.status(400).json({ status: false, message: "transactionID does not exists" });
         return
     }
+    const { isAdmin, userId } = getUserDetails(req.user)
 
     let payload = insertingData(_b, _b.transactionID);
 
@@ -70,6 +72,7 @@ exports.delete = (req, res) => {
         return
     }
 
+    const { isAdmin, userId } = getUserDetails(req.user)
 
     Transaction.destroy(
         {
@@ -90,6 +93,8 @@ exports.delete = (req, res) => {
 
 exports.getAll = (req, res) => {
     const _b = req.body
+    const { isAdmin, userId } = getUserDetails(req.user)
+
     Transaction.findAll()
         .then(c => {
 
@@ -109,6 +114,8 @@ exports.getAll = (req, res) => {
 
 
 exports.getByID = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
+
     Transaction.findOne({
         where: {
             transactionID: req.params.transactionID

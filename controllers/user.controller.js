@@ -131,6 +131,7 @@ exports.login = (req, res) => {
 
 
 exports.suggestAll = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
 
     const _b = req.body;
     sequelize.query(

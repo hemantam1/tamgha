@@ -4,6 +4,8 @@ const config = require('../config');
 
 exports.add = (req, res) => {
     const _b = req.body;
+    const { isAdmin, userId } = getUserDetails(req.user)
+
     State.create({
         state: _b.state,
         stateAr: _b.stateAr,
@@ -35,6 +37,7 @@ exports.update = (req, res) => {
 
     if (_b.stateAr)
         payload.stateAr = _b.stateAr
+    const { isAdmin, userId } = getUserDetails(req.user)
 
     State.update(payload,
         {
@@ -61,6 +64,7 @@ exports.delete = (req, res) => {
         res.status(400).json({ status: false, message: "stateID does not exists" });
         return
     }
+    const { isAdmin, userId } = getUserDetails(req.user)
 
     State.destroy(
         {
@@ -80,6 +84,7 @@ exports.delete = (req, res) => {
 };
 
 exports.getAll = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
 
     State.findAll()
         .then(c => {
@@ -94,6 +99,8 @@ exports.getAll = (req, res) => {
 
 
 exports.getByID = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
+
     State.findOne({
         where: {
             stateID: req.params.stateID

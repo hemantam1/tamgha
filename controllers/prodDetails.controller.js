@@ -20,6 +20,7 @@ exports.add = (req, res) => {
         priceExcluding: _b.priceExcluding,
         product_id: _b.product_id
     }
+    const { isAdmin, userId } = getUserDetails(req.user)
 
     ProdDetail.create(payload)
         .then(r => {
@@ -41,6 +42,7 @@ exports.update = (req, res) => {
         res.status(400).json({ status: false, message: "productDetailID does not exists" });
         return
     }
+    const { isAdmin, userId } = getUserDetails(req.user)
 
     let payload = insertingData(_b, _b.productDetailID);
 
@@ -69,6 +71,7 @@ exports.delete = (req, res) => {
         res.status(400).json({ status: false, message: "productDetailID does not exists" });
         return
     }
+    const { isAdmin, userId } = getUserDetails(req.user)
 
 
     ProdDetail.destroy(
@@ -90,6 +93,8 @@ exports.delete = (req, res) => {
 
 exports.getAll = (req, res) => {
     const _b = req.body
+    const { isAdmin, userId } = getUserDetails(req.user)
+
     ProdDetail.findAll()
         .then(c => {
 
@@ -109,6 +114,8 @@ exports.getAll = (req, res) => {
 
 
 exports.getByID = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
+
     ProdDetail.findOne({
         where: {
             productDetailID: req.params.productDetailID

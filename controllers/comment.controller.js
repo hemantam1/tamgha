@@ -14,6 +14,8 @@ exports.add = (req, res) => {
         user_id: _b.user_id,
         product_id: _b.product_id
     }
+    const { isAdmin, userId } = getUserDetails(req.user)
+
     Comment.create(payload)
         .then(r => {
             res.status(200).json({ status: true, result: r });
@@ -34,6 +36,7 @@ exports.update = (req, res) => {
         res.status(400).json({ status: false, message: "commentID does not exists" });
         return
     }
+    const { isAdmin, userId } = getUserDetails(req.user)
 
     let payload = insertingData(_b, _b.commentID);
 
@@ -63,6 +66,7 @@ exports.delete = (req, res) => {
         return
     }
 
+    const { isAdmin, userId } = getUserDetails(req.user)
 
     Comment.destroy(
         {
@@ -83,6 +87,8 @@ exports.delete = (req, res) => {
 
 exports.getAll = (req, res) => {
     const _b = req.body
+    const { isAdmin, userId } = getUserDetails(req.user)
+
     Comment.findAll()
         .then(c => {
 
@@ -102,6 +108,8 @@ exports.getAll = (req, res) => {
 
 
 exports.getByID = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
+
     Comment.findOne({
         where: {
             commentID: req.params.commentID

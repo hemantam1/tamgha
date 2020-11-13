@@ -14,6 +14,7 @@ exports.add = (req, res) => {
         measurementValue: _b.measurementValue,
         productDetail_id: _b.productDetail_id
     }
+    const { isAdmin, userId } = getUserDetails(req.user)
 
     MeasurementValue.create(payload)
         .then(r => {
@@ -35,6 +36,7 @@ exports.update = (req, res) => {
         res.status(400).json({ status: false, message: "measurementID does not exists" });
         return
     }
+    const { isAdmin, userId } = getUserDetails(req.user)
 
     let payload = insertingData(_b, _b.measurementID);
 
@@ -64,6 +66,7 @@ exports.delete = (req, res) => {
         return
     }
 
+    const { isAdmin, userId } = getUserDetails(req.user)
 
     MeasurementValue.destroy(
         {
@@ -84,6 +87,8 @@ exports.delete = (req, res) => {
 
 exports.getAll = (req, res) => {
     const _b = req.body
+    const { isAdmin, userId } = getUserDetails(req.user)
+
     MeasurementValue.findAll()
         .then(c => {
 
@@ -103,6 +108,8 @@ exports.getAll = (req, res) => {
 
 
 exports.getByID = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
+
     MeasurementValue.findOne({
         where: {
             measurementID: req.params.measurementID

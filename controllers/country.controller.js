@@ -4,6 +4,7 @@ const config = require('../config');
 
 exports.add = (req, res) => {
     const _b = req.body;
+    const { isAdmin, userId } = getUserDetails(req.user)
 
     Country.create({
         country: _b.country,

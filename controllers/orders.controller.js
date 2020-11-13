@@ -21,6 +21,7 @@ exports.add = (req, res) => {
         address_id: _b.address_id,
         user_id: _b.user_id
     }
+    const { isAdmin, userId } = getUserDetails(req.user)
 
     Orders.create(payload)
         .then(r => {
@@ -42,6 +43,7 @@ exports.update = (req, res) => {
         res.status(400).json({ status: false, message: "orderID does not exists" });
         return
     }
+    const { isAdmin, userId } = getUserDetails(req.user)
 
     let payload = insertingData(_b, _b.orderID);
 
@@ -70,6 +72,7 @@ exports.delete = (req, res) => {
         res.status(400).json({ status: false, message: "orderID does not exists" });
         return
     }
+    const { isAdmin, userId } = getUserDetails(req.user)
 
 
     Orders.destroy(
@@ -91,6 +94,8 @@ exports.delete = (req, res) => {
 
 exports.getAll = (req, res) => {
     const _b = req.body
+    const { isAdmin, userId } = getUserDetails(req.user)
+
     Orders.findAll()
         .then(c => {
 
@@ -110,6 +115,8 @@ exports.getAll = (req, res) => {
 
 
 exports.getByID = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
+
     Orders.findOne({
         where: {
             orderID: req.params.orderID

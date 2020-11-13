@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
 const Cart = require('../models/cart.model');
 const config = require('../config');
-const { insertingData } = require('../utils/helperFunc')
+const { insertingData, getUserDetails } = require('../utils/helperFunc')
 const { isAr } = require('../utils/verify')
 // const { getCartSchema } = require('../utils/schema/schemas');
 const Serializer = require('sequelize-to-json');
@@ -11,8 +11,10 @@ exports.add = (req, res) => {
     let payload = {
         quantity: _b.quantity,
         price: _b.price,
-        prod_id: _b.prod_id,
+        product_id: _b.product_id,
     }
+    const { isAdmin, userId } = getUserDetails(req.user)
+
 
     Cart.create(payload)
         .then(r => {
@@ -36,6 +38,7 @@ exports.update = (req, res) => {
         });
         return
     }
+    const { isAdmin, userId } = getUserDetails(req.user)
 
     let payload = insertingData(_b, _b.cartID);
 
@@ -85,6 +88,8 @@ exports.delete = (req, res) => {
 
 exports.getAll = (req, res) => {
     const _b = req.body
+    const { isAdmin, userId } = getUserDetails(req.user)
+    console.log(userId, "User", isAdmin)
     Cart.findAll()
         .then(c => {
 
@@ -104,6 +109,8 @@ exports.getAll = (req, res) => {
 
 
 exports.getByID = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
+
     Cart.findOne({
         where: {
             cartID: req.params.cartID

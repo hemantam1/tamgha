@@ -12,6 +12,7 @@ exports.add = (req, res) => {
         user_id: _b.user_id,
         product_id: _b.product_id,
     }
+    const { isAdmin, userId } = getUserDetails(req.user)
 
     Favourite.create(payload)
         .then(r => {
@@ -35,6 +36,7 @@ exports.update = (req, res) => {
         });
         return
     }
+    const { isAdmin, userId } = getUserDetails(req.user)
 
     let payload = insertingData(_b, _b.favouriteID);
 
@@ -66,6 +68,7 @@ exports.delete = (req, res) => {
         return
     }
 
+    const { isAdmin, userId } = getUserDetails(req.user)
 
     Favourite.destroy(
         {
@@ -86,6 +89,8 @@ exports.delete = (req, res) => {
 
 exports.getAll = (req, res) => {
     const _b = req.body
+    const { isAdmin, userId } = getUserDetails(req.user)
+
     Favourite.findAll()
         .then(c => {
 
@@ -105,6 +110,8 @@ exports.getAll = (req, res) => {
 
 
 exports.getByID = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
+
     Favourite.findOne({
         where: {
             favouriteID: req.params.favouriteID

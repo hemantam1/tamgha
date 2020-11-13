@@ -27,6 +27,7 @@ exports.add = (req, res) => {
         user_id: _b.user_id,
         subCategory_id: _b.subCategory_id
     }
+    const { isAdmin, userId } = getUserDetails(req.user)
 
     Product.create(payload)
         .then(r => {
@@ -48,6 +49,7 @@ exports.update = (req, res) => {
         res.status(400).json({ status: false, message: "productID does not exists" });
         return
     }
+    const { isAdmin, userId } = getUserDetails(req.user)
 
     let payload = insertingData(_b, _b.productID);
 
@@ -76,6 +78,7 @@ exports.delete = (req, res) => {
         res.status(400).json({ status: false, message: "productID does not exists" });
         return
     }
+    const { isAdmin, userId } = getUserDetails(req.user)
 
 
     Product.destroy(
@@ -97,6 +100,8 @@ exports.delete = (req, res) => {
 
 exports.getAll = (req, res) => {
     const _b = req.body
+    const { isAdmin, userId } = getUserDetails(req.user)
+
     Product.findAll({
         include: [
             {
@@ -125,6 +130,8 @@ exports.getAll = (req, res) => {
 
 
 exports.getByID = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
+
     Product.findOne({
         where: {
             productID: req.params.productID
@@ -143,6 +150,7 @@ exports.getByID = (req, res) => {
 
 
 exports.uploadPhotos = (req, res, next) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
     const files = req.files
     if (!files) {
         const error = new Error('Please upload a file')
@@ -180,6 +188,7 @@ exports.uploadPhotos = (req, res, next) => {
 
 exports.upload = (req, res) => {
     const _b = req.body
+    const { isAdmin, userId } = getUserDetails(req.user)
 
     let productPayload = {
         productName: _b.productName,
@@ -271,6 +280,8 @@ exports.upload = (req, res) => {
 
 exports.explore = (req, res) => {
     // const _b = req.body
+    const { isAdmin, userId } = getUserDetails(req.user)
+
     // write a condition for products having more no of likes
     Product.findAll()
         .then(c => {
