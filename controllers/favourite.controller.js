@@ -8,11 +8,11 @@ const Serializer = require('sequelize-to-json');
 
 exports.add = (req, res) => {
     const _b = req.body;
+    const { isAdmin, userId } = getUserDetails(req.user)
     let payload = {
-        user_id: _b.user_id,
+        user_id: userId,
         product_id: _b.product_id,
     }
-    const { isAdmin, userId } = getUserDetails(req.user)
 
     Favourite.create(payload)
         .then(r => {
@@ -29,6 +29,7 @@ exports.add = (req, res) => {
 
 exports.update = (req, res) => {
     const _b = req.body;
+    const { isAdmin, userId } = getUserDetails(req.user)
 
     if (!_b.favouriteID) {
         res.status(400).json({
@@ -36,10 +37,9 @@ exports.update = (req, res) => {
         });
         return
     }
-    const { isAdmin, userId } = getUserDetails(req.user)
 
     let payload = insertingData(_b, _b.favouriteID);
-
+    payload.user_id = userId
     Favourite.update(payload,
         {
             where: {
@@ -60,6 +60,7 @@ exports.update = (req, res) => {
 
 exports.delete = (req, res) => {
     const _b = req.body;
+    const { isAdmin, userId } = getUserDetails(req.user)
 
     if (!_b.favouriteID) {
         res.status(400).json({
@@ -68,7 +69,6 @@ exports.delete = (req, res) => {
         return
     }
 
-    const { isAdmin, userId } = getUserDetails(req.user)
 
     Favourite.destroy(
         {

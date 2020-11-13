@@ -7,6 +7,7 @@ const { isAr } = require('../utils/verify')
 const Serializer = require('sequelize-to-json');
 
 exports.add = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
     let payload = {
         weight: _b.weight,
@@ -14,7 +15,6 @@ exports.add = (req, res) => {
         currencyAr: _b.currencyAr,
         price: _b.price,
     }
-    const { isAdmin, userId } = getUserDetails(req.user)
 
     ShippingDetails.create(payload)
         .then(r => {
@@ -30,6 +30,7 @@ exports.add = (req, res) => {
 };
 
 exports.update = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
 
     if (!_b.shipID) {
@@ -38,7 +39,6 @@ exports.update = (req, res) => {
         });
         return
     }
-    const { isAdmin, userId } = getUserDetails(req.user)
 
     let payload = insertingData(_b, _b.shipID);
 
@@ -61,6 +61,7 @@ exports.update = (req, res) => {
 
 
 exports.delete = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
 
     if (!_b.shipID) {
@@ -69,7 +70,6 @@ exports.delete = (req, res) => {
         });
         return
     }
-    const { isAdmin, userId } = getUserDetails(req.user)
 
 
     ShippingDetails.destroy(
@@ -90,8 +90,8 @@ exports.delete = (req, res) => {
 };
 
 exports.getAll = (req, res) => {
-    const _b = req.body
     const { isAdmin, userId } = getUserDetails(req.user)
+    const _b = req.body
 
     ShippingDetails.findAll()
         .then(c => {

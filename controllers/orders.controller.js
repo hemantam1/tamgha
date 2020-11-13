@@ -7,6 +7,7 @@ const { isAr } = require('../utils/verify')
 const Serializer = require('sequelize-to-json');
 
 exports.add = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
     let payload = {
         deliveryMethod: _b.deliveryMethod,
@@ -19,9 +20,8 @@ exports.add = (req, res) => {
         product_id: _b.product_id,
         productDetail_id: _b.productDetail_id,
         address_id: _b.address_id,
-        user_id: _b.user_id
+        user_id: userId
     }
-    const { isAdmin, userId } = getUserDetails(req.user)
 
     Orders.create(payload)
         .then(r => {
@@ -36,43 +36,43 @@ exports.add = (req, res) => {
         });
 };
 
-exports.update = (req, res) => {
-    const _b = req.body;
+// exports.update = (req, res) => {
+//     const { isAdmin, userId } = getUserDetails(req.user)
+//     const _b = req.body;
 
-    if (!_b.orderID) {
-        res.status(400).json({ status: false, message: "orderID does not exists" });
-        return
-    }
-    const { isAdmin, userId } = getUserDetails(req.user)
+//     if (!_b.orderID) {
+//         res.status(400).json({ status: false, message: "orderID does not exists" });
+//         return
+//     }
 
-    let payload = insertingData(_b, _b.orderID);
+//     let payload = insertingData(_b, _b.orderID);
 
-    Orders.update(payload,
-        {
-            where: {
-                orderID: _b.orderID
-            }
-        }
-    )
-        .then(c => {
-            if (!c) throw new Error('No Orders found!');
-            res.status(200).json({ status: true, category: c });
-        })
-        .catch(err => {
-            console.error(err);
-            res.status(400).json({ status: false });
-        });
-};
+//     Orders.update(payload,
+//         {
+//             where: {
+//                 orderID: _b.orderID
+//             }
+//         }
+//     )
+//         .then(c => {
+//             if (!c) throw new Error('No Orders found!');
+//             res.status(200).json({ status: true, category: c });
+//         })
+//         .catch(err => {
+//             console.error(err);
+//             res.status(400).json({ status: false });
+//         });
+// };
 
 
 exports.delete = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
 
     if (!_b.orderID) {
         res.status(400).json({ status: false, message: "orderID does not exists" });
         return
     }
-    const { isAdmin, userId } = getUserDetails(req.user)
 
 
     Orders.destroy(
@@ -93,8 +93,8 @@ exports.delete = (req, res) => {
 };
 
 exports.getAll = (req, res) => {
-    const _b = req.body
     const { isAdmin, userId } = getUserDetails(req.user)
+    const _b = req.body
 
     Orders.findAll()
         .then(c => {

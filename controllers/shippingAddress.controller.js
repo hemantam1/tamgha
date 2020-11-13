@@ -7,6 +7,7 @@ const { isAr } = require('../utils/verify')
 const Serializer = require('sequelize-to-json');
 
 exports.add = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
     let payload = {
         address: _b.address,
@@ -17,12 +18,11 @@ exports.add = (req, res) => {
         phoneNo: _b.phoneNo,
         email: _b.email,
         emailAr: _b.emailAr,
-        user_id: _b.user_id,
+        user_id: userId,
         product_id: _b.product_id
 
     }
 
-    const { isAdmin, userId } = getUserDetails(req.user)
 
     ShippingAddress.create(payload)
         .then(r => {
@@ -38,16 +38,16 @@ exports.add = (req, res) => {
 };
 
 exports.update = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
 
     if (!_b.addressID) {
         res.status(400).json({ status: false, message: "addressID does not exists" });
         return
     }
-    const { isAdmin, userId } = getUserDetails(req.user)
 
     let payload = insertingData(_b, _b.addressID);
-
+    payload.user_id = userId
     ShippingAddress.update(payload,
         {
             where: {
@@ -67,6 +67,7 @@ exports.update = (req, res) => {
 
 
 exports.delete = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
 
     if (!_b.addressID) {
@@ -74,7 +75,6 @@ exports.delete = (req, res) => {
         return
     }
 
-    const { isAdmin, userId } = getUserDetails(req.user)
 
     ShippingAddress.destroy(
         {
@@ -94,8 +94,8 @@ exports.delete = (req, res) => {
 };
 
 exports.getAll = (req, res) => {
-    const _b = req.body
     const { isAdmin, userId } = getUserDetails(req.user)
+    const _b = req.body
 
     ShippingAddress.findAll()
         .then(c => {

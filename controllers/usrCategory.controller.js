@@ -7,12 +7,12 @@ const { isAr } = require('../utils/verify')
 const Serializer = require('sequelize-to-json');
 
 exports.add = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
     let payload = {
         userCategory: _b.userCategory,
         userCategoryAr: _b.userCategoryAr,
     }
-    const { isAdmin, userId } = getUserDetails(req.user)
 
     UsrCategory.create(payload)
         .then(r => {
@@ -28,6 +28,7 @@ exports.add = (req, res) => {
 };
 
 exports.update = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
 
     if (!_b.userCategoryID) {
@@ -36,7 +37,6 @@ exports.update = (req, res) => {
         });
         return
     }
-    const { isAdmin, userId } = getUserDetails(req.user)
 
     let payload = insertingData(_b, _b.userCategoryID);
 
@@ -59,6 +59,7 @@ exports.update = (req, res) => {
 
 
 exports.delete = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
 
     if (!_b.userCategoryID) {
@@ -68,7 +69,6 @@ exports.delete = (req, res) => {
         return
     }
 
-    const { isAdmin, userId } = getUserDetails(req.user)
 
     UsrCategory.destroy(
         {
@@ -88,8 +88,8 @@ exports.delete = (req, res) => {
 };
 
 exports.getAll = (req, res) => {
-    const _b = req.body
     const { isAdmin, userId } = getUserDetails(req.user)
+    const _b = req.body
 
     UsrCategory.findAll()
         .then(c => {

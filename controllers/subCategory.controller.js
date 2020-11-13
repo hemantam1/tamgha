@@ -7,6 +7,7 @@ const { isAr } = require('../utils/verify')
 const Serializer = require('sequelize-to-json');
 
 exports.add = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
     let payload = {
         subCategory: _b.subCategory,
@@ -14,7 +15,6 @@ exports.add = (req, res) => {
         category_id: _b.category_id
     }
 
-    const { isAdmin, userId } = getUserDetails(req.user)
 
     SubCategory.create(payload)
         .then(r => {
@@ -30,13 +30,13 @@ exports.add = (req, res) => {
 };
 
 exports.update = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
 
     if (!_b.subCategoryID) {
         res.status(400).json({ status: false, message: "subCategoryID does not exists" });
         return
     }
-    const { isAdmin, userId } = getUserDetails(req.user)
 
     let payload = insertingData(_b, _b.subCategoryID);
 
@@ -59,13 +59,13 @@ exports.update = (req, res) => {
 
 
 exports.delete = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
 
     if (!_b.subCategoryID) {
         res.status(400).json({ status: false, message: "subCategoryID does not exists" });
         return
     }
-    const { isAdmin, userId } = getUserDetails(req.user)
 
 
     SubCategory.destroy(
@@ -86,8 +86,8 @@ exports.delete = (req, res) => {
 };
 
 exports.getAll = (req, res) => {
-    const _b = req.body
     const { isAdmin, userId } = getUserDetails(req.user)
+    const _b = req.body
 
     SubCategory.findAll()
         .then(c => {

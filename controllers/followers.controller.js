@@ -8,11 +8,11 @@ const Serializer = require('sequelize-to-json');
 
 exports.add = (req, res) => {
     const _b = req.body;
+    const { isAdmin, userId } = getUserDetails(req.user)
     let payload = {
-        user_id: _b.user_id,
+        user_id: userId,
         follower_user_id: _b.follower_user_id
     }
-    const { isAdmin, userId } = getUserDetails(req.user)
 
     Followers.create(payload)
         .then(r => {
@@ -27,44 +27,16 @@ exports.add = (req, res) => {
         });
 };
 
-exports.update = (req, res) => {
-    const _b = req.body;
-
-    if (!_b.followerID) {
-        res.status(400).json({ status: false, message: "followerID does not exists" });
-        return
-    }
-    const { isAdmin, userId } = getUserDetails(req.user)
-
-    let payload = insertingData(_b, _b.followerID);
-
-    Followers.update(payload,
-        {
-            where: {
-                followerID: _b.followerID
-            }
-        }
-    )
-        .then(c => {
-            if (!c) throw new Error('No Followers found!');
-            res.status(200).json({ status: true, category: c });
-        })
-        .catch(err => {
-            console.error(err);
-            res.status(400).json({ status: false });
-        });
-};
-
 
 exports.delete = (req, res) => {
     const _b = req.body;
+    const { isAdmin, userId } = getUserDetails(req.user)
 
     if (!_b.followerID) {
         res.status(400).json({ status: false, message: "followerID does not exists" });
         return
     }
 
-    const { isAdmin, userId } = getUserDetails(req.user)
 
     Followers.destroy(
         {

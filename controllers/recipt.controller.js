@@ -7,14 +7,14 @@ const { isAr } = require('../utils/verify')
 const Serializer = require('sequelize-to-json');
 
 exports.add = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
     let payload = {
         reciptType: _b.reciptType,
         order_id: _b.order_id,
-        user_id: _b.user_id
+        user_id: userId
     }
 
-    const { isAdmin, userId } = getUserDetails(req.user)
 
     Recipts.create(payload)
         .then(r => {
@@ -29,36 +29,37 @@ exports.add = (req, res) => {
         });
 };
 
-exports.update = (req, res) => {
-    const _b = req.body;
+// exports.update = (req, res) => {
+//     const { isAdmin, userId } = getUserDetails(req.user)
+//     const _b = req.body;
 
-    if (!_b.reciptID) {
-        res.status(400).json({ status: false, message: "reciptID does not exists" });
-        return
-    }
-    const { isAdmin, userId } = getUserDetails(req.user)
+//     if (!_b.reciptID) {
+//         res.status(400).json({ status: false, message: "reciptID does not exists" });
+//         return
+//     }
 
-    let payload = insertingData(_b, _b.reciptID);
+//     let payload = insertingData(_b, _b.reciptID);
 
-    Recipts.update(payload,
-        {
-            where: {
-                reciptID: _b.reciptID
-            }
-        }
-    )
-        .then(c => {
-            if (!c) throw new Error('No Recipts found!');
-            res.status(200).json({ status: true, category: c });
-        })
-        .catch(err => {
-            console.error(err);
-            res.status(400).json({ status: false });
-        });
-};
+//     Recipts.update(payload,
+//         {
+//             where: {
+//                 reciptID: _b.reciptID
+//             }
+//         }
+//     )
+//         .then(c => {
+//             if (!c) throw new Error('No Recipts found!');
+//             res.status(200).json({ status: true, category: c });
+//         })
+//         .catch(err => {
+//             console.error(err);
+//             res.status(400).json({ status: false });
+//         });
+// };
 
 
 exports.delete = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
 
     if (!_b.reciptID) {
@@ -66,7 +67,6 @@ exports.delete = (req, res) => {
         return
     }
 
-    const { isAdmin, userId } = getUserDetails(req.user)
 
     Recipts.destroy(
         {
@@ -86,8 +86,8 @@ exports.delete = (req, res) => {
 };
 
 exports.getAll = (req, res) => {
-    const _b = req.body
     const { isAdmin, userId } = getUserDetails(req.user)
+    const _b = req.body
 
     Recipts.findAll()
         .then(c => {

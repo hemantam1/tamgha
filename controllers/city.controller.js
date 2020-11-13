@@ -26,6 +26,7 @@ exports.add = (req, res) => {
 exports.update = (req, res) => {
     const _b = req.body;
     let payload = {};
+    const { isAdmin, userId } = getUserDetails(req.user)
 
     if (!_b.cityID) {
         res.status(400).json({ status: false, message: "cityID does not exists" });
@@ -37,7 +38,6 @@ exports.update = (req, res) => {
 
     if (_b.cityAr)
         payload.cityAr = _b.cityAr
-    const { isAdmin, userId } = getUserDetails(req.user)
 
     City.update(payload,
         {
@@ -59,12 +59,12 @@ exports.update = (req, res) => {
 
 exports.delete = (req, res) => {
     const _b = req.body;
+    const { isAdmin, userId } = getUserDetails(req.user)
 
     if (!_b.cityID) {
         res.status(400).json({ status: false, message: "cityID does not exists" });
         return
     }
-    const { isAdmin, userId } = getUserDetails(req.user)
 
     City.destroy(
         {

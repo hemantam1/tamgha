@@ -15,6 +15,7 @@ const { User } = require('../models/associations');
 const SubCategory = require('../models/subCategory.model');
 
 exports.add = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
     let payload = {
         productName: _b.productName,
@@ -24,10 +25,9 @@ exports.add = (req, res) => {
         priceCurrencyAr: _b.priceCurrencyAr,
         price: _b.price,
         isAvailable: _b.isAvailable,
-        user_id: _b.user_id,
+        user_id: userId,
         subCategory_id: _b.subCategory_id
     }
-    const { isAdmin, userId } = getUserDetails(req.user)
 
     Product.create(payload)
         .then(r => {
@@ -43,13 +43,13 @@ exports.add = (req, res) => {
 };
 
 exports.update = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
 
     if (!_b.productID) {
         res.status(400).json({ status: false, message: "productID does not exists" });
         return
     }
-    const { isAdmin, userId } = getUserDetails(req.user)
 
     let payload = insertingData(_b, _b.productID);
 
@@ -72,13 +72,13 @@ exports.update = (req, res) => {
 
 
 exports.delete = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
 
     if (!_b.productID) {
         res.status(400).json({ status: false, message: "productID does not exists" });
         return
     }
-    const { isAdmin, userId } = getUserDetails(req.user)
 
 
     Product.destroy(
@@ -99,8 +99,8 @@ exports.delete = (req, res) => {
 };
 
 exports.getAll = (req, res) => {
-    const _b = req.body
     const { isAdmin, userId } = getUserDetails(req.user)
+    const _b = req.body
 
     Product.findAll({
         include: [
@@ -199,7 +199,7 @@ exports.upload = (req, res) => {
         priceCurrencyAr: _b.priceCurrencyAr,
         price: _b.price,
         isAvailable: _b.isAvailable,
-        user_id: _b.user_id,
+        user_id: userId,
         subCategory_id: _b.subCategory_id
     }
 

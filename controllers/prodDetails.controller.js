@@ -7,6 +7,7 @@ const { isAr } = require('../utils/verify')
 const Serializer = require('sequelize-to-json');
 
 exports.add = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
     let payload = {
         size: _b.size,
@@ -20,7 +21,6 @@ exports.add = (req, res) => {
         priceExcluding: _b.priceExcluding,
         product_id: _b.product_id
     }
-    const { isAdmin, userId } = getUserDetails(req.user)
 
     ProdDetail.create(payload)
         .then(r => {
@@ -36,13 +36,13 @@ exports.add = (req, res) => {
 };
 
 exports.update = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
 
     if (!_b.productDetailID) {
         res.status(400).json({ status: false, message: "productDetailID does not exists" });
         return
     }
-    const { isAdmin, userId } = getUserDetails(req.user)
 
     let payload = insertingData(_b, _b.productDetailID);
 
@@ -65,13 +65,13 @@ exports.update = (req, res) => {
 
 
 exports.delete = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
 
     if (!_b.productDetailID) {
         res.status(400).json({ status: false, message: "productDetailID does not exists" });
         return
     }
-    const { isAdmin, userId } = getUserDetails(req.user)
 
 
     ProdDetail.destroy(
@@ -92,8 +92,8 @@ exports.delete = (req, res) => {
 };
 
 exports.getAll = (req, res) => {
-    const _b = req.body
     const { isAdmin, userId } = getUserDetails(req.user)
+    const _b = req.body
 
     ProdDetail.findAll()
         .then(c => {

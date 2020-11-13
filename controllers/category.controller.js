@@ -8,11 +8,11 @@ const Serializer = require('sequelize-to-json');
 
 exports.add = (req, res) => {
     const _b = req.body;
+    const { isAdmin, userId } = getUserDetails(req.user)
     let payload = {
         category: _b.category,
         categoryAr: _b.categoryAr,
     }
-    const { isAdmin, userId } = getUserDetails(req.user)
 
     Category.create(payload)
         .then(r => {
@@ -29,6 +29,7 @@ exports.add = (req, res) => {
 
 exports.update = (req, res) => {
     const _b = req.body;
+    const { isAdmin, userId } = getUserDetails(req.user)
 
     if (!_b.categoryID) {
         res.status(400).json({
@@ -36,7 +37,6 @@ exports.update = (req, res) => {
         });
         return
     }
-    const { isAdmin, userId } = getUserDetails(req.user)
 
     let payload = insertingData(_b, _b.categoryID);
 
@@ -60,6 +60,7 @@ exports.update = (req, res) => {
 
 exports.delete = (req, res) => {
     const _b = req.body;
+    const { isAdmin, userId } = getUserDetails(req.user)
 
     if (!_b.categoryID) {
         res.status(400).json({
@@ -68,7 +69,6 @@ exports.delete = (req, res) => {
         return
     }
 
-    const { isAdmin, userId } = getUserDetails(req.user)
 
     Category.destroy(
         {

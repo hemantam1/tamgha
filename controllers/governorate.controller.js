@@ -25,6 +25,7 @@ exports.add = (req, res) => {
 
 exports.update = (req, res) => {
     const _b = req.body;
+    const { isAdmin, userId } = getUserDetails(req.user)
     let payload = {};
 
     if (!_b.stateID) {
@@ -37,7 +38,6 @@ exports.update = (req, res) => {
 
     if (_b.stateAr)
         payload.stateAr = _b.stateAr
-    const { isAdmin, userId } = getUserDetails(req.user)
 
     State.update(payload,
         {
@@ -58,13 +58,13 @@ exports.update = (req, res) => {
 
 
 exports.delete = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
 
     if (!_b.stateID) {
         res.status(400).json({ status: false, message: "stateID does not exists" });
         return
     }
-    const { isAdmin, userId } = getUserDetails(req.user)
 
     State.destroy(
         {

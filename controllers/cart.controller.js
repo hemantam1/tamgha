@@ -8,13 +8,14 @@ const Serializer = require('sequelize-to-json');
 
 exports.add = (req, res) => {
     const _b = req.body;
+    const { isAdmin, userId } = getUserDetails(req.user)
+
     let payload = {
         quantity: _b.quantity,
         price: _b.price,
         product_id: _b.product_id,
+        user_id: userId
     }
-    const { isAdmin, userId } = getUserDetails(req.user)
-
 
     Cart.create(payload)
         .then(r => {
@@ -31,6 +32,7 @@ exports.add = (req, res) => {
 
 exports.update = (req, res) => {
     const _b = req.body;
+    const { isAdmin, userId } = getUserDetails(req.user)
 
     if (!_b.cartID) {
         res.status(400).json({
@@ -38,10 +40,9 @@ exports.update = (req, res) => {
         });
         return
     }
-    const { isAdmin, userId } = getUserDetails(req.user)
 
     let payload = insertingData(_b, _b.cartID);
-
+    payload.user_id = userId
     Cart.update(payload,
         {
             where: {
@@ -62,6 +63,7 @@ exports.update = (req, res) => {
 
 exports.delete = (req, res) => {
     const _b = req.body;
+    const { isAdmin, userId } = getUserDetails(req.user)
 
     if (!_b.cartID) {
         res.status(400).json({
@@ -89,7 +91,7 @@ exports.delete = (req, res) => {
 exports.getAll = (req, res) => {
     const _b = req.body
     const { isAdmin, userId } = getUserDetails(req.user)
-    console.log(userId, "User", isAdmin)
+    // console.log(userId, "User", isAdmin)
     Cart.findAll()
         .then(c => {
 
