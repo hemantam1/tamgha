@@ -3,18 +3,18 @@ const Sequelize = require('sequelize');
 
 
 const measurementValue = connection.define('prod_meas_value', {
-    msvID: {
+    measurementID: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
         primaryKey: true
     },
-    measureType: {
+    measurementType: {
         type: Sequelize.STRING,
     },
-    measureTypeAr: {
+    measurementTypeAr: {
         type: Sequelize.STRING,
     },
-    measureValue: {
+    measurementValue: {
         type: Sequelize.DOUBLE(4, 2),
     }
 }

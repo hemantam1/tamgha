@@ -1,15 +1,15 @@
 const Sequelize = require('sequelize');
 const Country = require('../models/country.model');
 const config = require('../config');
+const { getUserDetails } = require('../utils/helperFunc');
 
 exports.add = (req, res) => {
     const _b = req.body;
+    const { isAdmin, userId } = getUserDetails(req.user)
 
     Country.create({
-        ctryName: _b.ctryName,
-        ctryNameAr: _b.ctryNameAr,
-        id_cont: _b.contID
-
+        country: _b.country,
+        countryAr: _b.countryAr
     })
         .then(r => {
             res.status(200).json({ status: true, result: r });
@@ -26,30 +26,28 @@ exports.add = (req, res) => {
 exports.update = (req, res) => {
     const _b = req.body;
     let payload = {};
+    const { isAdmin, userId } = getUserDetails(req.user)
 
-    if (!_b.ctryID) {
-        res.status(400).json({ status: false, message: "ctryID does not exists" });
+    if (!_b.countryID) {
+        res.status(400).json({ status: false, message: "countryID does not exists" });
         return
     }
 
-    if (_b.ctryName)
-        payload.ctryName = _b.ctryName
+    if (_b.country)
+        payload.country = _b.country
 
-    if (_b.ctryNameAr)
-        payload.ctryNameAr = _b.ctryNameAr
-
-    if (_b.contID)
-        payload.id_cont = _b.contID
+    if (_b.countryAr)
+        payload.countryAr = _b.countryAr
 
     Country.update(payload,
         {
             where: {
-                ctryID: _b.ctryID
+                countryID: _b.countryID
             }
         }
     )
         .then(c => {
-            if (!c) throw new Error('No countryt found!');
+            if (!c) throw new Error('No country found!');
             res.status(200).json({ status: true, category: c });
         })
         .catch(err => {
@@ -61,9 +59,10 @@ exports.update = (req, res) => {
 
 exports.delete = (req, res) => {
     const _b = req.body;
+    const { isAdmin, userId } = getUserDetails(req.user)
 
-    if (!_b.ctryID) {
-        res.status(400).json({ status: false, message: "ctryID does not exists" });
+    if (!_b.countryID) {
+        res.status(400).json({ status: false, message: "countryID does not exists" });
         return
     }
 
@@ -71,7 +70,7 @@ exports.delete = (req, res) => {
     Country.destroy(
         {
             where: {
-                ctryID: _b.ctryID
+                countryID: _b.countryID
             }
         }
     )
@@ -86,6 +85,8 @@ exports.delete = (req, res) => {
 };
 
 exports.getAll = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
+
 
     Country.findAll({})
         .then(c => {
@@ -100,14 +101,11 @@ exports.getAll = (req, res) => {
 
 
 exports.getByID = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
+
     Country.findOne({
-        include: [
-            {
-                model: Continent
-            }
-        ],
         where: {
-            ctryID: req.params.ctryID
+            countryID: req.params.countryID
         }
     })
         .then(c => {

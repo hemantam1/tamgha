@@ -1,13 +1,15 @@
 const Sequelize = require('sequelize');
 const DeliveryAddress = require('../models/deliveryAddres.model');
 const config = require('../config');
-const { insertingData } = require('../utils/helperFunc')
+const { insertingData, getUserDetails } = require('../utils/helperFunc')
 const { isAr } = require('../utils/verify')
 // const { getActivitySchema } = require('../utils/schema/schemas');
 const Serializer = require('sequelize-to-json');
 
 exports.add = (req, res) => {
     const _b = req.body;
+    const { isAdmin, userId } = getUserDetails(req.user)
+
     let payload = {
         firstName: _b.firstName,
         lastName: _b.lastName,
@@ -27,7 +29,8 @@ exports.add = (req, res) => {
         email: _b.email,
         emailAr: _b.emailAr,
         note: _b.note,
-        noteAr: _b.noteAr
+        noteAr: _b.noteAr,
+        user_id: userId
     }
 
     DeliveryAddress.create(payload)
@@ -45,23 +48,24 @@ exports.add = (req, res) => {
 
 exports.update = (req, res) => {
     const _b = req.body;
+    const { isAdmin, userId } = getUserDetails(req.user)
 
-    if (!_b.adrsID) {
-        res.status(400).json({ status: false, message: "adrsID does not exists" });
+    if (!_b.addressID) {
+        res.status(400).json({ status: false, message: "addressID does not exists" });
         return
     }
 
-    let payload = insertingData(_b, _b.adrsID);
-
+    let payload = insertingData(_b, _b.addressID);
+    payload.user_id = userId
     DeliveryAddress.update(payload,
         {
             where: {
-                adrsID: _b.adrsID
+                addressID: _b.addressID
             }
         }
     )
         .then(c => {
-            if (!c) throw new Error('No Activities found!');
+            if (!c) throw new Error('No Address found!');
             res.status(200).json({ status: true, category: c });
         })
         .catch(err => {
@@ -73,9 +77,10 @@ exports.update = (req, res) => {
 
 exports.delete = (req, res) => {
     const _b = req.body;
+    const { isAdmin, userId } = getUserDetails(req.user)
 
-    if (!_b.adrsID) {
-        res.status(400).json({ status: false, message: "adrsID does not exists" });
+    if (!_b.addressID) {
+        res.status(400).json({ status: false, message: "addressID does not exists" });
         return
     }
 
@@ -83,7 +88,7 @@ exports.delete = (req, res) => {
     DeliveryAddress.destroy(
         {
             where: {
-                adrsID: _b.adrsID
+                addressID: _b.addressID
             }
         }
     )
@@ -99,6 +104,8 @@ exports.delete = (req, res) => {
 
 exports.getAll = (req, res) => {
     const _b = req.body
+    const { isAdmin, userId } = getUserDetails(req.user)
+
     DeliveryAddress.findAll()
         .then(c => {
             // 
@@ -118,9 +125,11 @@ exports.getAll = (req, res) => {
 
 
 exports.getByID = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
+
     DeliveryAddress.findOne({
         where: {
-            adrsID: req.params.adrsID
+            addressID: req.params.addressID
         }
     })
         .then(c => {

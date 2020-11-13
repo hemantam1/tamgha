@@ -1,22 +1,17 @@
 const Sequelize = require('sequelize');
-const MeasurementValue = require('../models/prodMeasureValue.model');
+const State = require('../models/governorate.model');
 const config = require('../config');
-const { insertingData, getUserDetails } = require('../utils/helperFunc')
-const { isAr } = require('../utils/verify')
-// const { getMeasurementValueSchema } = require('../utils/schema/schemas');
-const Serializer = require('sequelize-to-json');
+const { getUserDetails } = require('../utils/helperFunc');
 
 exports.add = (req, res) => {
-    const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
-    let payload = {
-        measurementType: _b.measurementType,
-        measurementTypeAr: _b.measurementTypeAr,
-        measurementValue: _b.measurementValue,
-        productDetail_id: _b.productDetail_id
-    }
+    const { isAdmin, userId } = getUserDetails(req.user)
 
-    MeasurementValue.create(payload)
+    State.create({
+        state: _b.state,
+        stateAr: _b.stateAr,
+        country_id: _b.country_id
+    })
         .then(r => {
             res.status(200).json({ status: true, result: r });
         })
@@ -30,25 +25,30 @@ exports.add = (req, res) => {
 };
 
 exports.update = (req, res) => {
-    const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
+    const { isAdmin, userId } = getUserDetails(req.user)
+    let payload = {};
 
-    if (!_b.measurementID) {
-        res.status(400).json({ status: false, message: "measurementID does not exists" });
+    if (!_b.stateID) {
+        res.status(400).json({ status: false, message: "stateID does not exists" });
         return
     }
 
-    let payload = insertingData(_b, _b.measurementID);
+    if (_b.state)
+        payload.state = _b.state
 
-    MeasurementValue.update(payload,
+    if (_b.stateAr)
+        payload.stateAr = _b.stateAr
+
+    State.update(payload,
         {
             where: {
-                measurementID: _b.measurementID
+                stateID: _b.stateID
             }
         }
     )
         .then(c => {
-            if (!c) throw new Error('No MeasurementValues found!');
+            if (!c) throw new Error('No State found!');
             res.status(200).json({ status: true, category: c });
         })
         .catch(err => {
@@ -62,21 +62,20 @@ exports.delete = (req, res) => {
     const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
 
-    if (!_b.measurementID) {
-        res.status(400).json({ status: false, message: "measurementID does not exists" });
+    if (!_b.stateID) {
+        res.status(400).json({ status: false, message: "stateID does not exists" });
         return
     }
 
-
-    MeasurementValue.destroy(
+    State.destroy(
         {
             where: {
-                measurementID: _b.measurementID
+                stateID: _b.stateID
             }
         }
     )
         .then(c => {
-            if (!c) throw new Error('No MeasurementValue found!');
+            if (!c) throw new Error('No State found!');
             res.status(200).json({ status: true, category: c });
         })
         .catch(err => {
@@ -87,18 +86,11 @@ exports.delete = (req, res) => {
 
 exports.getAll = (req, res) => {
     const { isAdmin, userId } = getUserDetails(req.user)
-    const _b = req.body
 
-    MeasurementValue.findAll()
+    State.findAll()
         .then(c => {
-
-            if (!c) throw new Error('No MeasurementValue found!');
-
-            // let schema = getMeasurementValueSchema(_b.languageID)
-
-            // let data = Serializer.serializeMany(c, MeasurementValue, schema);
+            if (!c) throw new Error('No State found!');
             res.status(200).json({ status: true, data: c });
-
         })
         .catch(err => {
             console.error(err);
@@ -110,13 +102,13 @@ exports.getAll = (req, res) => {
 exports.getByID = (req, res) => {
     const { isAdmin, userId } = getUserDetails(req.user)
 
-    MeasurementValue.findOne({
+    State.findOne({
         where: {
-            measurementID: req.params.measurementID
+            stateID: req.params.stateID
         }
     })
         .then(c => {
-            if (!c) throw new Error('No MeasurementValue found!');
+            if (!c) throw new Error('No State found!');
             res.status(200).json({ status: true, data: c });
         })
         .catch(err => {

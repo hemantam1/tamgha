@@ -3,18 +3,19 @@ const Sequelize = require('sequelize');
 
 
 const media = connection.define('prod_media', {
-    medID: {
+    mediaID: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
         primaryKey: true
     },
-    medType: {
-        type: Sequelize.ENUM,
-        values: ['Image', 'Video'],
-        defaultValue: 'Image'
-    },
-    medValue: {
+    url: {
         type: Sequelize.TEXT,
+    },
+    ext: {
+        type: Sequelize.STRING,
+    },
+    format: {
+        type: Sequelize.STRING,
     }
 }
 );

@@ -1,12 +1,13 @@
 const router = require('express').Router();
 const likesController = require('../controllers/likes.controller');
 const passport = require('passport');
+const { user, admin, guest } = require('../middlewares/auth')
 
 
-router.get('/', likesController.getAll);
-router.post('/', likesController.add);
-router.put('/', likesController.update);
-router.delete('/', likesController.delete);
+router.get('/', passport.authenticate('user', { session: false }), likesController.getAll);
+router.post('/', passport.authenticate('user', { session: false }), likesController.add);
+// router.put('/', likesController.update);
+router.delete('/', passport.authenticate('user', { session: false }), likesController.delete);
 
 
 

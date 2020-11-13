@@ -1,13 +1,16 @@
 const Sequelize = require('sequelize');
 const City = require('../models/city.model');
 const config = require('../config');
+const { getUserDetails } = require('../utils/helperFunc');
 
 exports.add = (req, res) => {
     const _b = req.body;
+    const { isAdmin, userId } = getUserDetails(req.user)
+
     City.create({
-        citName: _b.citName,
-        citNameAr: _b.citNameAr,
-        id_country: _b.ctryID
+        city: _b.city,
+        cityAr: _b.cityAr,
+        state_id: _b.state_id
     })
         .then(r => {
             res.status(200).json({ status: true, result: r });
@@ -24,22 +27,23 @@ exports.add = (req, res) => {
 exports.update = (req, res) => {
     const _b = req.body;
     let payload = {};
+    const { isAdmin, userId } = getUserDetails(req.user)
 
-    if (!_b.citID) {
-        res.status(400).json({ status: false, message: "citID does not exists" });
+    if (!_b.cityID) {
+        res.status(400).json({ status: false, message: "cityID does not exists" });
         return
     }
 
-    if (_b.citName)
-        payload.citName = _b.citName
+    if (_b.city)
+        payload.city = _b.city
 
-    if (_b.citNameAr)
-        payload.citNameAr = _b.citNameAr
+    if (_b.cityAr)
+        payload.cityAr = _b.cityAr
 
     City.update(payload,
         {
             where: {
-                citID: _b.citID
+                cityID: _b.cityID
             }
         }
     )
@@ -56,17 +60,17 @@ exports.update = (req, res) => {
 
 exports.delete = (req, res) => {
     const _b = req.body;
+    const { isAdmin, userId } = getUserDetails(req.user)
 
-    if (!_b.citID) {
-        res.status(400).json({ status: false, message: "citID does not exists" });
+    if (!_b.cityID) {
+        res.status(400).json({ status: false, message: "cityID does not exists" });
         return
     }
-
 
     City.destroy(
         {
             where: {
-                citID: _b.citID
+                cityID: _b.cityID
             }
         }
     )
@@ -81,6 +85,7 @@ exports.delete = (req, res) => {
 };
 
 exports.getAll = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
 
     City.findAll()
         .then(c => {
@@ -95,9 +100,11 @@ exports.getAll = (req, res) => {
 
 
 exports.getByID = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
+
     City.findOne({
         where: {
-            citID: req.params.citID
+            cityID: req.params.cityID
         }
     })
         .then(c => {

@@ -2,7 +2,7 @@ const connection = require('../services/sequelize.service').connection();
 const Sequelize = require('sequelize');
 
 const user = connection.define('user', {
-    userId: {
+    userID: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
         primaryKey: true
@@ -14,9 +14,16 @@ const user = connection.define('user', {
     password: {
         type: Sequelize.STRING,
     },
+    userType:{
+        type: Sequelize.ENUM,
+        values: ['User', 'Admin'],
+        defaultValue:'User'
+    },
     userName: {
         type: Sequelize.STRING,
-
+    },
+    userNameAr: {
+        type: Sequelize.STRING,
     },
     profilePhoto: {
         type: Sequelize.STRING,
@@ -36,10 +43,21 @@ const user = connection.define('user', {
     phoneNo: {
         type: Sequelize.STRING,
     },
-    country: {
+    // country: {
+    //     type: Sequelize.STRING,
+    // },
+    // countryAr: {
+    //     type: Sequelize.STRING,
+    // },
+    idType: {
+        type: Sequelize.ENUM,
+        values: ['Passport', 'Civil'],
+        allowNull:true
+    },
+    idFront: {
         type: Sequelize.STRING,
     },
-    countryAr: {
+    idBack: {
         type: Sequelize.STRING,
     },
     categorySelected: {

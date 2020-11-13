@@ -1,12 +1,13 @@
 const router = require('express').Router();
 const cartController = require('../controllers/cart.controller');
 const passport = require('passport');
+const { user, admin, guest } = require('../middlewares/auth')
 
 
-router.get('/', cartController.getAll);
-router.post('/', cartController.add);
-router.put('/', cartController.update);
-router.delete('/', cartController.delete);
+router.get('/', passport.authenticate('user', { session: false }), cartController.getAll);
+router.post('/', passport.authenticate('user', { session: false }), cartController.add);
+router.put('/', passport.authenticate('user', { session: false }), cartController.update);
+router.delete('/', passport.authenticate('user', { session: false }), cartController.delete);
 
 
 

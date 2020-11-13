@@ -4,7 +4,7 @@ const Media = require('../models/media.model');
 const ProductDetails = require('../models/prodDetails.model');
 const ShippingAddress = require('../models/shippingAddres.model');
 const config = require('../config');
-const { insertingData } = require('../utils/helperFunc')
+const { insertingData, getUserDetails } = require('../utils/helperFunc')
 const { isAr } = require('../utils/verify')
 // const { getProductSchema } = require('../utils/schema/schemas');
 const Serializer = require('sequelize-to-json');
@@ -15,17 +15,18 @@ const { User } = require('../models/associations');
 const SubCategory = require('../models/subCategory.model');
 
 exports.add = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
     let payload = {
-        prodName: _b.prodName,
-        prodNameAr: _b.prodNameAr,
-        prodDescription: _b.prodDescription,
-        prodDescriptionAr: _b.prodDescriptionAr,
+        productName: _b.productName,
+        productName: _b.productName,
+        productDescription: _b.productDescription,
+        productDescriptionAr: _b.productDescriptionAr,
         priceCurrencyAr: _b.priceCurrencyAr,
         price: _b.price,
         isAvailable: _b.isAvailable,
-        usr_id: _b.usr_id,
-        subCat_id: _b.subCat_id
+        user_id: userId,
+        subCategory_id: _b.subCategory_id
     }
 
     Product.create(payload)
@@ -42,6 +43,7 @@ exports.add = (req, res) => {
 };
 
 exports.update = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
 
     if (!_b.productID) {
@@ -70,6 +72,7 @@ exports.update = (req, res) => {
 
 
 exports.delete = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
 
     if (!_b.productID) {
@@ -96,7 +99,9 @@ exports.delete = (req, res) => {
 };
 
 exports.getAll = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body
+
     Product.findAll({
         include: [
             {
@@ -125,6 +130,8 @@ exports.getAll = (req, res) => {
 
 
 exports.getByID = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
+
     Product.findOne({
         where: {
             productID: req.params.productID
@@ -143,6 +150,7 @@ exports.getByID = (req, res) => {
 
 
 exports.uploadPhotos = (req, res, next) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
     const files = req.files
     if (!files) {
         const error = new Error('Please upload a file')
@@ -180,12 +188,8 @@ exports.uploadPhotos = (req, res, next) => {
 
 exports.upload = (req, res) => {
     const _b = req.body
-    if (!_b.photos && _b.photos.length <= 0) {
-        res.json({
-            status: false,
-            message: "image != Array"
-        })
-    }
+    const { isAdmin, userId } = getUserDetails(req.user)
+
     let productPayload = {
         productName: _b.productName,
         productNameAr: _b.productNameAr,
@@ -195,26 +199,9 @@ exports.upload = (req, res) => {
         priceCurrencyAr: _b.priceCurrencyAr,
         price: _b.price,
         isAvailable: _b.isAvailable,
-        usr_id: _b.user_id,
-        subCat_id: _b.subCat_id
+        user_id: userId,
+        subCategory_id: _b.subCategory_id
     }
-    // let mediaPayload = {
-    //     medType: _b.medType,
-    //     medValue: _b.medValue,
-    //     // prod_id: _b.prod_id
-    // }
-    // let productDetailsPayload = {
-    //     available: _b.available,
-    //     color: _b.color,
-    //     colorAr: _b.colorAr,
-    //     priceCurrency: _b.priceCurrency,
-    //     priceCurrencyAr: _b.priceCurrencyAr,
-    //     totalPrice: _b.totalPrice,
-    //     isFaltDiscount: _b.isFaltDiscount,
-    //     priceExcluding: _b.priceExcluding,
-    //     // prod_id: _b.prod_id
-
-    // }
 
     Product.create(productPayload)
         .then(c => {
@@ -222,26 +209,23 @@ exports.upload = (req, res) => {
             if (!c) throw new Error('No Product found!');
             let productID = c.dataValues.productID
             if (productID) {
-                for (let i = 0; i < _b.photos.length; i++) {
-
-                    try {
-                        let mediaPayload = {
-                            medType: _b.medType,
-                            medValue: _b.photos[i],
-                            prod_id: productID
-                        }
-                        Media.create(mediaPayload)
-                    }
-                    catch (err) {
-                        console.error(err);
-                        res.status(400).json({ status: false });
-                    }
+                const files = req.dir;
+                if (files) {
+                    console.log(files)
+                    Media.bulkCreate(files)
+                        .then((media) => {
+                            console.log(media);
+                            return
+                        })
+                        .catch((err) => reject(res, err));
                 }
+
                 try {
                     for (let j = 0; j < _b.sizes.length; j++) {
                         let additionalPrice = parseInt(_b.sizes[j].additionalPrice) + parseInt(_b.price)
                         let productDetailsPayload = {
-                            name: _b.sizes[j].size,
+                            size: _b.sizes[j].size,
+                            sizeAr: _b.sizes[j].sizeAr,
                             available: _b.sizes[j].available,
                             color: _b.sizes[j].color,
                             colorAr: _b.colorAr,
@@ -250,7 +234,7 @@ exports.upload = (req, res) => {
                             totalPrice: additionalPrice,
                             isFaltDiscount: _b.isFaltDiscount,
                             priceExcluding: _b.priceExcluding,
-                            prod_id: productID
+                            product_id: productID
                         }
                         ProductDetails.create(productDetailsPayload)
                     }
@@ -263,19 +247,14 @@ exports.upload = (req, res) => {
                     let shippingAddresPayload = {
                         address: _b.locationTitle,
                         area: _b.locationArea,
-                        country: _b.country,
-                        city: _b.locationCity,
                         pinCode: _b.locationCode,
-                        state: _b.locationState,
-                        idType: _b.idType,
-                        idFront: _b.idFront,
-                        idBack: _b.idBack,
                         isTamghaShipping: false,
                         phoneNo: _b.phoneNo,
                         email: _b.email,
                         emailAr: _b.emailAr,
-                        usr_id: _b.user_id,
-                        prod_id: productID
+                        city_id: _b.city_id,
+                        user_id: _b.user_id,
+                        product_id: productID
                     }
                     ShippingAddress.create(shippingAddresPayload)
                         .then(s => res.json({
@@ -301,6 +280,8 @@ exports.upload = (req, res) => {
 
 exports.explore = (req, res) => {
     // const _b = req.body
+    const { isAdmin, userId } = getUserDetails(req.user)
+
     // write a condition for products having more no of likes
     Product.findAll()
         .then(c => {

@@ -1,16 +1,17 @@
 const Sequelize = require('sequelize');
 const Category = require('../models/category.model');
 const config = require('../config');
-const { insertingData } = require('../utils/helperFunc')
+const { insertingData, getUserDetails } = require('../utils/helperFunc')
 const { isAr } = require('../utils/verify')
 // const { getCategorySchema } = require('../utils/schema/schemas');
 const Serializer = require('sequelize-to-json');
 
 exports.add = (req, res) => {
     const _b = req.body;
+    const { isAdmin, userId } = getUserDetails(req.user)
     let payload = {
-        CatName: _b.CatName,
-        CatNameAr: _b.CatNameAr,
+        category: _b.category,
+        categoryAr: _b.categoryAr,
     }
 
     Category.create(payload)
@@ -28,21 +29,21 @@ exports.add = (req, res) => {
 
 exports.update = (req, res) => {
     const _b = req.body;
+    const { isAdmin, userId } = getUserDetails(req.user)
 
-    if (!_b.catID) {
+    if (!_b.categoryID) {
         res.status(400).json({
-            status: false, message: "catID does not exists"
+            status: false, message: "categoryID does not exists"
         });
         return
     }
 
-    let payload = insertingData(_b, _b.catID);
+    let payload = insertingData(_b, _b.categoryID);
 
     Category.update(payload,
         {
             where: {
-                catID:
-                    _b.catID
+                categoryID: _b.categoryID
             }
         }
     )
@@ -59,10 +60,11 @@ exports.update = (req, res) => {
 
 exports.delete = (req, res) => {
     const _b = req.body;
+    const { isAdmin, userId } = getUserDetails(req.user)
 
-    if (!_b.catID) {
+    if (!_b.categoryID) {
         res.status(400).json({
-            status: false, message: "catID does not exists"
+            status: false, message: "categoryID does not exists"
         });
         return
     }
@@ -71,7 +73,7 @@ exports.delete = (req, res) => {
     Category.destroy(
         {
             where: {
-                catID: _b.catID
+                categoryID: _b.categoryID
             }
         }
     )
@@ -87,6 +89,8 @@ exports.delete = (req, res) => {
 
 exports.getAll = (req, res) => {
     const _b = req.body
+    const { isAdmin, userId } = getUserDetails(req.user)
+
     Category.findAll()
         .then(c => {
 
@@ -106,9 +110,11 @@ exports.getAll = (req, res) => {
 
 
 exports.getByID = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
+
     Category.findOne({
         where: {
-            catID: req.params.catID
+            categoryID: req.params.categoryID
         }
     })
         .then(c => {

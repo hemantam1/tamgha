@@ -2,20 +2,20 @@ const connection = require('../services/sequelize.service').connection();
 const Sequelize = require('sequelize');
 
 
-const UsrCategory = connection.define('usr_category', {
-    usrCatID: {
+const UserCategory = connection.define('user_category', {
+    userCategoryID: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
         primaryKey: true
     },
-    usrCatName: {
+    userCategory: {
         type: Sequelize.STRING,
         unique: true
     },
-    usrCatNameAr: {
+    userCategoryAr: {
         type: Sequelize.STRING,
         unique: true
     }
 }
 );
-module.exports = UsrCategory;
+module.exports = UserCategory;

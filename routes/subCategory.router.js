@@ -1,12 +1,13 @@
 const router = require('express').Router();
 const subCategoryController = require('../controllers/subCategory.controller');
 const passport = require('passport');
+const { user, admin, guest } = require('../middlewares/auth')
 
 
-router.get('/', subCategoryController.getAll);
-router.post('/', subCategoryController.add);
-router.put('/', subCategoryController.update);
-router.delete('/', subCategoryController.delete);
+router.get('/', passport.authenticate('user', { session: false }), subCategoryController.getAll);
+router.post('/', passport.authenticate('user', { session: false }), subCategoryController.add);
+router.put('/', passport.authenticate('user', { session: false }), subCategoryController.update);
+router.delete('/', passport.authenticate('user', { session: false }), subCategoryController.delete);
 
 
 

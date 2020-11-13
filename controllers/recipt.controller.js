@@ -1,17 +1,18 @@
 const Sequelize = require('sequelize');
 const Recipts = require('../models/recipts.model');
 const config = require('../config');
-const { insertingData } = require('../utils/helperFunc')
+const { insertingData, getUserDetails } = require('../utils/helperFunc')
 const { isAr } = require('../utils/verify')
 // const { getReciptsSchema } = require('../utils/schema/schemas');
 const Serializer = require('sequelize-to-json');
 
 exports.add = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
     let payload = {
-        recpType: _b.recpType,
-        ord_id: _b.ord_id,
-        usr_id: _b.usr_id
+        reciptType: _b.reciptType,
+        order_id: _b.order_id,
+        user_id: userId
     }
 
 
@@ -28,39 +29,41 @@ exports.add = (req, res) => {
         });
 };
 
-exports.update = (req, res) => {
-    const _b = req.body;
+// exports.update = (req, res) => {
+//     const { isAdmin, userId } = getUserDetails(req.user)
+//     const _b = req.body;
 
-    if (!_b.recpID) {
-        res.status(400).json({ status: false, message: "recpID does not exists" });
-        return
-    }
+//     if (!_b.reciptID) {
+//         res.status(400).json({ status: false, message: "reciptID does not exists" });
+//         return
+//     }
 
-    let payload = insertingData(_b, _b.recpID);
+//     let payload = insertingData(_b, _b.reciptID);
 
-    Recipts.update(payload,
-        {
-            where: {
-                recpID: _b.recpID
-            }
-        }
-    )
-        .then(c => {
-            if (!c) throw new Error('No Recipts found!');
-            res.status(200).json({ status: true, category: c });
-        })
-        .catch(err => {
-            console.error(err);
-            res.status(400).json({ status: false });
-        });
-};
+//     Recipts.update(payload,
+//         {
+//             where: {
+//                 reciptID: _b.reciptID
+//             }
+//         }
+//     )
+//         .then(c => {
+//             if (!c) throw new Error('No Recipts found!');
+//             res.status(200).json({ status: true, category: c });
+//         })
+//         .catch(err => {
+//             console.error(err);
+//             res.status(400).json({ status: false });
+//         });
+// };
 
 
 exports.delete = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
 
-    if (!_b.recpID) {
-        res.status(400).json({ status: false, message: "recpID does not exists" });
+    if (!_b.reciptID) {
+        res.status(400).json({ status: false, message: "reciptID does not exists" });
         return
     }
 
@@ -68,7 +71,7 @@ exports.delete = (req, res) => {
     Recipts.destroy(
         {
             where: {
-                recpID: _b.recpID
+                reciptID: _b.reciptID
             }
         }
     )
@@ -83,7 +86,9 @@ exports.delete = (req, res) => {
 };
 
 exports.getAll = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body
+
     Recipts.findAll()
         .then(c => {
 
@@ -103,9 +108,11 @@ exports.getAll = (req, res) => {
 
 
 exports.getByID = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
+
     Recipts.findOne({
         where: {
-            recpID: req.params.recpID
+            reciptID: req.params.reciptID
         }
     })
         .then(c => {

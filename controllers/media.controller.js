@@ -1,17 +1,18 @@
 const Sequelize = require('sequelize');
 const Media = require('../models/media.model');
 const config = require('../config');
-const { insertingData } = require('../utils/helperFunc')
+const { insertingData, getUserDetails } = require('../utils/helperFunc')
 const { isAr } = require('../utils/verify')
 // const { getMediaSchema } = require('../utils/schema/schemas');
 const Serializer = require('sequelize-to-json');
 
 exports.add = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
     let payload = {
-        medType: _b.medType,
-        medValue: _b.medValue,
-        prod_id: _b.prod_id
+        mediaLink: _b.mediaLink,
+        user_id: userId,
+        product_id: _b.product_id
     }
 
     Media.create(payload)
@@ -28,19 +29,20 @@ exports.add = (req, res) => {
 };
 
 exports.update = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
 
-    if (!_b.medID) {
-        res.status(400).json({ status: false, message: "medID does not exists" });
+    if (!_b.mediaID) {
+        res.status(400).json({ status: false, message: "mediaID does not exists" });
         return
     }
 
-    let payload = insertingData(_b, _b.medID);
-
+    let payload = insertingData(_b, _b.mediaID);
+    payload.user_id = userId
     Media.update(payload,
         {
             where: {
-                medID: _b.medID
+                mediaID: _b.mediaID
             }
         }
     )
@@ -56,10 +58,11 @@ exports.update = (req, res) => {
 
 
 exports.delete = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
 
-    if (!_b.medID) {
-        res.status(400).json({ status: false, message: "medID does not exists" });
+    if (!_b.mediaID) {
+        res.status(400).json({ status: false, message: "mediaID does not exists" });
         return
     }
 
@@ -67,7 +70,7 @@ exports.delete = (req, res) => {
     Media.destroy(
         {
             where: {
-                medID: _b.medID
+                mediaID: _b.mediaID
             }
         }
     )
@@ -82,7 +85,9 @@ exports.delete = (req, res) => {
 };
 
 exports.getAll = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body
+
     Media.findAll()
         .then(c => {
 
@@ -102,9 +107,11 @@ exports.getAll = (req, res) => {
 
 
 exports.getByID = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
+
     Media.findOne({
         where: {
-            medID: req.params.medID
+            mediaID: req.params.mediaID
         }
     })
         .then(c => {

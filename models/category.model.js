@@ -3,16 +3,16 @@ const Sequelize = require('sequelize');
 
 
 const category = connection.define('category', {
-    catID: {
+    categoryID: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
         primaryKey: true
     },
-    catName: {
+    category: {
         type: Sequelize.STRING,
         unique: true
     },
-    catNameAr: {
+    categoryAr: {
         type: Sequelize.STRING,
         unique: true
     }

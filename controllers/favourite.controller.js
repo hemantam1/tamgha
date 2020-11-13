@@ -1,16 +1,17 @@
 const Sequelize = require('sequelize');
 const Favourite = require('../models/favourite.model');
 const config = require('../config');
-const { insertingData } = require('../utils/helperFunc')
+const { insertingData, getUserDetails } = require('../utils/helperFunc')
 const { isAr } = require('../utils/verify')
 // const { getFavouriteSchema } = require('../utils/schema/schemas');
 const Serializer = require('sequelize-to-json');
 
 exports.add = (req, res) => {
     const _b = req.body;
+    const { isAdmin, userId } = getUserDetails(req.user)
     let payload = {
-        usr_id: _b.usr_id,
-        prod_id: _b.prod_id,
+        user_id: userId,
+        product_id: _b.product_id,
     }
 
     Favourite.create(payload)
@@ -28,20 +29,21 @@ exports.add = (req, res) => {
 
 exports.update = (req, res) => {
     const _b = req.body;
+    const { isAdmin, userId } = getUserDetails(req.user)
 
-    if (!_b.favID) {
+    if (!_b.favouriteID) {
         res.status(400).json({
-            status: false, message: "favID does not exists"
+            status: false, message: "favouriteID does not exists"
         });
         return
     }
 
-    let payload = insertingData(_b, _b.favID);
-
+    let payload = insertingData(_b, _b.favouriteID);
+    payload.user_id = userId
     Favourite.update(payload,
         {
             where: {
-                favID: _b.favID
+                favouriteID: _b.favouriteID
             }
         }
     )
@@ -58,10 +60,11 @@ exports.update = (req, res) => {
 
 exports.delete = (req, res) => {
     const _b = req.body;
+    const { isAdmin, userId } = getUserDetails(req.user)
 
-    if (!_b.favID) {
+    if (!_b.favouriteID) {
         res.status(400).json({
-            status: false, message: "favID does not exists"
+            status: false, message: "favouriteID does not exists"
         });
         return
     }
@@ -70,7 +73,7 @@ exports.delete = (req, res) => {
     Favourite.destroy(
         {
             where: {
-                favID: _b.favID
+                favouriteID: _b.favouriteID
             }
         }
     )
@@ -86,6 +89,8 @@ exports.delete = (req, res) => {
 
 exports.getAll = (req, res) => {
     const _b = req.body
+    const { isAdmin, userId } = getUserDetails(req.user)
+
     Favourite.findAll()
         .then(c => {
 
@@ -105,9 +110,11 @@ exports.getAll = (req, res) => {
 
 
 exports.getByID = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
+
     Favourite.findOne({
         where: {
-            favID: req.params.favID
+            favouriteID: req.params.favouriteID
         }
     })
         .then(c => {

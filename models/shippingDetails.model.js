@@ -3,7 +3,7 @@ const Sequelize = require('sequelize');
 
 
 const ShipingDetail = connection.define('ship_details', {
-    shdID: {
+    shipID: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
         primaryKey: true

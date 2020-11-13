@@ -3,7 +3,7 @@ const Sequelize = require('sequelize');
 
 
 const followers = connection.define('followers', {
-    folID: {
+    followerID: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
         primaryKey: true

@@ -1,17 +1,18 @@
 const Sequelize = require('sequelize');
 const SubCategory = require('../models/subCategory.model');
 const config = require('../config');
-const { insertingData } = require('../utils/helperFunc')
+const { insertingData, getUserDetails } = require('../utils/helperFunc')
 const { isAr } = require('../utils/verify')
 // const { getSubCategorySchema } = require('../utils/schema/schemas');
 const Serializer = require('sequelize-to-json');
 
 exports.add = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
     let payload = {
-        subCatName: _b.subCatName,
-        subCatNameAr: _b.subCatNameAr,
-        cat_id: _b.cat_id
+        subCategory: _b.subCategory,
+        subCategoryAr: _b.subCategoryAr,
+        category_id: _b.category_id
     }
 
 
@@ -29,19 +30,20 @@ exports.add = (req, res) => {
 };
 
 exports.update = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
 
-    if (!_b.subCatID) {
-        res.status(400).json({ status: false, message: "subCatID does not exists" });
+    if (!_b.subCategoryID) {
+        res.status(400).json({ status: false, message: "subCategoryID does not exists" });
         return
     }
 
-    let payload = insertingData(_b, _b.subCatID);
+    let payload = insertingData(_b, _b.subCategoryID);
 
     SubCategory.update(payload,
         {
             where: {
-                subCatID: _b.subCatID
+                subCategoryID: _b.subCategoryID
             }
         }
     )
@@ -57,10 +59,11 @@ exports.update = (req, res) => {
 
 
 exports.delete = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
 
-    if (!_b.subCatID) {
-        res.status(400).json({ status: false, message: "subCatID does not exists" });
+    if (!_b.subCategoryID) {
+        res.status(400).json({ status: false, message: "subCategoryID does not exists" });
         return
     }
 
@@ -68,7 +71,7 @@ exports.delete = (req, res) => {
     SubCategory.destroy(
         {
             where: {
-                subCatID: _b.subCatID
+                subCategoryID: _b.subCategoryID
             }
         }
     )
@@ -83,7 +86,9 @@ exports.delete = (req, res) => {
 };
 
 exports.getAll = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body
+
     SubCategory.findAll()
         .then(c => {
 
@@ -103,9 +108,11 @@ exports.getAll = (req, res) => {
 
 
 exports.getByID = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
+
     SubCategory.findOne({
         where: {
-            subCatID: req.params.subCatID
+            subCategoryID: req.params.subCategoryID
         }
     })
         .then(c => {

@@ -3,15 +3,15 @@ const Sequelize = require('sequelize');
 
 
 const city = connection.define('city', {
-    citID: {
+    cityID: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
         primaryKey: true
     },
-    citName: {
+    city: {
         type: Sequelize.STRING
     },
-    citNameAr: {
+    cityAr: {
         type: Sequelize.STRING
     }
 

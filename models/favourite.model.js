@@ -3,7 +3,7 @@ const Sequelize = require('sequelize');
 
 
 const Favourite = connection.define('favourite', {
-    favID: {
+    favouriteID: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
         primaryKey: true

@@ -1,15 +1,18 @@
 const Sequelize = require('sequelize');
 const ShippingDetails = require('../models/shippingDetails.model');
 const config = require('../config');
-const { insertingData } = require('../utils/helperFunc')
+const { insertingData, getUserDetails } = require('../utils/helperFunc')
 const { isAr } = require('../utils/verify')
 // const { getShippingDetailsSchema } = require('../utils/schema/schemas');
 const Serializer = require('sequelize-to-json');
 
 exports.add = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
     let payload = {
         weight: _b.weight,
+        currency: _b.currency,
+        currencyAr: _b.currencyAr,
         price: _b.price,
     }
 
@@ -27,21 +30,22 @@ exports.add = (req, res) => {
 };
 
 exports.update = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
 
-    if (!_b.shdID) {
+    if (!_b.shipID) {
         res.status(400).json({
-            status: false, message: "shdID does not exists"
+            status: false, message: "shipID does not exists"
         });
         return
     }
 
-    let payload = insertingData(_b, _b.shdID);
+    let payload = insertingData(_b, _b.shipID);
 
     ShippingDetails.update(payload,
         {
             where: {
-                shdID: _b.shdID
+                shipID: _b.shipID
             }
         }
     )
@@ -57,11 +61,12 @@ exports.update = (req, res) => {
 
 
 exports.delete = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
 
-    if (!_b.shdID) {
+    if (!_b.shipID) {
         res.status(400).json({
-            status: false, message: "shdID does not exists"
+            status: false, message: "shipID does not exists"
         });
         return
     }
@@ -70,7 +75,7 @@ exports.delete = (req, res) => {
     ShippingDetails.destroy(
         {
             where: {
-                shdID: _b.shdID
+                shipID: _b.shipID
             }
         }
     )
@@ -85,7 +90,9 @@ exports.delete = (req, res) => {
 };
 
 exports.getAll = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body
+
     ShippingDetails.findAll()
         .then(c => {
 
@@ -105,9 +112,11 @@ exports.getAll = (req, res) => {
 
 
 exports.getByID = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
+
     ShippingDetails.findOne({
         where: {
-            shdID: req.params.shdID
+            shipID: req.params.shipID
         }
     })
         .then(c => {

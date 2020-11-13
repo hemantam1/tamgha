@@ -3,6 +3,7 @@ const Sequelize = require('sequelize');
 const User = require('../models/user.model');
 const jwt = require('jsonwebtoken');
 const config = require('../config');
+const { getUserDetails } = require('../utils/helperFunc');
 
 
 exports.register = (req, res) => {
@@ -25,7 +26,7 @@ exports.register = (req, res) => {
             where: {
                 email: _b.email
             },
-            attributes: ['userId']
+            attributes: ['userID']
         })
             .then(u => {
                 if (u) {
@@ -35,20 +36,26 @@ exports.register = (req, res) => {
                     });
                 }
                 else {
-                    let payload = {
+                    User.create({
                         email: _b.email,
                         password: bcrypt.hashSync(_b.password, 0),
                         userName: _b.userName,
                         firstName: _b.firstName,
                         lastName: _b.lastName,
                         phoneNo: _b.phoneNo,
+<<<<<<< HEAD
+                        country_id: _b.country_id,
+                        isCivilIdUpload: false,
+                        categorySelected: false,
+=======
                         // country: _b.country,
                         isCivilUpload: false,
+>>>>>>> main
                         emailVerified: true // set to false in production
-                    }
-                    User.create(payload)
+                    })
                         .then(data => {
-                            const auth = `bearer ${jwt.sign(data.userId, config.passport.jwtSecret)}`;
+                            const token = jwt.sign(data.userID, config.passport.jwtSecret)
+                            const auth = `bearer ${token}`;
                             // mailer(auth);
                             res.status(200).send({
                                 status: true,
@@ -76,8 +83,8 @@ exports.register = (req, res) => {
 
 exports.login = (req, res) => {
     const _b = req.body;
-    if (!_b.userName) {
-        res.status(400).send({ message: "UserNAme cannot be null" });
+    if (!_b.email) {
+        res.status(400).send({ message: "email cannot be null" });
     }
     else if (!_b.password) {
         res.status(400).send({ message: "Password cannot be null" });
@@ -85,7 +92,7 @@ exports.login = (req, res) => {
     else {
         User.findOne({
             where: {
-                userName: _b.userName
+                email: _b.email
             }
         })
             .then(u => {
@@ -103,7 +110,7 @@ exports.login = (req, res) => {
                         });
                     }
                     else {
-                        const auth = `bearer ${jwt.sign(u.userId, config.passport.jwtSecret)}`;
+                        const auth = `bearer ${jwt.sign(u.userID, config.passport.jwtSecret)}`;
                         res.status(200).json({
                             ...u.dataValues,
                             auth: auth,
@@ -130,6 +137,7 @@ exports.login = (req, res) => {
 
 
 exports.suggestAll = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
 
     const _b = req.body;
     sequelize.query(
