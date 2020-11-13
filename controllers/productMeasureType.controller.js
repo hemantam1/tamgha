@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
 const ProductMeasureType = require('../models/prodMeasureType.model');
 const config = require('../config');
-const { insertingData } = require('../utils/helperFunc')
+const { insertingData, getUserDetails } = require('../utils/helperFunc')
 const { isAr } = require('../utils/verify')
 // const { getProductMeasureTypeSchema } = require('../utils/schema/schemas');
 const Serializer = require('sequelize-to-json');

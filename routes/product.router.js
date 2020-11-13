@@ -19,11 +19,11 @@ const multer = require('../services/multer.service');
 // router.post('/photos/upload', upload.array('photos', 12), productController.uploadPhotos);
 
 
-router.get('/', productController.getAll);
-router.post('/upload', multer.array("files"), productController.upload);
-router.post('/', productController.add);
-router.put('/', productController.update);
-router.delete('/', productController.delete);
+router.get('/', passport.authenticate('user', { session: false }), productController.getAll);
+router.post('/upload', multer.array("files"), passport.authenticate('user', { session: false }), productController.upload);
+router.post('/', passport.authenticate('user', { session: false }), productController.add);
+router.put('/', passport.authenticate('user', { session: false }), productController.update);
+router.delete('/', passport.authenticate('user', { session: false }), productController.delete);
 
 
 router.use('/category', require('./category.router'));

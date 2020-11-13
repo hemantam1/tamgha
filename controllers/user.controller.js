@@ -3,6 +3,7 @@ const Sequelize = require('sequelize');
 const User = require('../models/user.model');
 const jwt = require('jsonwebtoken');
 const config = require('../config');
+const { getUserDetails } = require('../utils/helperFunc');
 
 
 exports.register = (req, res) => {

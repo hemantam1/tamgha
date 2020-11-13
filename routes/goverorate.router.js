@@ -10,11 +10,11 @@ const passport = require('passport');
 
 router.use('/city', require('./city.router'));
 
-router.post('/', governorateController.add);
-router.put('/', governorateController.update);
-router.delete('/', governorateController.delete);
-router.get('/', governorateController.getAll);
-router.get('/:stateID', governorateController.getByID);
+router.post('/', passport.authenticate('user', { session: false }), governorateController.add);
+router.put('/', passport.authenticate('user', { session: false }), governorateController.update);
+router.delete('/', passport.authenticate('user', { session: false }), governorateController.delete);
+router.get('/', passport.authenticate('user', { session: false }), governorateController.getAll);
+router.get('/:stateID', passport.authenticate('user', { session: false }), governorateController.getByID);
 
 
 module.exports = router;

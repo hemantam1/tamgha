@@ -6,11 +6,11 @@ const { user, admin, guest } = require('../middlewares/auth')
 
 router.use('/subCategory', require('./subCategory.router'));
 
-router.get('/', categoryController.getAll);
+router.get('/', passport.authenticate('user', { session: false }), categoryController.getAll);
 
-router.post('/', categoryController.add);
-router.put('/', categoryController.update);
-router.delete('/', categoryController.delete);
+router.post('/', passport.authenticate('user', { session: false }), categoryController.add);
+router.put('/', passport.authenticate('user', { session: false }), categoryController.update);
+router.delete('/', passport.authenticate('user', { session: false }), categoryController.delete);
 
 
 

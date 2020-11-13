@@ -4,10 +4,10 @@ const passport = require('passport');
 const { user, admin, guest } = require('../middlewares/auth')
 
 
-router.get('/', productMVController.getAll);
-router.post('/', productMVController.add);
-router.put('/', productMVController.update);
-router.delete('/', productMVController.delete);
+router.get('/', passport.authenticate('user', { session: false }), productMVController.getAll);
+router.post('/', passport.authenticate('user', { session: false }), productMVController.add);
+router.put('/', passport.authenticate('user', { session: false }), productMVController.update);
+router.delete('/', passport.authenticate('user', { session: false }), productMVController.delete);
 
 
 

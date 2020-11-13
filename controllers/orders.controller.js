@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
 const Orders = require('../models/orders.model');
 const config = require('../config');
-const { insertingData } = require('../utils/helperFunc')
+const { insertingData, getUserDetails } = require('../utils/helperFunc')
 const { isAr } = require('../utils/verify')
 // const { getOrdersSchema } = require('../utils/schema/schemas');
 const Serializer = require('sequelize-to-json');

@@ -48,7 +48,6 @@ module.exports = {
                 .then(u => {
 
                     if (u) {
-                        // req.body['user'] = u
                         done(null, u);
                     } else done(null, false);
                 })

@@ -5,11 +5,11 @@ const { user, admin, guest } = require('../middlewares/auth')
 
 
 
-router.get('/', deliveryAddressController.getAll);
+router.get('/', passport.authenticate('user', { session: false }), deliveryAddressController.getAll);
 
-router.post('/', deliveryAddressController.add);
-router.put('/', deliveryAddressController.update);
-router.delete('/', deliveryAddressController.delete);
+router.post('/', passport.authenticate('user', { session: false }), deliveryAddressController.add);
+router.put('/', passport.authenticate('user', { session: false }), deliveryAddressController.update);
+router.delete('/', passport.authenticate('user', { session: false }), deliveryAddressController.delete);
 
 
 

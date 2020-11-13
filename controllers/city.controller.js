@@ -1,6 +1,7 @@
 const Sequelize = require('sequelize');
 const City = require('../models/city.model');
 const config = require('../config');
+const { getUserDetails } = require('../utils/helperFunc');
 
 exports.add = (req, res) => {
     const _b = req.body;
