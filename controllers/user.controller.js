@@ -43,14 +43,9 @@ exports.register = (req, res) => {
                         firstName: _b.firstName,
                         lastName: _b.lastName,
                         phoneNo: _b.phoneNo,
-<<<<<<< HEAD
                         country_id: _b.country_id,
                         isCivilIdUpload: false,
                         categorySelected: false,
-=======
-                        // country: _b.country,
-                        isCivilUpload: false,
->>>>>>> main
                         emailVerified: true // set to false in production
                     })
                         .then(data => {
