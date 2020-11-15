@@ -15,19 +15,9 @@ const { User } = require('../models/associations');
 const SubCategory = require('../models/subCategory.model');
 
 exports.add = (req, res) => {
-    const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
-    let payload = {
-        productName: _b.productName,
-        productName: _b.productName,
-        productDescription: _b.productDescription,
-        productDescriptionAr: _b.productDescriptionAr,
-        priceCurrencyAr: _b.priceCurrencyAr,
-        price: _b.price,
-        isAvailable: _b.isAvailable,
-        user_id: userId,
-        subCategory_id: _b.subCategory_id
-    }
+
+    let payload = getData(_b, req.user)
 
     Product.create(payload)
         .then(r => {
@@ -43,7 +33,6 @@ exports.add = (req, res) => {
 };
 
 exports.update = (req, res) => {
-    const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
 
     if (!_b.productID) {
@@ -51,7 +40,7 @@ exports.update = (req, res) => {
         return
     }
 
-    let payload = insertingData(_b, _b.productID);
+    let payload = getData(_b, req.user)
 
     Product.update(payload,
         {
@@ -84,7 +73,8 @@ exports.delete = (req, res) => {
     Product.destroy(
         {
             where: {
-                productID: _b.productID
+                productID: _b.productID,
+                user_id: userId
             }
         }
     )
@@ -99,7 +89,7 @@ exports.delete = (req, res) => {
 };
 
 exports.getAll = (req, res) => {
-    const { isAdmin, userId } = getUserDetails(req.user)
+    const { isAdmin, userId, lang } = getUserDetails(req.user)
     const _b = req.body
 
     Product.findAll({
@@ -115,7 +105,7 @@ exports.getAll = (req, res) => {
 
             if (!c) throw new Error('No Product found!');
 
-            let schema = getProductSchema(_b.languageID)
+            let schema = getProductSchema(lang)
 
             let data = Serializer.serializeMany(c, Product, schema);
             // console.log(data)
@@ -300,3 +290,38 @@ exports.explore = (req, res) => {
             res.status(400).json({ status: false });
         });
 };
+
+
+function getData(_b, user) {
+    const { isAdmin, userId, lang } = getUserDetails(user)
+    let payload = {
+        price: _b.price,
+        isAvailable: _b.isAvailable,
+        user_id: userId,
+        subCategory_id: _b.subCategory_id
+    }
+
+    if (isAdmin) {
+        payload = {
+            productName: _b.productName,
+            productName: _b.productName,
+            productDescription: _b.productDescription,
+            productDescriptionAr: _b.productDescriptionAr,
+            priceCurrencyAr: _b.priceCurrencyAr,
+            price: _b.price,
+            isAvailable: _b.isAvailable,
+            user_id: userId,
+            subCategory_id: _b.subCategory_id
+        }
+    } else if (isAr(lang)) {
+        payload.productNameAr = _b.productName
+        payload.productDescriptionAr = _b.productDescription
+        payload.priceCurrencyAr = _b.priceCurrency
+
+    } else {
+        payload.productName = _b.productName
+        payload.productDescription = _b.productDescription
+        payload.priceCurrency = _b.priceCurrency
+    }
+    return payload
+}

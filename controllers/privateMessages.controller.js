@@ -70,7 +70,8 @@ exports.delete = (req, res) => {
     PrivateMessage.destroy(
         {
             where: {
-                messageID: _b.messageID
+                messageID: _b.messageID,
+                user_id: userId
             }
         }
     )
@@ -88,7 +89,29 @@ exports.getAll = (req, res) => {
     const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body
 
-    PrivateMessage.findAll()
+    if (isAdmin) {
+        PrivateMessage.findAll()
+            .then(c => {
+
+                if (!c) throw new Error('No PrivateMessage found!');
+
+                // let schema = getPrivateMessageSchema(_b.languageID)
+
+                // let data = Serializer.serializeMany(c, PrivateMessage, schema);
+                res.status(200).json({ status: true, data: c });
+                return
+            })
+            .catch(err => {
+                console.error(err);
+                res.status(400).json({ status: false });
+            });
+    }
+
+    PrivateMessage.findAll({
+        where: {
+            user_id: userId
+        }
+    })
         .then(c => {
 
             if (!c) throw new Error('No PrivateMessage found!');
@@ -103,6 +126,7 @@ exports.getAll = (req, res) => {
             console.error(err);
             res.status(400).json({ status: false });
         });
+
 };
 
 

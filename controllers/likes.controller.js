@@ -87,7 +87,30 @@ exports.getAll = (req, res) => {
     const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body
 
-    Likes.findAll()
+    if (isAdmin) {
+        Likes.findAll()
+            .then(c => {
+
+                if (!c) throw new Error('No Likes found!');
+
+                // let schema = getLikesSchema(_b.languageID)
+
+                // let data = Serializer.serializeMany(c, Likes, schema);
+                res.status(200).json({ status: true, data: c });
+
+            })
+            .catch(err => {
+                console.error(err);
+                res.status(400).json({ status: false });
+            });
+    }
+
+    // write a query for user has a product and user fetching likes of his product
+    Likes.findAll({
+        // where: {
+        //     product_id: product_id
+        // }
+    })
         .then(c => {
 
             if (!c) throw new Error('No Likes found!');
@@ -102,6 +125,8 @@ exports.getAll = (req, res) => {
             console.error(err);
             res.status(400).json({ status: false });
         });
+
+
 };
 
 
@@ -110,7 +135,7 @@ exports.getByID = (req, res) => {
 
     Likes.findOne({
         where: {
-            likeID: req.params.likeID
+            product_id: req.params.product_id
         }
     })
         .then(c => {

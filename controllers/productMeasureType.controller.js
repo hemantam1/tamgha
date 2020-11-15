@@ -7,13 +7,9 @@ const { isAr } = require('../utils/verify')
 const Serializer = require('sequelize-to-json');
 
 exports.add = (req, res) => {
-    const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
-    let payload = {
-        type: _b.type,
-        typeAr: _b.typeAr,
-        product_id: _b.product_id
-    }
+
+    let payload = getData(_b, req.user)
 
     ProductMeasureType.create(payload)
         .then(r => {
@@ -30,14 +26,12 @@ exports.add = (req, res) => {
 
 exports.update = (req, res) => {
     const _b = req.body;
-    const { isAdmin, userId } = getUserDetails(req.user)
 
     if (!_b.typeID) {
         res.status(400).json({ status: false, message: "typeID does not exists" });
         return
     }
-
-    let payload = insertingData(_b, _b.typeID);
+    let payload = getData(_b, req.user)
 
     ProductMeasureType.update(payload,
         {
@@ -123,3 +117,24 @@ exports.getByID = (req, res) => {
             res.status(400).json({ status: false });
         });
 };
+function getData(_b, user) {
+
+    const { isAdmin, userId, lang } = getUserDetails(user)
+    let payload = {
+        type: _b.type,
+        product_id: _b.product_id
+    }
+    if (isAdmin) {
+        payload = {
+            type: _b.type,
+            typeAr: _b.typeAr,
+            product_id: _b.product_id
+        }
+    }
+    if (isAr(lang)) {
+        payload.typeAr = _b.type
+    } else {
+        payload.type = _b.type
+    }
+    return payload
+}

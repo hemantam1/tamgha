@@ -5,13 +5,10 @@ const { getUserDetails } = require('../utils/helperFunc');
 
 exports.add = (req, res) => {
     const _b = req.body;
-    const { isAdmin, userId } = getUserDetails(req.user)
 
-    State.create({
-        state: _b.state,
-        stateAr: _b.stateAr,
-        country_id: _b.country_id
-    })
+    let payload = getData(_b, req.user)
+
+    State.create(payload)
         .then(r => {
             res.status(200).json({ status: true, result: r });
         })
@@ -26,19 +23,13 @@ exports.add = (req, res) => {
 
 exports.update = (req, res) => {
     const _b = req.body;
-    const { isAdmin, userId } = getUserDetails(req.user)
-    let payload = {};
 
     if (!_b.stateID) {
         res.status(400).json({ status: false, message: "stateID does not exists" });
         return
     }
+    let payload = getData(_b, req.user)
 
-    if (_b.state)
-        payload.state = _b.state
-
-    if (_b.stateAr)
-        payload.stateAr = _b.stateAr
 
     State.update(payload,
         {
@@ -85,12 +76,16 @@ exports.delete = (req, res) => {
 };
 
 exports.getAll = (req, res) => {
-    const { isAdmin, userId } = getUserDetails(req.user)
+    const { isAdmin, userId, lang } = getUserDetails(req.user)
 
     State.findAll()
         .then(c => {
             if (!c) throw new Error('No State found!');
-            res.status(200).json({ status: true, data: c });
+            let schema = getStateSchema(lang)
+
+            let data = Serializer.serializeMany(c, State, schema);
+
+            res.status(200).json({ status: true, data });
         })
         .catch(err => {
             console.error(err);
@@ -116,3 +111,21 @@ exports.getByID = (req, res) => {
             res.status(400).json({ status: false });
         });
 };
+
+function getData(body, user) {
+    const { isAdmin, userId, lang } = getUserDetails(user)
+    let payload = {
+        country_id: _b.country_id
+    }
+    if (isAdmin) {
+        payload = {
+            state: _b.state,
+            stateAr: _b.stateAr,
+        }
+    } else if (isAr(lang)) {
+        payload.stateAr = body.state
+    } else {
+        payload.state = body.state
+    }
+    return payload
+}

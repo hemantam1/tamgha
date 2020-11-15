@@ -59,7 +59,28 @@ exports.getAll = (req, res) => {
     const _b = req.body
     const { isAdmin, userId } = getUserDetails(req.user)
 
-    Followers.findAll()
+    if (isAdmin) {
+        Followers.findAll()
+            .then(c => {
+
+                if (!c) throw new Error('No Followers found!');
+
+                // let schema = getActivitySchema(_b.languageID)
+
+                // let data = Serializer.serializeMany(c, Followers, schema);
+                res.status(200).json({ status: true, data: c });
+                return
+            })
+            .catch(err => {
+                console.error(err);
+                res.status(400).json({ status: false });
+            });
+    }
+    Followers.findAll({
+        where: {
+            user_id: userId
+        }
+    })
         .then(c => {
 
             if (!c) throw new Error('No Followers found!');

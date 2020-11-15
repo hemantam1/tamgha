@@ -8,30 +8,8 @@ const Serializer = require('sequelize-to-json');
 
 exports.add = (req, res) => {
     const _b = req.body;
-    const { isAdmin, userId } = getUserDetails(req.user)
 
-    let payload = {
-        firstName: _b.firstName,
-        lastName: _b.lastName,
-        fullName: _b.fullName,
-        city: _b.city,
-        country: _b.country,
-        address: _b.address,
-        addressAr: _b.addressAr,
-        area: _b.area,
-        block: _b.block,
-        street: _b.street,
-        avenue: _b.avenue,
-        houseNo: _b.houseNo,
-        floorNo: _b.floorNo,
-        flatNo: _b.flatNo,
-        phoneNo: _b.phoneNo,
-        email: _b.email,
-        emailAr: _b.emailAr,
-        note: _b.note,
-        noteAr: _b.noteAr,
-        user_id: userId
-    }
+    let payload = getData(_b, req.user)
 
     DeliveryAddress.create(payload)
         .then(r => {
@@ -48,15 +26,14 @@ exports.add = (req, res) => {
 
 exports.update = (req, res) => {
     const _b = req.body;
-    const { isAdmin, userId } = getUserDetails(req.user)
 
     if (!_b.addressID) {
         res.status(400).json({ status: false, message: "addressID does not exists" });
         return
     }
 
-    let payload = insertingData(_b, _b.addressID);
-    payload.user_id = userId
+    let payload = getData(_b, req.user)
+
     DeliveryAddress.update(payload,
         {
             where: {
@@ -88,7 +65,8 @@ exports.delete = (req, res) => {
     DeliveryAddress.destroy(
         {
             where: {
-                addressID: _b.addressID
+                addressID: _b.addressID,
+                user_id: userId
             }
         }
     )
@@ -106,7 +84,29 @@ exports.getAll = (req, res) => {
     const _b = req.body
     const { isAdmin, userId } = getUserDetails(req.user)
 
-    DeliveryAddress.findAll()
+    if (isAdmin) {
+        DeliveryAddress.findAll()
+            .then(c => {
+                // 
+                if (!c) throw new Error('No DeliveryAddress found!');
+
+                // let schema = getActivitySchema(_b.languageID)
+
+                // let data = Serializer.serializeMany(c, DeliveryAddress, schema);
+                res.status(200).json({ status: true, data: c });
+                // 
+                return
+            })
+            .catch(err => {
+                console.error(err);
+                res.status(400).json({ status: false });
+            });
+    }
+    DeliveryAddress.findAll({
+        where: {
+            user_id: userId
+        }
+    })
         .then(c => {
             // 
             if (!c) throw new Error('No DeliveryAddress found!');
@@ -116,11 +116,14 @@ exports.getAll = (req, res) => {
             // let data = Serializer.serializeMany(c, DeliveryAddress, schema);
             res.status(200).json({ status: true, data: c });
             // 
+            return
         })
         .catch(err => {
             console.error(err);
             res.status(400).json({ status: false });
         });
+
+
 };
 
 
@@ -141,3 +144,40 @@ exports.getByID = (req, res) => {
             res.status(400).json({ status: false });
         });
 };
+
+function getData(_b, user) {
+    const { isAdmin, userId, lang } = getUserDetails(user)
+    let payload = {
+        houseNo: _b.houseNo,
+        floorNo: _b.floorNo,
+        flatNo: _b.flatNo,
+        phoneNo: _b.phoneNo,
+        user_id: userId,
+        city_id: _b.city_id
+    }
+    if (isAr(lang)) {
+        payload.firstNameAr = _b.firstName
+        payload.lastNameAr = _b.lastName
+        payload.fullNameAr = _b.fullName
+        payload.addressAr = _b.addressAr
+        payload.emailAr = _b.emailAr
+        payload.noteAr = _b.noteAr
+        payload.areaAr = _b.area
+        payload.blockAr = _b.block
+        payload.streetAr = _b.street
+        payload.avenueAr = _b.avenue
+    }
+    else {
+        payload.firstName = _b.firstName
+        payload.lastName = _b.lastName
+        payload.fullName = _b.fullName
+        payload.address = _b.address
+        payload.email = _b.email
+        payload.note = _b.note
+        payload.area = _b.area
+        payload.block = _b.block
+        payload.street = _b.street
+        payload.avenue = _b.avenue
+    }
+    return payload
+}

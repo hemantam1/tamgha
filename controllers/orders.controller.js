@@ -14,7 +14,6 @@ exports.add = (req, res) => {
         paymentMethod: _b.paymentMethod,
         status: _b.status,
         orderCurrency: _b.orderCurrency,
-        orderCurrencyAr: _b.orderCurrencyAr,
         orderPrice: _b.orderPrice,
         orderQuantity: _b.orderQuantity,
         product_id: _b.product_id,
@@ -23,6 +22,11 @@ exports.add = (req, res) => {
         user_id: userId
     }
 
+    if (isAr(lang)) {
+        payload.orderCurrencyAr = _b.orderCurrency
+    } else {
+        payload.orderCurrency = _b.orderCurrency
+    }
     Orders.create(payload)
         .then(r => {
             res.status(200).json({ status: true, result: r });
@@ -93,10 +97,31 @@ exports.delete = (req, res) => {
 };
 
 exports.getAll = (req, res) => {
-    const { isAdmin, userId } = getUserDetails(req.user)
+    const { isAdmin, userId, lang } = getUserDetails(req.user)
     const _b = req.body
 
-    Orders.findAll()
+    if (isAdmin) {
+        Orders.findAll()
+            .then(c => {
+
+                if (!c) throw new Error('No Orders found!');
+
+                // let schema = getOrdersSchema(_b.languageID)
+
+                // let data = Serializer.serializeMany(c, Orders, schema);
+                res.status(200).json({ status: true, data: c });
+                return
+            })
+            .catch(err => {
+                console.error(err);
+                res.status(400).json({ status: false });
+            });
+    }
+    Orders.findAll({
+        where: {
+            user_id: userId
+        }
+    })
         .then(c => {
 
             if (!c) throw new Error('No Orders found!');
@@ -111,6 +136,8 @@ exports.getAll = (req, res) => {
             console.error(err);
             res.status(400).json({ status: false });
         });
+
+
 };
 
 

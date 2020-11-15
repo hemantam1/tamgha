@@ -91,10 +91,10 @@ exports.getAll = (req, res) => {
 
             if (!c) throw new Error('No Category found!');
 
-            // let schema = getCategorySchema(_b.languageID)
+            let schema = getCategorySchema(_b.languageID)
 
-            // let data = Serializer.serializeMany(c, Category, schema);
-            res.status(200).json({ status: true, data: c });
+            let data = Serializer.serializeMany(c, Category, schema);
+            res.status(200).json({ status: true, data });
 
         })
         .catch(err => {

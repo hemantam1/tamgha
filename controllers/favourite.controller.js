@@ -27,35 +27,35 @@ exports.add = (req, res) => {
         });
 };
 
-exports.update = (req, res) => {
-    const _b = req.body;
-    const { isAdmin, userId } = getUserDetails(req.user)
+// exports.update = (req, res) => {
+//     const _b = req.body;
+//     const { isAdmin, userId } = getUserDetails(req.user)
 
-    if (!_b.favouriteID) {
-        res.status(400).json({
-            status: false, message: "favouriteID does not exists"
-        });
-        return
-    }
+//     if (!_b.favouriteID) {
+//         res.status(400).json({
+//             status: false, message: "favouriteID does not exists"
+//         });
+//         return
+//     }
 
-    let payload = insertingData(_b, _b.favouriteID);
-    payload.user_id = userId
-    Favourite.update(payload,
-        {
-            where: {
-                favouriteID: _b.favouriteID
-            }
-        }
-    )
-        .then(c => {
-            if (!c) throw new Error('No Favourites found!');
-            res.status(200).json({ status: true, Favourite: c });
-        })
-        .catch(err => {
-            console.error(err);
-            res.status(400).json({ status: false });
-        });
-};
+//     let payload = insertingData(_b, _b.favouriteID);
+//     payload.user_id = userId
+//     Favourite.update(payload,
+//         {
+//             where: {
+//                 favouriteID: _b.favouriteID
+//             }
+//         }
+//     )
+//         .then(c => {
+//             if (!c) throw new Error('No Favourites found!');
+//             res.status(200).json({ status: true, Favourite: c });
+//         })
+//         .catch(err => {
+//             console.error(err);
+//             res.status(400).json({ status: false });
+//         });
+// };
 
 
 exports.delete = (req, res) => {
@@ -73,7 +73,8 @@ exports.delete = (req, res) => {
     Favourite.destroy(
         {
             where: {
-                favouriteID: _b.favouriteID
+                favouriteID: _b.favouriteID,
+                user_id: userId
             }
         }
     )
@@ -91,7 +92,28 @@ exports.getAll = (req, res) => {
     const _b = req.body
     const { isAdmin, userId } = getUserDetails(req.user)
 
-    Favourite.findAll()
+    if (isAdmin) {
+        Favourite.findAll()
+            .then(c => {
+
+                if (!c) throw new Error('No Favourite found!');
+
+                // let schema = getFavouriteSchema(_b.languageID)
+
+                // let data = Serializer.serializeMany(c, Favourite, schema);
+                res.status(200).json({ status: true, data: c });
+                return
+            })
+            .catch(err => {
+                console.error(err);
+                res.status(400).json({ status: false });
+            });
+    }
+    Favourite.findAll({
+        where: {
+            user_id: userId
+        }
+    })
         .then(c => {
 
             if (!c) throw new Error('No Favourite found!');
@@ -106,6 +128,7 @@ exports.getAll = (req, res) => {
             console.error(err);
             res.status(400).json({ status: false });
         });
+
 };
 
 

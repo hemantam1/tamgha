@@ -7,21 +7,9 @@ const { isAr } = require('../utils/verify')
 const Serializer = require('sequelize-to-json');
 
 exports.add = (req, res) => {
-    const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
-    let payload = {
-        size: _b.size,
-        available: _b.available,
-        color: _b.color,
-        colorAr: _b.colorAr,
-        priceCurrency: _b.priceCurrency,
-        priceCurrencyAr: _b.priceCurrencyAr,
-        totalPrice: _b.totalPrice,
-        isFaltDiscount: _b.isFaltDiscount,
-        priceExcluding: _b.priceExcluding,
-        product_id: _b.product_id
-    }
 
+    let payload = getData(_b, req.user)
     ProdDetail.create(payload)
         .then(r => {
             res.status(200).json({ status: true, result: r });
@@ -36,15 +24,14 @@ exports.add = (req, res) => {
 };
 
 exports.update = (req, res) => {
-    const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
 
     if (!_b.productDetailID) {
         res.status(400).json({ status: false, message: "productDetailID does not exists" });
         return
     }
+    let payload = getData(_b, req.user)
 
-    let payload = insertingData(_b, _b.productDetailID);
 
     ProdDetail.update(payload,
         {
@@ -54,7 +41,7 @@ exports.update = (req, res) => {
         }
     )
         .then(c => {
-            if (!c) throw new Error('No Activities found!');
+            if (!c) throw new Error('No ProductDetails found!');
             res.status(200).json({ status: true, category: c });
         })
         .catch(err => {
@@ -73,11 +60,11 @@ exports.delete = (req, res) => {
         return
     }
 
-
+    // write a logic for is permissible to delete this productDetail
     ProdDetail.destroy(
         {
             where: {
-                productDetailID: _b.productDetailID
+                productDetailID: _b.productDetailID,
             }
         }
     )
@@ -95,7 +82,28 @@ exports.getAll = (req, res) => {
     const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body
 
-    ProdDetail.findAll()
+    if (isAdmin) {
+        ProdDetail.findAll()
+            .then(c => {
+
+                if (!c) throw new Error('No ProdDetail found!');
+
+                // let schema = getSchema(_b.languageID)
+
+                // let data = Serializer.serializeMany(c, ProdDetail, schema);
+                res.status(200).json({ status: true, data: c });
+                return
+            })
+            .catch(err => {
+                console.error(err);
+                res.status(400).json({ status: false });
+            });
+    }
+    ProdDetail.findAll({
+        where: {
+            user_id: userId
+        }
+    })
         .then(c => {
 
             if (!c) throw new Error('No ProdDetail found!');
@@ -110,6 +118,8 @@ exports.getAll = (req, res) => {
             console.error(err);
             res.status(400).json({ status: false });
         });
+
+
 };
 
 
@@ -118,7 +128,7 @@ exports.getByID = (req, res) => {
 
     ProdDetail.findOne({
         where: {
-            productDetailID: req.params.productDetailID
+            product_id: req.params.product_id
         }
     })
         .then(c => {
@@ -130,3 +140,24 @@ exports.getByID = (req, res) => {
             res.status(400).json({ status: false });
         });
 };
+function getData(_b, user) {
+    const { isAdmin, userId, lang } = getUserDetails(user)
+
+    let payload = {
+        available: _b.available,
+        totalPrice: _b.totalPrice,
+        isFaltDiscount: _b.isFaltDiscount,
+        priceExcluding: _b.priceExcluding,
+        product_id: _b.product_id
+    }
+    if (isAr(lang)) {
+        payload.sizeAr = _b.size
+        payload.colorAr = _b.color
+        payload.priceCurrencyAr = _b.priceCurrency
+    } else {
+        payload.size = _b.size
+        payload.color = _b.color
+        payload.priceCurrency = _b.priceCurrency
+    }
+    return payload
+}

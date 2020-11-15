@@ -10,10 +10,13 @@ exports.add = (req, res) => {
     const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
     let payload = {
-        measurementType: _b.measurementType,
-        measurementTypeAr: _b.measurementTypeAr,
         measurementValue: _b.measurementValue,
         productDetail_id: _b.productDetail_id
+    }
+    if (isAr(lang)) {
+        payload.measurementTypeAr = _b.measurementType
+    } else {
+        payload.measurementType = _b.measurementType
     }
 
     MeasurementValue.create(payload)
@@ -89,7 +92,30 @@ exports.getAll = (req, res) => {
     const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body
 
-    MeasurementValue.findAll()
+    if (isAdmin) {
+
+
+        MeasurementValue.findAll()
+            .then(c => {
+
+                if (!c) throw new Error('No MeasurementValue found!');
+
+                // let schema = getMeasurementValueSchema(_b.languageID)
+
+                // let data = Serializer.serializeMany(c, MeasurementValue, schema);
+                res.status(200).json({ status: true, data: c });
+
+            })
+            .catch(err => {
+                console.error(err);
+                res.status(400).json({ status: false });
+            });
+    }
+
+    // write a logic for getting a measurements of a product with product_id 
+    MeasurementValue.findAll({
+        // where:
+    })
         .then(c => {
 
             if (!c) throw new Error('No MeasurementValue found!');
@@ -104,6 +130,7 @@ exports.getAll = (req, res) => {
             console.error(err);
             res.status(400).json({ status: false });
         });
+
 };
 
 

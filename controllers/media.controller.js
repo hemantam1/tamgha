@@ -11,7 +11,7 @@ exports.add = (req, res) => {
         const { isAdmin, userId } = getUserDetails(req.user)
     }
     const _b = req.body;
-    console.log(req)
+    // console.log(req)
     let payload = {
         mediaLink: _b.mediaLink,
         user_id: userId,
