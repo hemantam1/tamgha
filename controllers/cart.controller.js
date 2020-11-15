@@ -3,19 +3,12 @@ const Cart = require('../models/cart.model');
 const config = require('../config');
 const { insertingData, getUserDetails } = require('../utils/helperFunc')
 const { isAr } = require('../utils/verify')
-// const { getCartSchema } = require('../utils/schema/schemas');
+const { getCartSchema } = require('../utils/schema/schemas');
 const Serializer = require('sequelize-to-json');
 
 exports.add = (req, res) => {
-    const _b = req.body;
-    const { isAdmin, userId } = getUserDetails(req.user)
 
-    let payload = {
-        quantity: _b.quantity,
-        price: _b.price,
-        product_id: _b.product_id,
-        user_id: userId
-    }
+    let payload = getData(req.body, req.user)
 
     Cart.create(payload)
         .then(r => {
@@ -32,7 +25,6 @@ exports.add = (req, res) => {
 
 exports.update = (req, res) => {
     const _b = req.body;
-    const { isAdmin, userId } = getUserDetails(req.user)
 
     if (!_b.cartID) {
         res.status(400).json({
@@ -41,8 +33,8 @@ exports.update = (req, res) => {
         return
     }
 
-    let payload = insertingData(_b, _b.cartID);
-    payload.user_id = userId
+    let payload = getData(_b, req.user)
+
     Cart.update(payload,
         {
             where: {
@@ -72,12 +64,17 @@ exports.delete = (req, res) => {
         return
     }
 
-
-    Cart.destroy({
+    let payload = {
         where: {
-            cartID: _b.cartID
+            cartID: _b.cartID,
         }
-    })
+    }
+    if (!isAdmin) {
+        payload.where.user_id = userId
+    }
+
+    // console.log(payload, "payload")
+    Cart.destroy(payload)
         .then(c => {
             if (!c) throw new Error('No Cart found!');
             res.status(200).json({ status: true, Cart: c });
@@ -89,24 +86,43 @@ exports.delete = (req, res) => {
 };
 
 exports.getAll = (req, res) => {
-    const _b = req.body
-    const { isAdmin, userId } = getUserDetails(req.user)
+    // const _b = req.body
+    const { isAdmin, userId, lang } = getUserDetails(req.user)
     // console.log(userId, "User", isAdmin)
-    Cart.findAll()
-        .then(c => {
+    if (isAdmin) {
+        Cart.findAll()
+            .then(c => {
+                if (!c) throw new Error('No Cart found!');
 
-            if (!c) throw new Error('No Cart found!');
+                let schema = getCartSchema(lang)
 
-            // let schema = getCartSchema(_b.languageID)
+                let data = Serializer.serializeMany(c, Cart, schema);
+                res.status(200).json({ status: true, data });
+                return
+            })
+            .catch(err => {
+                console.error(err);
+                res.status(400).json({ status: false });
+            });
+    }
+    Cart.findAll({
+        where: {
+            user_id: userId
+        }
+    }).then(c => {
+        if (!c) throw new Error('No Cart found!');
 
-            // let data = Serializer.serializeMany(c, Cart, schema);
-            res.status(200).json({ status: true, data: c });
+        let schema = getCartSchema(lang)
 
-        })
+        let data = Serializer.serializeMany(c, Cart, schema);
+        res.status(200).json({ status: true, data });
+    })
         .catch(err => {
             console.error(err);
             res.status(400).json({ status: false });
         });
+
+
 };
 
 
@@ -127,3 +143,21 @@ exports.getByID = (req, res) => {
             res.status(400).json({ status: false });
         });
 };
+
+
+function getData(body, user) {
+    const { isAdmin, userId, lang } = getUserDetails(user)
+
+    let payload = {
+        quantity: _b.quantity,
+        price: _b.price,
+        product_id: _b.product_id,
+        user_id: userId
+    }
+    if (isAr(lang)) {
+        payload.priceCurrencyAr = body.priceCurrency
+    } else {
+        payload.priceCurrency = body.priceCurrency
+    }
+    return payload
+}

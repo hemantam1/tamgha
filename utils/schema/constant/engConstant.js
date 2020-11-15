@@ -2,13 +2,14 @@ module.exports = {
     // Product
     product: "productName", productDescription: "productDescription", productCurrency: "priceCurrency",
     // City & Country
-    city: "citName", country: "ctryName",
+    city: "city", country: "country", state: "state",
     // uSER
     firstName: "firstName", lastName: "lastName", country: "country",
     // UsercATEGORY
-    usrCatName: "usrCatName",
+    usrCatName: "userCategory",
     // Category & Sub Category
-    catName: "catName", subCatName: "subCatName",
-
+    catName: "category", subCatName: "subCategory",
+    // Cart
+    priceCurrency: "priceCurrency",
 
 }

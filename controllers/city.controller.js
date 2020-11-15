@@ -2,16 +2,15 @@ const Sequelize = require('sequelize');
 const City = require('../models/city.model');
 const config = require('../config');
 const { getUserDetails } = require('../utils/helperFunc');
+const { isAr } = require('../utils/verify');
+const { getCitySchema } = require('../utils/schema/schemas');
+const Serializer = require('sequelize-to-json');
 
 exports.add = (req, res) => {
     const _b = req.body;
-    const { isAdmin, userId } = getUserDetails(req.user)
 
-    City.create({
-        city: _b.city,
-        cityAr: _b.cityAr,
-        state_id: _b.state_id
-    })
+    let payload = getData(_b, req.user)
+    City.create(payload)
         .then(r => {
             res.status(200).json({ status: true, result: r });
         })
@@ -26,19 +25,13 @@ exports.add = (req, res) => {
 
 exports.update = (req, res) => {
     const _b = req.body;
-    let payload = {};
-    const { isAdmin, userId } = getUserDetails(req.user)
 
     if (!_b.cityID) {
         res.status(400).json({ status: false, message: "cityID does not exists" });
         return
     }
 
-    if (_b.city)
-        payload.city = _b.city
-
-    if (_b.cityAr)
-        payload.cityAr = _b.cityAr
+    let payload = getData(_b, req.user)
 
     City.update(payload,
         {
@@ -85,12 +78,16 @@ exports.delete = (req, res) => {
 };
 
 exports.getAll = (req, res) => {
-    const { isAdmin, userId } = getUserDetails(req.user)
+    const { isAdmin, userId, lang } = getUserDetails(req.user)
 
     City.findAll()
         .then(c => {
             if (!c) throw new Error('No City found!');
-            res.status(200).json({ status: true, data: c });
+            let schema = getCitySchema(lang)
+
+            let data = Serializer.serializeMany(c, City, schema);
+
+            res.status(200).json({ status: true, data });
         })
         .catch(err => {
             console.error(err);
@@ -116,3 +113,21 @@ exports.getByID = (req, res) => {
             res.status(400).json({ status: false });
         });
 };
+function getData(body, user) {
+    const { isAdmin, userId, lang } = getUserDetails(user)
+    let payload = {}
+    if (isAdmin) {
+        payload = {
+            city: _b.city,
+            cityAr: _b.cityAr,
+            state_id: _b.state_id
+        }
+    } else if (isAr(lang)) {
+        payload.cityAr = body.city
+        payload.state_id = body.state_id
+    } else {
+        payload.city = body.city
+        payload.state_id = body.state_id
+    }
+    return payload
+}

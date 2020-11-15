@@ -8,11 +8,8 @@ const Serializer = require('sequelize-to-json');
 
 exports.add = (req, res) => {
     const _b = req.body;
-    const { isAdmin, userId } = getUserDetails(req.user)
-    let payload = {
-        category: _b.category,
-        categoryAr: _b.categoryAr,
-    }
+
+    let payload = getData(_b, req.user)
 
     Category.create(payload)
         .then(r => {
@@ -29,7 +26,6 @@ exports.add = (req, res) => {
 
 exports.update = (req, res) => {
     const _b = req.body;
-    const { isAdmin, userId } = getUserDetails(req.user)
 
     if (!_b.categoryID) {
         res.status(400).json({
@@ -37,8 +33,7 @@ exports.update = (req, res) => {
         });
         return
     }
-
-    let payload = insertingData(_b, _b.categoryID);
+    let payload = getData(_b, req.user)
 
     Category.update(payload,
         {
@@ -126,3 +121,18 @@ exports.getByID = (req, res) => {
             res.status(400).json({ status: false });
         });
 };
+
+function getData(body, user) {
+    const { isAdmin, userId, lang } = getUserDetails(user)
+    let payload = {}
+    if (isAdmin) {
+        payload.category = body.category
+        payload.categoryAr = body.categoryAr
+    } else if (isAr(lang)) {
+        payload.categoryAr = body.category
+    }
+    else {
+        payload.category = body.category
+    }
+    return payload
+}

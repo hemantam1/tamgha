@@ -13,6 +13,12 @@ const Cart = connection.define('cart', {
         allowNull: false,
         defaultValue: 1
     },
+    priceCurrency: {
+        type: Sequelize.STRING,
+    },
+    priceCurrencyAr: {
+        type: Sequelize.STRING,
+    },
     price: {
         type: Sequelize.DOUBLE(8, 2),
     }

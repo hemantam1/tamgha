@@ -14,10 +14,10 @@ const user = connection.define('user', {
     password: {
         type: Sequelize.STRING,
     },
-    userType:{
+    userType: {
         type: Sequelize.ENUM,
         values: ['User', 'Admin'],
-        defaultValue:'User'
+        defaultValue: 'User'
     },
     userName: {
         type: Sequelize.STRING,
@@ -49,10 +49,13 @@ const user = connection.define('user', {
     // countryAr: {
     //     type: Sequelize.STRING,
     // },
+    prefferedLanguageCode: {
+        type: Sequelize.STRING,
+    },
     idType: {
         type: Sequelize.ENUM,
         values: ['Passport', 'Civil'],
-        allowNull:true
+        allowNull: true
     },
     idFront: {
         type: Sequelize.STRING,

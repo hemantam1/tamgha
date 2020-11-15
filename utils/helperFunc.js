@@ -14,10 +14,19 @@ function getUserDetails(user) {
     let object = {
         isAdmin: false
     }
-    if (user.dataValues.userType === 'Admin') {
-        object.isAdmin = true
+    // console.log(user.dataValues.prefferedLanguageCode, "LANGUAGE CODE")
+    if (user !== undefined) {
+
+        if (user.dataValues.userType === 'Admin') {
+            object.isAdmin = true
+        }
+        if (user.dataValues.prefferedLanguageCode) {
+            object.lang = user.dataValues.prefferedLanguageCode
+        }
+        object.userId = user.dataValues.userID
+        return object
     }
-    object.userId = user.dataValues.userID
+    object.isGuest = true
     return object
 }
 
