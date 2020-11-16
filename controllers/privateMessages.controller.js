@@ -133,9 +133,9 @@ exports.getAll = (req, res) => {
 exports.getByID = (req, res) => {
     const { isAdmin, userId } = getUserDetails(req.user)
 
-    PrivateMessage.findOne({
+    PrivateMessage.findAll({
         where: {
-            messageID: req.params.messageID
+            messageID: req.params.to_user_id
         }
     })
         .then(c => {

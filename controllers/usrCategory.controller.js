@@ -7,13 +7,9 @@ const { isAr } = require('../utils/verify')
 const Serializer = require('sequelize-to-json');
 
 exports.add = (req, res) => {
-    const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
-    let payload = {
-        userCategory: _b.userCategory,
-        userCategoryAr: _b.userCategoryAr,
-    }
 
+    let payload = getData(_b, req.user)
     UsrCategory.create(payload)
         .then(r => {
             res.status(200).json({ status: true, result: r });
@@ -38,7 +34,7 @@ exports.update = (req, res) => {
         return
     }
 
-    let payload = insertingData(_b, _b.userCategoryID);
+    let payload = getData(_b, req.user)
 
     UsrCategory.update(payload,
         {
@@ -90,7 +86,27 @@ exports.delete = (req, res) => {
 exports.getAll = (req, res) => {
     const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body
+    if (req.params.userId) {
+        UsrCategory.findAll({
+            where: {
+                user_id: userId
+            }
+        })
+            .then(c => {
 
+                if (!c) throw new Error('No UsrCategory found!');
+
+                // let schema = getCategorySchema(_b.languageID)
+
+                // let data = Serializer.serializeMany(c, UsrCategory, schema);
+                res.status(200).json({ status: true, data: c });
+
+            })
+            .catch(err => {
+                console.error(err);
+                res.status(400).json({ status: false });
+            });
+    }
     UsrCategory.findAll()
         .then(c => {
 
@@ -126,3 +142,19 @@ exports.getByID = (req, res) => {
             res.status(400).json({ status: false });
         });
 };
+
+function getData(_b, user) {
+    const { isAdmin, userId } = getUserDetails(user)
+    let payload = {}
+    if (isAdmin) {
+        payload = {
+            userCategory: _b.userCategory,
+            userCategoryAr: _b.userCategoryAr,
+        }
+    } else if (isAr(lang)) {
+        payload.userCategoryAr = _b.userCategory
+    } else {
+        payload.userCategory = _b.userCategory
+    }
+    return payload
+}

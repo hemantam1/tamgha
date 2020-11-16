@@ -102,12 +102,20 @@ exports.getAll = (req, res) => {
 
 exports.getByID = (req, res) => {
     const { isAdmin, userId } = getUserDetails(req.user)
-
-    ProductMeasureType.findOne({
+    let opts = {
         where: {
             typeID: req.params.typeID
         }
-    })
+    }
+    let productId = req.params.product_id
+    if (productId) {
+        opts = {
+            where: {
+                product_id: req.params.product_id
+            }
+        }
+    }
+    ProductMeasureType.findAll(opts)
         .then(c => {
             if (!c) throw new Error('No ProductMeasurementType found!');
             res.status(200).json({ status: true, data: c });

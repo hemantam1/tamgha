@@ -7,20 +7,9 @@ const { isAr } = require('../utils/verify')
 const Serializer = require('sequelize-to-json');
 
 exports.add = (req, res) => {
-    const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
-    let payload = {
-        salePrice: _b.salePrice,
-        paymentGateway: _b.paymentGateway,
-        status: _b.status,
-        isSuccesfull: _b.isSuccesfull,
-        isRefunded: _b.isRefunded,
-        finalAmmount: _b.finalAmmount,
-        user_id: userId,
-        order_id: _b.order_id
 
-    }
-
+    let payload = getData(_b, req.user)
 
     Transaction.create(payload)
         .then(r => {
@@ -73,7 +62,6 @@ exports.delete = (req, res) => {
         return
     }
 
-
     Transaction.destroy(
         {
             where: {
@@ -95,7 +83,45 @@ exports.getAll = (req, res) => {
     const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body
 
-    Transaction.findAll()
+    if (isAdmin) {
+        Transaction.findAll()
+            .then(c => {
+
+                if (!c) throw new Error('No Transaction found!');
+
+                // let schema = getTransactionSchema(_b.languageID)
+
+                // let data = Serializer.serializeMany(c, Transaction, schema);
+                res.status(200).json({ status: true, data: c });
+                return
+            })
+            .catch(err => {
+                console.error(err);
+                res.status(400).json({ status: false });
+            });
+    }
+    if (req.params.seller_user_id) {
+        Transaction.findAll({
+            where: { seller_user_id: userId }
+        })
+            .then(c => {
+
+                if (!c) throw new Error('No Transaction found!');
+
+                // let schema = getTransactionSchema(_b.languageID)
+
+                // let data = Serializer.serializeMany(c, Transaction, schema);
+                res.status(200).json({ status: true, data: c });
+                return
+            })
+            .catch(err => {
+                console.error(err);
+                res.status(400).json({ status: false });
+            });
+    }
+    Transaction.findAll({
+        where: { user_id: userId }
+    })
         .then(c => {
 
             if (!c) throw new Error('No Transaction found!');
@@ -110,6 +136,8 @@ exports.getAll = (req, res) => {
             console.error(err);
             res.status(400).json({ status: false });
         });
+
+
 };
 
 
@@ -130,3 +158,19 @@ exports.getByID = (req, res) => {
             res.status(400).json({ status: false });
         });
 };
+
+
+function getData(_b, user) {
+    const { isAdmin, userId } = getUserDetails(user)
+    let payload = {
+        salePrice: _b.salePrice,
+        paymentGateway: _b.paymentGateway,
+        status: _b.status,
+        isSuccesfull: _b.isSuccesfull,
+        isRefunded: _b.isRefunded,
+        finalAmmount: _b.finalAmmount,
+        user_id: userId,
+        order_id: _b.order_id
+    }
+    return payload
+}

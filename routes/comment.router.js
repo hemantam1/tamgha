@@ -8,6 +8,7 @@ router.get('/', passport.authenticate('user', { session: false }), commentContro
 router.post('/', passport.authenticate('user', { session: false }), commentController.add);
 router.put('/', passport.authenticate('user', { session: false }), commentController.update);
 router.delete('/', passport.authenticate('user', { session: false }), commentController.delete);
+router.get('/:product_id', passport.authenticate('user', { session: false }), commentController.getByID);
 
 
 

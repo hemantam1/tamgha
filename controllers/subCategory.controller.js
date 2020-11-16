@@ -7,14 +7,9 @@ const { isAr } = require('../utils/verify')
 const Serializer = require('sequelize-to-json');
 
 exports.add = (req, res) => {
-    const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
-    let payload = {
-        subCategory: _b.subCategory,
-        subCategoryAr: _b.subCategoryAr,
-        category_id: _b.category_id
-    }
 
+    let payload = getData(_b, req.user)
 
     SubCategory.create(payload)
         .then(r => {
@@ -38,7 +33,7 @@ exports.update = (req, res) => {
         return
     }
 
-    let payload = insertingData(_b, _b.subCategoryID);
+    let payload = getData(_b, req.user);
 
     SubCategory.update(payload,
         {
@@ -124,3 +119,22 @@ exports.getByID = (req, res) => {
             res.status(400).json({ status: false });
         });
 };
+
+function getData(_b, user) {
+    const { isAdmin, userId, lang } = getUserDetails(user)
+    let payload = {
+        category_id: _b.category_id,
+    }
+    if (isAdmin) {
+        payload = {
+            subCategory: _b.subCategory,
+            subCategoryAr: _b.subCategoryAr,
+            category_id: _b.category_id
+        }
+    } else if (isAr(lang)) {
+        payload.subCategoryAr = _b.subCategory
+    } else {
+        payload.subCategory = _b.subCategory
+    }
+    return payload
+}

@@ -107,6 +107,13 @@ exports.getAll = (req, res) => {
 exports.getByID = (req, res) => {
     const { isAdmin, userId } = getUserDetails(req.user)
 
+    if (req.params.product_id) {
+        opts = {
+            where: {
+                // product_id
+            }
+        }
+    }
     Category.findOne({
         where: {
             categoryID: req.params.categoryID

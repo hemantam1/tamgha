@@ -9,6 +9,12 @@ const Serializer = require('sequelize-to-json');
 exports.add = (req, res) => {
     const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
+    if (!isAdmin) {
+        res.status(400).json({
+            status: false, message: "Not a Admin"
+        });
+        return
+    }
     let payload = {
         weight: _b.weight,
         currency: _b.currency,
@@ -27,6 +33,7 @@ exports.add = (req, res) => {
                 error: err
             });
         });
+
 };
 
 exports.update = (req, res) => {
@@ -39,7 +46,12 @@ exports.update = (req, res) => {
         });
         return
     }
-
+    if (!isAdmin) {
+        res.status(400).json({
+            status: false, message: "Not a Admin"
+        });
+        return
+    }
     let payload = insertingData(_b, _b.shipID);
 
     ShippingDetails.update(payload,
@@ -63,7 +75,12 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
     const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
-
+    if (!isAdmin) {
+        res.status(400).json({
+            status: false, message: "Not a Admin"
+        });
+        return
+    }
     if (!_b.shipID) {
         res.status(400).json({
             status: false, message: "shipID does not exists"

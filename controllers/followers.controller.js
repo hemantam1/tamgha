@@ -100,12 +100,20 @@ exports.getAll = (req, res) => {
 
 exports.getByID = (req, res) => {
     const { isAdmin, userId } = getUserDetails(req.user)
-
-    Followers.findOne({
+    let followerUserId = req.params.followerUserId
+    let opts = {
         where: {
-            followerID: req.params.followerID
+            followerID: req.params.follower_user_id
         }
-    })
+    }
+    if (followerUserId) {
+        opts = {
+            where: {
+                follower_user_id: req.params.follower_user_id
+            }
+        }
+    }
+    Followers.findAll(opts)
         .then(c => {
             if (!c) throw new Error('No Followers found!');
             res.status(200).json({ status: true, data: c });

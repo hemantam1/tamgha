@@ -10,9 +10,11 @@ exports.add = (req, res) => {
     const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
     let payload = {
-        reciptType: _b.reciptType,
         order_id: _b.order_id,
-        user_id: userId
+        buyer_user_id: userId,
+        // Join Two tables Orders, Product, Users.
+        // fetch from order_id --> product_id --> user_id 
+        // seller_user_id: user_id
     }
 
 
@@ -71,7 +73,8 @@ exports.delete = (req, res) => {
     Recipts.destroy(
         {
             where: {
-                reciptID: _b.reciptID
+                reciptID: _b.reciptID,
+                seller_user_id: userId
             }
         }
     )
@@ -89,7 +92,30 @@ exports.getAll = (req, res) => {
     const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body
 
-    Recipts.findAll()
+    if (isAdmin) {
+        Recipts.findAll()
+            .then(c => {
+
+                if (!c) throw new Error('No Recipts found!');
+
+                // let schema = getReciptsSchema(_b.languageID)
+
+                // let data = Serializer.serializeMany(c, Recipts, schema);
+                res.status(200).json({ status: true, data: c });
+
+            })
+            .catch(err => {
+                console.error(err);
+                res.status(400).json({ status: false });
+            });
+    }
+
+
+    Recipts.findAll({
+        where: {
+            buyer_user_id: userId
+        }
+    })
         .then(c => {
 
             if (!c) throw new Error('No Recipts found!');
@@ -104,6 +130,28 @@ exports.getAll = (req, res) => {
             console.error(err);
             res.status(400).json({ status: false });
         });
+    if (req.params.sold) {
+        Recipts.findAll({
+            where: {
+                seller_user_id: userId
+            }
+        })
+            .then(c => {
+
+                if (!c) throw new Error('No Recipts found!');
+
+                // let schema = getReciptsSchema(_b.languageID)
+
+                // let data = Serializer.serializeMany(c, Recipts, schema);
+                res.status(200).json({ status: true, data: c });
+
+            })
+            .catch(err => {
+                console.error(err);
+                res.status(400).json({ status: false });
+            });
+    }
+
 };
 
 

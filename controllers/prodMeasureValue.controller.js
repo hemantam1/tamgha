@@ -93,8 +93,6 @@ exports.getAll = (req, res) => {
     const _b = req.body
 
     if (isAdmin) {
-
-
         MeasurementValue.findAll()
             .then(c => {
 
@@ -114,7 +112,9 @@ exports.getAll = (req, res) => {
 
     // write a logic for getting a measurements of a product with product_id 
     MeasurementValue.findAll({
-        // where:
+        where: {
+            productDetail_id: req.params.productDetail_id
+        }
     })
         .then(c => {
 

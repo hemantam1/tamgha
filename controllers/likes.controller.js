@@ -133,7 +133,7 @@ exports.getAll = (req, res) => {
 exports.getByID = (req, res) => {
     const { isAdmin, userId } = getUserDetails(req.user)
 
-    Likes.findOne({
+    Likes.findAll({
         where: {
             product_id: req.params.product_id
         }

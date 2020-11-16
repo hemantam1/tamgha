@@ -134,12 +134,20 @@ exports.getAll = (req, res) => {
 
 exports.getByID = (req, res) => {
     const { isAdmin, userId } = getUserDetails(req.user)
-
-    Favourite.findOne({
-        where: {
-            favouriteID: req.params.favouriteID
+    let productId = req.params.product_id
+    let opts = {
+        // where: {
+        //     favouriteID: req.params.favouriteID
+        // }
+    }
+    if (productId) {
+        opts = {
+            where: {
+                product_id: productId
+            }
         }
-    })
+    }
+    Favourite.findAll(opts)
         .then(c => {
             if (!c) throw new Error('No Favourite found!');
             res.status(200).json({ status: true, data: c });

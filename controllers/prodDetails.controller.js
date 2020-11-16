@@ -101,7 +101,7 @@ exports.getAll = (req, res) => {
     }
     ProdDetail.findAll({
         where: {
-            user_id: userId
+            product_id: req.params.product_id
         }
     })
         .then(c => {

@@ -91,27 +91,37 @@ exports.getAll = (req, res) => {
     const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body
 
-    Media.findAll()
-        .then(c => {
+    if (isAdmin) {
+        Media.findAll()
+            .then(c => {
 
-            if (!c) throw new Error('No Media found!');
+                if (!c) throw new Error('No Media found!');
 
-            // let schema = getMediaSchema(_b.languageID)
+                // let schema = getMediaSchema(_b.languageID)
 
-            // let data = Serializer.serializeMany(c, Media, schema);
-            res.status(200).json({ status: true, data: c });
+                // let data = Serializer.serializeMany(c, Media, schema);
+                res.status(200).json({ status: true, data: c });
 
-        })
-        .catch(err => {
-            console.error(err);
-            res.status(400).json({ status: false });
-        });
+            })
+            .catch(err => {
+                console.error(err);
+                res.status(400).json({ status: false });
+            });
+    }
 };
 
 
 exports.getByID = (req, res) => {
     const { isAdmin, userId } = getUserDetails(req.user)
 
+    // let productId = req.params.product_id
+    // if (productId) {
+    //     opts = {
+    //         where: {
+    //             product_id: productId
+    //         }
+    //     }
+    // }
     Media.findOne({
         where: {
             mediaID: req.params.mediaID
