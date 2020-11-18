@@ -4,15 +4,16 @@ const Media = require('../models/media.model');
 const ProductDetails = require('../models/prodDetails.model');
 const ShippingAddress = require('../models/shippingAddres.model');
 const config = require('../config');
-const { insertingData, getUserDetails } = require('../utils/helperFunc')
+const { insertingData, getUserDetails, getDataWithLikes } = require('../utils/helperFunc')
 const { isAr } = require('../utils/verify')
 // const { getProductSchema } = require('../utils/schema/schemas');
 const Serializer = require('sequelize-to-json');
 // const { Media, ProductDetails } = require('../models/associations');
 const sequelizeService = require('../services/sequelize.service');
 const { getProductSchema, getExploreSchema } = require('../utils/schema/schemas');
-const { User } = require('../models/associations');
+const { User, } = require('../models/associations');
 const SubCategory = require('../models/subCategory.model');
+const Likes = require('../models/likes.model')
 
 exports.add = (req, res) => {
     const _b = req.body;
@@ -63,6 +64,7 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
     const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
+    console.log(data[0].productID)
 
     if (!_b.productID) {
         res.status(400).json({ status: false, message: "productID does not exists" });
@@ -102,14 +104,18 @@ exports.getAll = (req, res) => {
         ]
     })
         .then(c => {
-
             if (!c) throw new Error('No Product found!');
 
             let schema = getProductSchema(lang)
 
             let data = Serializer.serializeMany(c, Product, schema);
-            // console.log(data)
-            res.status(200).json({ status: true, data });
+
+            getDataWithLikes(data, userId)
+                .then(dat => res.status(200).json({ status: true, data: dat }))
+                .catch(err => {
+                    console.error(err);
+                    res.status(400).json({ status: false });
+                });
 
         })
         .catch(err => {

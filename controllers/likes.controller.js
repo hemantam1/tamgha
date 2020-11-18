@@ -5,6 +5,7 @@ const { insertingData, getUserDetails } = require('../utils/helperFunc')
 const { isAr } = require('../utils/verify')
 // const { getLikesSchema } = require('../utils/schema/schemas');
 const Serializer = require('sequelize-to-json');
+const Product = require('../models/product.model');
 
 exports.add = (req, res) => {
     const { isAdmin, userId } = getUserDetails(req.user)
@@ -16,7 +17,30 @@ exports.add = (req, res) => {
 
     Likes.create(payload)
         .then(r => {
-            res.status(200).json({ status: true, result: r });
+            if (!r) throw Error("Could Not be created")
+            if (r) {
+                (async () => {
+                    // await sequelize.sync();
+                    let product = await Product.findOne({
+                        where: {
+                            productID: _b.product_id,
+                        }
+                    });
+                    if (!product.noOfLikes) {
+                        res.status(400).json({ status: false, message: 'No Product Found' });
+                        return
+                    }
+                    console.log(product.noOfLikes); // 'John Doe'
+                    product.noOfLikes = 1;
+                    await product.save();
+                    res.status(200).json({ status: true, result: r });
+
+                })();
+                // let product = Product.update(payload,
+
+                // );
+                // product.totalNoOfLikes = 1
+            }
         })
         .catch(err => {
             console.error(err);

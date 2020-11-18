@@ -1,3 +1,5 @@
+const Followers = require("../models/followers.model")
+const Likes = require("../models/likes.model")
 
 function insertingData(_b, id) {
     let payload = {}
@@ -30,5 +32,57 @@ function getUserDetails(user) {
     return object
 }
 
+const getDataWithLikes = (async (data, userId) => {
+    let arr = [];
+    for (let i = 0; i < data.length; i++) {
+        // console.log(data[i].productID)
+        let obj = data[i]
+        if (data[i].productID) {
+            await Likes.findOne({
+                where: {
+                    product_id: data[i].productID,
+                    user_id: userId
+                }
+            }).then(a => {
+                if (a) {
+                    obj['userLikeIt'] = true
+                } else {
+                    obj['userLikeIt'] = false
+                }
+            })
+        }
+        arr.push(obj)
+    }
+    return arr
+})
 
-module.exports = { insertingData, getUserDetails };
+const getDataWithFollowers = (async (data, userId) => {
+    let array = []
+    for (let i = 0; i < data.length; i++) {
+        let arr = [];
+        // console.log(data[i], "SD")
+        for (let j = 0; j < data[i].length; j++) {
+            let obj = data[i][j]
+            // console.log(obj, "OBJ")
+            if (data[i][j].userID) {
+                await Followers.findOne({
+                    where: {
+                        follower_user_id: data[i][j].userID,
+                        user_id: userId
+                    }
+                }).then(a => {
+                    if (a) {
+                        obj['user_followed_him'] = true
+                    } else {
+                        obj['user_followed_him'] = false
+                    }
+                })
+            }
+            arr.push(obj)
+        }
+        array.push(arr)
+    }
+    return array
+})
+
+module.exports = { insertingData, getUserDetails, getDataWithLikes, getDataWithFollowers };

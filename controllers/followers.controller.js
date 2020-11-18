@@ -103,7 +103,7 @@ exports.getByID = (req, res) => {
     let followerUserId = req.params.followerUserId
     let opts = {
         where: {
-            followerID: req.params.follower_user_id
+            followerID: req.params.followerID
         }
     }
     if (followerUserId) {

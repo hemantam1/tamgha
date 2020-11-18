@@ -4,6 +4,7 @@ const { productSchema } = require("./product.schema")
 const { citySchema } = require('./city.schema')
 const { countrySchema } = require('./country.schema')
 const { stateSchema } = require('./state.schema')
+const { userSchema } = require('./user.schema')
 
 
 
@@ -34,7 +35,9 @@ function getCountrySchema(languageID) {
 function getStateSchema(languageID) {
     return stateSchema(getConstant(languageID))
 }
-
+function getUserSchema(languageID) {
+    return userSchema(getConstant(languageID))
+}
 module.exports = {
     getProductSchema,
     getExploreSchema,
@@ -42,4 +45,5 @@ module.exports = {
     getCitySchema,
     getCountrySchema,
     getStateSchema,
+    getUserSchema,
 }

@@ -52,6 +52,14 @@ const user = connection.define('user', {
     prefferedLanguageCode: {
         type: Sequelize.STRING,
     },
+    noOfFollowers: {
+        type: Sequelize.INTEGER,
+        defaultValue: 0
+    },
+    noOfFollowings: {
+        type: Sequelize.INTEGER,
+        defaultValue: 0
+    },
     idType: {
         type: Sequelize.ENUM,
         values: ['Passport', 'Civil'],

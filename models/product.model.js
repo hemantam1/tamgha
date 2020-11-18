@@ -29,10 +29,23 @@ const product = connection.define('product', {
     price: {
         type: Sequelize.DOUBLE(6, 2),
     },
+    noOfLikes: {
+        type: Sequelize.INTEGER,
+        defaultValue: 0,
+        set() {
+            const likes = this.noOfLikes
+            let total = likes + 1
+            this.setDataValue('noOfLikes', total);
+            return
+        }
+    },
     isAvailable: {
         type: Sequelize.BOOLEAN,
         defaultValue: true
-    }
+    },
+    // setterMethods: {
+
+    // }
 }
 );
 module.exports = product;

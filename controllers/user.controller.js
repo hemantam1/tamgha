@@ -3,8 +3,10 @@ const Sequelize = require('sequelize');
 const User = require('../models/user.model');
 const jwt = require('jsonwebtoken');
 const config = require('../config');
-const { getUserDetails } = require('../utils/helperFunc');
-
+const { getUserDetails, getDataWithFollowers } = require('../utils/helperFunc');
+const { getUserSchema } = require('../utils/schema/schemas');
+const sequilize = require('../services/sequelize.service').connect()
+const Serializer = require('sequelize-to-json');
 
 exports.register = (req, res) => {
     const _b = req.body;
@@ -132,16 +134,32 @@ exports.login = (req, res) => {
 
 
 exports.suggestAll = (req, res) => {
-    const { isAdmin, userId } = getUserDetails(req.user)
+    const { isAdmin, userId, lang } = getUserDetails(req.user)
 
     const _b = req.body;
-    sequelize.query(
-        `SELECT DISTINCT  users.usrID, users.profilePhoto, users.usrName FROM products INNER JOIN users on products.usr_id = users.usrID LEFT JOIN categories on categories.catID = products.subCat_id
+    sequilize.query(
+        `SELECT DISTINCT  * FROM products INNER JOIN users on products.user_id = users.userID LEFT JOIN sub_categories on sub_categories.subCategoryID = products.subCategory_id
         `)
-        .then(e =>
-            res.status(200).json({
-                status: true, data: e
-            }))
+        .then(e => {
+            let attributes = ['createdAt', 'updatedAt', "user_id", "subCategory_id", "password", "userType", "idType", "idFront", "idBack"]
+            let schema = getUserSchema(lang)
+            // console.log(schema, "schema")
+            // let data = Serializer.serializeMany(e[0], User, schema);
+
+            // console.log(data, "data")
+            getDataWithFollowers(e, userId)
+                .then(r => res.status(200).json({
+                    status: true, data: r
+                }))
+                .catch(e => {
+                    console.error(e);
+                    res.status(400).json({
+                        status: false,
+                        message: "internal error"
+                    });
+                });
+
+        })
         .catch(e => {
             console.error(e);
             res.status(400).json({
