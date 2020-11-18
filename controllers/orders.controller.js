@@ -5,6 +5,9 @@ const { insertingData, getUserDetails } = require('../utils/helperFunc')
 const { isAr } = require('../utils/verify')
 // const { getOrdersSchema } = require('../utils/schema/schemas');
 const Serializer = require('sequelize-to-json');
+const { getOrderSchema } = require('../utils/schema/schemas');
+const DeliveryAddress = require('../models/deliveryAddres.model');
+const { ProductDetails, Product } = require('../models/associations');
 
 exports.add = (req, res) => {
     const { isAdmin, userId } = getUserDetails(req.user)
@@ -120,16 +123,21 @@ exports.getAll = (req, res) => {
     Orders.findAll({
         where: {
             user_id: userId
-        }
+        },
+        include: [
+            { model: DeliveryAddress },
+            { model: Product },
+            { model: ProductDetails },
+        ]
     })
         .then(c => {
 
             if (!c) throw new Error('No Orders found!');
 
-            // let schema = getOrdersSchema(_b.languageID)
+            let schema = getOrderSchema(lang)
 
-            // let data = Serializer.serializeMany(c, Orders, schema);
-            res.status(200).json({ status: true, data: c });
+            let data = Serializer.serializeMany(c, Orders, schema);
+            res.status(200).json({ status: true, data });
 
         })
         .catch(err => {

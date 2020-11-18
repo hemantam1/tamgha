@@ -8,6 +8,7 @@ router.get('/', passport.authenticate('admin', { session: false }), shipDetailCo
 router.post('/', passport.authenticate('admin', { session: false }), shipDetailController.add);
 router.put('/', passport.authenticate('admin', { session: false }), shipDetailController.update);
 router.delete('/', passport.authenticate('admin', { session: false }), shipDetailController.delete);
+router.get('/:shipID', passport.authenticate('user', { session: false }), shipDetailController.getByID);
 
 
 

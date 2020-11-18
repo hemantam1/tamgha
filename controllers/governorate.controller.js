@@ -1,7 +1,8 @@
 const Sequelize = require('sequelize');
-const State = require('../models/governorate.model');
+const State = require('../models/state.model');
 const config = require('../config');
 const { getUserDetails } = require('../utils/helperFunc');
+const { Country } = require('../models/associations');
 
 exports.add = (req, res) => {
     const _b = req.body;
@@ -78,7 +79,11 @@ exports.delete = (req, res) => {
 exports.getAll = (req, res) => {
     const { isAdmin, userId, lang } = getUserDetails(req.user)
 
-    State.findAll()
+    State.findAll({
+        include: [
+            { model: Country },
+        ]
+    })
         .then(c => {
             if (!c) throw new Error('No State found!');
             let schema = getStateSchema(lang)

@@ -3,8 +3,9 @@ const Comment = require('../models/comment.model');
 const config = require('../config');
 const { insertingData, getUserDetails } = require('../utils/helperFunc')
 const { isAr } = require('../utils/verify')
-// const { getActivitySchema } = require('../utils/schema/schemas');
+const { getCommentSchema } = require('../utils/schema/schemas');
 const Serializer = require('sequelize-to-json');
+const { Product } = require('../models/associations');
 
 exports.add = (req, res) => {
     const _b = req.body;
@@ -91,7 +92,7 @@ exports.delete = (req, res) => {
 
 exports.getAll = (req, res) => {
     const _b = req.body
-    const { isAdmin, userId } = getUserDetails(req.user)
+    const { isAdmin, userId, lang } = getUserDetails(req.user)
 
     if (isAdmin) {
         Comment.findAll()
@@ -99,10 +100,10 @@ exports.getAll = (req, res) => {
 
                 if (!c) throw new Error('No Comment found!');
 
-                // let schema = getActivitySchema(_b.languageID)
+                let schema = getCommentSchema(lang)
 
-                // let data = Serializer.serializeMany(c, Comment, schema);
-                res.status(200).json({ status: true, data: c });
+                let data = Serializer.serializeMany(c, Comment, schema);
+                res.status(200).json({ status: true, data });
 
             })
             .catch(err => {
@@ -110,25 +111,49 @@ exports.getAll = (req, res) => {
                 res.status(400).json({ status: false });
             });
     }
+    Comment.findAll({
+        where: {
+            user_id: userId
+        }
+    })
+        .then(c => {
+
+            if (!c) throw new Error('No Comment found!');
+
+            let schema = getCommentSchema(lang)
+
+            let data = Serializer.serializeMany(c, Comment, schema);
+            res.status(200).json({ status: true, data });
+
+        })
+        .catch(err => {
+            console.error(err);
+            res.status(400).json({ status: false });
+        });
+
+    // res.status(401).json({ status: false, message: "Not Authorised" });
+
 };
 
 
 exports.getByID = (req, res) => {
     const { isAdmin, userId } = getUserDetails(req.user)
 
-    // let productId = req.params.product_id
-    // if (productId) {
-    //     opts = {
-    //         where: {
-    //             product_id: productId
-    //         }
-    //     }
-    // }
-    Comment.findAll({
+    let opts = {
         where: {
-            product_id: req.params.product_id
+            commentID: req.params.commentID
+        },
+        include: [
+            { model: Product },
+        ]
+    }
+    let productId = req.params.product_id
+    if (productId) {
+        opts.where = {
+            product_id: productId
         }
-    })
+    }
+    Comment.findAll(opts)
         .then(c => {
             if (!c) throw new Error('No Comment found!');
             res.status(200).json({ status: true, data: c });

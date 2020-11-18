@@ -18,7 +18,7 @@ router.use('/library', require('./media.router'));
 router.use('/order', require('./orders.router'));
 router.use('/recipt', require('./recipt.router'));
 
-router.get('/feed', passport.authenticate('jwt', { session: false }), productController.explore);
+router.get('/feed', passport.authenticate('user', { session: false }), productController.explore);
 router.post('/signUp', userController.register);
 router.post('/signIn', userController.login);
 

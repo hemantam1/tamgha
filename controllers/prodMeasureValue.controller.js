@@ -5,6 +5,7 @@ const { insertingData, getUserDetails } = require('../utils/helperFunc')
 const { isAr } = require('../utils/verify')
 // const { getMeasurementValueSchema } = require('../utils/schema/schemas');
 const Serializer = require('sequelize-to-json');
+const { ProductDetails } = require('../models/associations');
 
 exports.add = (req, res) => {
     const { isAdmin, userId } = getUserDetails(req.user)
@@ -109,27 +110,7 @@ exports.getAll = (req, res) => {
                 res.status(400).json({ status: false });
             });
     }
-
-    // write a logic for getting a measurements of a product with product_id 
-    MeasurementValue.findAll({
-        where: {
-            productDetail_id: req.params.productDetail_id
-        }
-    })
-        .then(c => {
-
-            if (!c) throw new Error('No MeasurementValue found!');
-
-            // let schema = getMeasurementValueSchema(_b.languageID)
-
-            // let data = Serializer.serializeMany(c, MeasurementValue, schema);
-            res.status(200).json({ status: true, data: c });
-
-        })
-        .catch(err => {
-            console.error(err);
-            res.status(400).json({ status: false });
-        });
+    res.status(400).json({ status: false, message: "Not A USER API" });
 
 };
 
@@ -137,11 +118,17 @@ exports.getAll = (req, res) => {
 exports.getByID = (req, res) => {
     const { isAdmin, userId } = getUserDetails(req.user)
 
-    MeasurementValue.findOne({
+    let opts = {
         where: {
-            measurementID: req.params.measurementID
-        }
-    })
+            productDetail_id: req.params.productDetail_id
+        },
+        include: [
+            { model: ProductDetails },
+        ]
+    }
+    let measurementID = req.params.measurementID
+    if (measurementID) opts.where = { measurementID: measurementID }
+    MeasurementValue.findOne(opts)
         .then(c => {
             if (!c) throw new Error('No MeasurementValue found!');
             res.status(200).json({ status: true, data: c });

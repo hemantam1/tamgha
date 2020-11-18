@@ -5,6 +5,7 @@ const { insertingData, getUserDetails } = require('../utils/helperFunc')
 const { isAr } = require('../utils/verify')
 // const { getSchema } = require('../utils/schema/schemas');
 const Serializer = require('sequelize-to-json');
+const { Product } = require('../models/associations');
 
 exports.add = (req, res) => {
     const _b = req.body;
@@ -99,41 +100,51 @@ exports.getAll = (req, res) => {
                 res.status(400).json({ status: false });
             });
     }
-    ProdDetail.findAll({
-        where: {
-            product_id: req.params.product_id
-        }
-    })
-        .then(c => {
+    // ProdDetail.findAll({
+    //     include: [
+    //         { model: Product },
+    //     ]
+    // })
+    //     .then(c => {
 
-            if (!c) throw new Error('No ProdDetail found!');
+    //         if (!c) throw new Error('No ProdDetail found!');
 
-            // let schema = getSchema(_b.languageID)
+    //         // let schema = getSchema(_b.languageID)
 
-            // let data = Serializer.serializeMany(c, ProdDetail, schema);
-            res.status(200).json({ status: true, data: c });
+    //         // let data = Serializer.serializeMany(c, ProdDetail, schema);
+    //         res.status(200).json({ status: true, data: c });
 
-        })
-        .catch(err => {
-            console.error(err);
-            res.status(400).json({ status: false });
-        });
-
+    //     })
+    //     .catch(err => {
+    //         console.error(err);
+    //         res.status(400).json({ status: false });
+    //     });
+    res.status(400).json({ status: false, message: "Not A USER API" });
 
 };
 
 
 exports.getByID = (req, res) => {
-    const { isAdmin, userId } = getUserDetails(req.user)
+    const { isAdmin, userId, lang } = getUserDetails(req.user)
 
-    ProdDetail.findOne({
+    let opts = {
         where: {
             product_id: req.params.product_id
-        }
-    })
+        },
+        include: [
+            { model: Product },
+        ]
+    }
+    let prdID = req.params.productDetailID
+    if (prdID) opts.where = { productDetailID: prdID }
+
+    ProdDetail.findOne(opts)
         .then(c => {
             if (!c) throw new Error('No ProdDetail found!');
-            res.status(200).json({ status: true, data: c });
+            let schema = getSchema(lang)
+
+            let data = Serializer.serializeMany(c, ProdDetail, schema);
+            res.status(200).json({ status: true, data });
         })
         .catch(err => {
             console.error(err);

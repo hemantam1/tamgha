@@ -5,6 +5,8 @@ const { insertingData, getUserDetails } = require('../utils/helperFunc')
 const { isAr } = require('../utils/verify')
 // const { getPrivateMessageSchema } = require('../utils/schema/schemas');
 const Serializer = require('sequelize-to-json');
+const { getPrivateMessageSchema } = require('../utils/schema/schemas');
+const { User } = require('../models/associations');
 
 exports.add = (req, res) => {
     const { isAdmin, userId } = getUserDetails(req.user)
@@ -86,7 +88,7 @@ exports.delete = (req, res) => {
 };
 
 exports.getAll = (req, res) => {
-    const { isAdmin, userId } = getUserDetails(req.user)
+    const { isAdmin, userId, lang } = getUserDetails(req.user)
     const _b = req.body
 
     if (isAdmin) {
@@ -110,16 +112,19 @@ exports.getAll = (req, res) => {
     PrivateMessage.findAll({
         where: {
             user_id: userId
-        }
+        },
+        include: [
+            { model: User },
+        ]
     })
         .then(c => {
 
             if (!c) throw new Error('No PrivateMessage found!');
 
-            // let schema = getPrivateMessageSchema(_b.languageID)
+            let schema = getPrivateMessageSchema(lang)
 
-            // let data = Serializer.serializeMany(c, PrivateMessage, schema);
-            res.status(200).json({ status: true, data: c });
+            let data = Serializer.serializeMany(c, PrivateMessage, schema);
+            res.status(200).json({ status: true, data });
 
         })
         .catch(err => {
@@ -135,7 +140,8 @@ exports.getByID = (req, res) => {
 
     PrivateMessage.findAll({
         where: {
-            messageID: req.params.to_user_id
+            to_user_id: req.params.to_user_id,
+            user_id: userId
         }
     })
         .then(c => {

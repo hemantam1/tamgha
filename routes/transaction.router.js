@@ -9,6 +9,7 @@ router.get('/', passport.authenticate('user', { session: false }), transactionCo
 router.post('/', passport.authenticate('user', { session: false }), transactionController.add);
 // router.put('/', transactionController.update);
 router.delete('/', passport.authenticate('user', { session: false }), transactionController.delete);
+router.get('/:transactionID', passport.authenticate('user', { session: false }), transactionController.getByID);
 
 
 

@@ -5,6 +5,8 @@ const { insertingData, getUserDetails } = require('../utils/helperFunc')
 const { isAr } = require('../utils/verify')
 // const { getProductMeasureTypeSchema } = require('../utils/schema/schemas');
 const Serializer = require('sequelize-to-json');
+const { getMeasurementTypeSchema } = require('../utils/schema/schemas');
+const { Product } = require('../models/associations');
 
 exports.add = (req, res) => {
     const _b = req.body;
@@ -80,17 +82,21 @@ exports.delete = (req, res) => {
 
 exports.getAll = (req, res) => {
     const _b = req.body
-    const { isAdmin, userId } = getUserDetails(req.user)
+    const { isAdmin, userId, lang } = getUserDetails(req.user)
 
-    ProductMeasureType.findAll()
+    ProductMeasureType.findAll({
+        include: [
+            { model: Product },
+        ]
+    })
         .then(c => {
 
             if (!c) throw new Error('No ProductMeasurementType found!');
 
-            // let schema = getProductMeasureTypeSchema(_b.languageID)
+            let schema = getMeasurementTypeSchema(lang)
 
-            // let data = Serializer.serializeMany(c, ProductMeasureType, schema);
-            res.status(200).json({ status: true, data: c });
+            let data = Serializer.serializeMany(c, ProductMeasureType, schema);
+            res.status(200).json({ status: true, data });
 
         })
         .catch(err => {

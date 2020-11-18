@@ -8,7 +8,8 @@ router.get('/', passport.authenticate('user', { session: false }), shippingAddre
 router.post('/', passport.authenticate('user', { session: false }), shippingAddressController.add);
 router.put('/', passport.authenticate('user', { session: false }), shippingAddressController.update);
 router.delete('/', passport.authenticate('user', { session: false }), shippingAddressController.delete);
-
+router.get('/:addressID', passport.authenticate('user', { session: false }), shippingAddressController.getByID);
+router.get('/:product_id', passport.authenticate('user', { session: false }), shippingAddressController.getByID);
 
 
 

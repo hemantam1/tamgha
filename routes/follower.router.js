@@ -8,6 +8,8 @@ router.get('/', passport.authenticate('user', { session: false }), followersCont
 router.post('/', passport.authenticate('user', { session: false }), followersController.add);
 // router.put('/', passport.authenticate('user', { session: false }), followersController.update);
 router.delete('/', passport.authenticate('user', { session: false }), followersController.delete);
+router.get('/:followerID', passport.authenticate('user', { session: false }), followersController.getByID);
+router.get('/:followerUserId', passport.authenticate('user', { session: false }), followersController.getByID);
 
 
 

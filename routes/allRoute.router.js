@@ -7,7 +7,7 @@ const passport = require('passport');
 
 
 
-router.get('/explore', passport.authenticate('jwt', { session: false }), productController.explore);
+router.get('/explore', passport.authenticate('user', { session: false }), productController.explore);
 router.get('/users', passport.authenticate('user', { session: false }), userController.suggestAll)
 // router.get('/feed', addressController.getAll);
 

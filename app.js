@@ -27,7 +27,7 @@ app.use('/tamghaShip', require('./routes/shippingDetail.router'));
 sequelize.connection()
     .authenticate()
     .then(() => {
-        return sequelize.connection().sync({ force: false, alter: false });
+        return sequelize.connection().sync({ force: false, alter: true });
     })
     .then((e) => {
         app.listen(config.port, (err) => {

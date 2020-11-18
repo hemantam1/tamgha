@@ -1,6 +1,7 @@
+
 function userCategorySchema(constant) {
     return {
-        include: [constant.usrCatName],
+        include: ['userCategoryID', constant.usrCatName],
         as: { userCategoryAr: 'userCategory' }
     }
 }

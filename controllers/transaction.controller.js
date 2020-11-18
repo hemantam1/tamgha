@@ -5,6 +5,8 @@ const { insertingData, getUserDetails } = require('../utils/helperFunc')
 const { isAr } = require('../utils/verify')
 // const { getTransactionSchema } = require('../utils/schema/schemas');
 const Serializer = require('sequelize-to-json');
+const { getTransactionSchema } = require('../utils/schema/schemas');
+const { Orders } = require('../models/associations');
 
 exports.add = (req, res) => {
     const _b = req.body;
@@ -80,7 +82,7 @@ exports.delete = (req, res) => {
 };
 
 exports.getAll = (req, res) => {
-    const { isAdmin, userId } = getUserDetails(req.user)
+    const { isAdmin, userId, lang } = getUserDetails(req.user)
     const _b = req.body
 
     if (isAdmin) {
@@ -100,36 +102,20 @@ exports.getAll = (req, res) => {
                 res.status(400).json({ status: false });
             });
     }
-    if (req.params.seller_user_id) {
-        Transaction.findAll({
-            where: { seller_user_id: userId }
-        })
-            .then(c => {
-
-                if (!c) throw new Error('No Transaction found!');
-
-                // let schema = getTransactionSchema(_b.languageID)
-
-                // let data = Serializer.serializeMany(c, Transaction, schema);
-                res.status(200).json({ status: true, data: c });
-                return
-            })
-            .catch(err => {
-                console.error(err);
-                res.status(400).json({ status: false });
-            });
-    }
     Transaction.findAll({
-        where: { user_id: userId }
+        where: { user_id: userId },
+        include: [
+            { model: Orders },
+        ]
     })
         .then(c => {
 
             if (!c) throw new Error('No Transaction found!');
 
-            // let schema = getTransactionSchema(_b.languageID)
+            let schema = getTransactionSchema(lang)
 
-            // let data = Serializer.serializeMany(c, Transaction, schema);
-            res.status(200).json({ status: true, data: c });
+            let data = Serializer.serializeMany(c, Transaction, schema);
+            res.status(200).json({ status: true, data });
 
         })
         .catch(err => {

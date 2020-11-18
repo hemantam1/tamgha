@@ -5,6 +5,7 @@ const { insertingData, getUserDetails } = require('../utils/helperFunc')
 const { isAr } = require('../utils/verify')
 const { getCartSchema } = require('../utils/schema/schemas');
 const Serializer = require('sequelize-to-json');
+const { User, Product } = require('../models/associations');
 
 exports.add = (req, res) => {
 
@@ -90,7 +91,13 @@ exports.getAll = (req, res) => {
     const { isAdmin, userId, lang } = getUserDetails(req.user)
     // console.log(userId, "User", isAdmin)
     if (isAdmin) {
-        Cart.findAll()
+        Cart.findAll(
+            {
+                include: [
+                    { model: User },
+                    { model: Product },
+                ]
+            })
             .then(c => {
                 if (!c) throw new Error('No Cart found!');
 
@@ -108,7 +115,11 @@ exports.getAll = (req, res) => {
     Cart.findAll({
         where: {
             user_id: userId
-        }
+        },
+        include: [
+            { model: User },
+            { model: Product },
+        ]
     }).then(c => {
         if (!c) throw new Error('No Cart found!');
 

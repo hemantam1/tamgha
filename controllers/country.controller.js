@@ -80,7 +80,7 @@ exports.getAll = (req, res) => {
     const { isAdmin, userId, lang } = getUserDetails(req.user)
 
 
-    Country.findAll({})
+    Country.findAll()
         .then(c => {
             if (!c) throw new Error('No country found!');
             let schema = getCountrySchema(lang)

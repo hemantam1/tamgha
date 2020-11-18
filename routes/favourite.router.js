@@ -8,6 +8,8 @@ router.get('/', passport.authenticate('user', { session: false }), favouriteCont
 router.post('/', passport.authenticate('user', { session: false }), favouriteController.add);
 // router.put('/', passport.authenticate('user', { session: false }), favouriteController.update);
 router.delete('/', passport.authenticate('user', { session: false }), favouriteController.delete);
+router.get('/:favouriteID', passport.authenticate('user', { session: false }), favouriteController.getByID);
+router.get('/:product_id', passport.authenticate('user', { session: false }), favouriteController.getByID);
 
 
 

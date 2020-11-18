@@ -5,6 +5,7 @@ const { getUserDetails } = require('../utils/helperFunc');
 const { isAr } = require('../utils/verify');
 const { getCitySchema } = require('../utils/schema/schemas');
 const Serializer = require('sequelize-to-json');
+const State = require('../models/state.model');
 
 exports.add = (req, res) => {
     const _b = req.body;
@@ -80,7 +81,13 @@ exports.delete = (req, res) => {
 exports.getAll = (req, res) => {
     const { isAdmin, userId, lang } = getUserDetails(req.user)
 
-    City.findAll()
+    City.findAll(
+        {
+            include: [
+                { model: State },
+            ]
+        }
+    )
         .then(c => {
             if (!c) throw new Error('No City found!');
             let schema = getCitySchema(lang)

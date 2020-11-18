@@ -5,6 +5,8 @@ const { insertingData, getUserDetails } = require('../utils/helperFunc')
 const { isAr } = require('../utils/verify')
 // const { getReciptsSchema } = require('../utils/schema/schemas');
 const Serializer = require('sequelize-to-json');
+const { getReciptSchema } = require('../utils/schema/schemas');
+const { User } = require('../models/associations');
 
 exports.add = (req, res) => {
     const { isAdmin, userId } = getUserDetails(req.user)
@@ -89,7 +91,7 @@ exports.delete = (req, res) => {
 };
 
 exports.getAll = (req, res) => {
-    const { isAdmin, userId } = getUserDetails(req.user)
+    const { isAdmin, userId, lang } = getUserDetails(req.user)
     const _b = req.body
 
     if (isAdmin) {
@@ -110,26 +112,34 @@ exports.getAll = (req, res) => {
             });
     }
 
-
     Recipts.findAll({
         where: {
             buyer_user_id: userId
-        }
+        },
+        include: [
+            { model: User },
+        ]
     })
         .then(c => {
 
             if (!c) throw new Error('No Recipts found!');
 
-            // let schema = getReciptsSchema(_b.languageID)
+            let schema = getReciptSchema(lang)
 
-            // let data = Serializer.serializeMany(c, Recipts, schema);
-            res.status(200).json({ status: true, data: c });
+            let data = Serializer.serializeMany(c, Recipts, schema);
+            res.status(200).json({ status: true, data });
 
         })
         .catch(err => {
             console.error(err);
             res.status(400).json({ status: false });
         });
+};
+
+
+exports.getByID = (req, res) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
+
     if (req.params.sold) {
         Recipts.findAll({
             where: {
@@ -140,23 +150,17 @@ exports.getAll = (req, res) => {
 
                 if (!c) throw new Error('No Recipts found!');
 
-                // let schema = getReciptsSchema(_b.languageID)
+                let schema = getReciptSchema(lang)
 
-                // let data = Serializer.serializeMany(c, Recipts, schema);
-                res.status(200).json({ status: true, data: c });
-
+                let data = Serializer.serializeMany(c, Recipts, schema);
+                res.status(200).json({ status: true, data });
+                return
             })
             .catch(err => {
                 console.error(err);
                 res.status(400).json({ status: false });
             });
     }
-
-};
-
-
-exports.getByID = (req, res) => {
-    const { isAdmin, userId } = getUserDetails(req.user)
 
     Recipts.findOne({
         where: {

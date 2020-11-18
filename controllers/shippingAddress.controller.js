@@ -5,6 +5,7 @@ const { insertingData, getUserDetails } = require('../utils/helperFunc')
 const { isAr } = require('../utils/verify')
 // const { getShippingAddressSchema } = require('../utils/schema/schemas');
 const Serializer = require('sequelize-to-json');
+const { City, Product } = require('../models/associations');
 
 exports.add = (req, res) => {
     const _b = req.body;
@@ -102,25 +103,22 @@ exports.getAll = (req, res) => {
             });
     }
 
-    ShippingAddress.findAll({
-        where: {
-            product_id: req.params.product_id
-        }
-    })
-        .then(c => {
+    // ShippingAddress.findAll()
+    //     .then(c => {
 
-            if (!c) throw new Error('No ShippingAddress found!');
+    //         if (!c) throw new Error('No ShippingAddress found!');
 
-            // let schema = getShippingAddressSchema(_b.languageID)
+    //         // let schema = getShippingAddressSchema(_b.languageID)
 
-            // let data = Serializer.serializeMany(c, ShippingAddress, schema);
-            res.status(200).json({ status: true, data: c });
+    //         // let data = Serializer.serializeMany(c, ShippingAddress, schema);
+    //         res.status(200).json({ status: true, data: c });
 
-        })
-        .catch(err => {
-            console.error(err);
-            res.status(400).json({ status: false });
-        });
+    //     })
+    //     .catch(err => {
+    //         console.error(err);
+    //         res.status(400).json({ status: false });
+    //     });
+    res.status(400).json({ status: false, message: "Not A USER API" });
 
 };
 
@@ -128,11 +126,18 @@ exports.getAll = (req, res) => {
 exports.getByID = (req, res) => {
     const { isAdmin, userId } = getUserDetails(req.user)
 
-    ShippingAddress.findOne({
+    let opts = {
         where: {
-            addressID: req.params.addressID
-        }
-    })
+            product_id: req.params.product_id
+        },
+        include: [
+            { model: City },
+            { model: Product },
+        ]
+    }
+    let addressId = req.params.addressID
+    if (addressId) opts.where = { addressID: addressId }
+    ShippingAddress.findOne(opts)
         .then(c => {
             if (!c) throw new Error('No ShippingAddress found!');
             res.status(200).json({ status: true, data: c });

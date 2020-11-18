@@ -5,6 +5,8 @@ const { insertingData, getUserDetails } = require('../utils/helperFunc')
 const { isAr } = require('../utils/verify')
 // const { getMediaSchema } = require('../utils/schema/schemas');
 const Serializer = require('sequelize-to-json');
+const { getMediaSchema } = require('../utils/schema/schemas');
+const { Product } = require('../models/associations');
 
 exports.add = (req, res) => {
     if (req.user) {
@@ -88,7 +90,7 @@ exports.delete = (req, res) => {
 };
 
 exports.getAll = (req, res) => {
-    const { isAdmin, userId } = getUserDetails(req.user)
+    const { isAdmin, userId, lang } = getUserDetails(req.user)
     const _b = req.body
 
     if (isAdmin) {
@@ -97,9 +99,9 @@ exports.getAll = (req, res) => {
 
                 if (!c) throw new Error('No Media found!');
 
-                // let schema = getMediaSchema(_b.languageID)
+                let schema = getMediaSchema(lang)
 
-                // let data = Serializer.serializeMany(c, Media, schema);
+                let data = Serializer.serializeMany(c, Media, schema);
                 res.status(200).json({ status: true, data: c });
 
             })
@@ -108,25 +110,52 @@ exports.getAll = (req, res) => {
                 res.status(400).json({ status: false });
             });
     }
+
+    Media.findAll({
+        where: {
+            user_id: userId
+        },
+        include: [
+            {
+                model: Product
+
+            },
+        ]
+    })
+        .then(c => {
+
+            if (!c) throw new Error('No Media found!');
+
+            let schema = getMediaSchema(lang)
+
+            let data = Serializer.serializeMany(c, Media, schema);
+            res.status(200).json({ status: true, data });
+
+        })
+        .catch(err => {
+            console.error(err);
+            res.status(400).json({ status: false });
+        });
 };
 
 
 exports.getByID = (req, res) => {
     const { isAdmin, userId } = getUserDetails(req.user)
 
-    // let productId = req.params.product_id
-    // if (productId) {
-    //     opts = {
-    //         where: {
-    //             product_id: productId
-    //         }
-    //     }
-    // }
-    Media.findOne({
+    let opts = {
         where: {
             mediaID: req.params.mediaID
         }
-    })
+    }
+    let productId = req.params.product_id
+    if (productId) {
+        opts = {
+            where: {
+                product_id: productId
+            }
+        }
+    }
+    Media.findOne(opts)
         .then(c => {
             if (!c) throw new Error('No Media found!');
             res.status(200).json({ status: true, data: c });

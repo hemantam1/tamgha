@@ -1,10 +1,9 @@
 const { productSchema } = require("./product.schema")
 const { userSchema } = require("./user.schema")
 
-function cartSchema(constant) {
+function favouriteSchema(constant) {
     return {
-        include: ['cartID', 'quantity', constant.priceCurrency, 'price', 'product'],
-        as: { priceCurrencyAr: "priceCurrency" },
+        include: ['favouriteID', 'product'],
         assoc: {
             product: productSchema(constant)
         }
@@ -13,5 +12,5 @@ function cartSchema(constant) {
 
 
 module.exports = {
-    cartSchema
+    favouriteSchema
 }

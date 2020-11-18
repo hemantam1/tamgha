@@ -24,6 +24,7 @@ router.post('/upload', multer.array("files"), passport.authenticate('user', { se
 router.post('/', passport.authenticate('user', { session: false }), productController.add);
 router.put('/', passport.authenticate('user', { session: false }), productController.update);
 router.delete('/', passport.authenticate('user', { session: false }), productController.delete);
+router.get('/:productID', passport.authenticate('user', { session: false }), productController.getByID);
 
 
 router.use('/category', require('./category.router'));

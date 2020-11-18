@@ -5,6 +5,8 @@ const { insertingData, getUserDetails } = require('../utils/helperFunc')
 const { isAr } = require('../utils/verify')
 // const { getActivitySchema } = require('../utils/schema/schemas');
 const Serializer = require('sequelize-to-json');
+const { getDeliveryAddressSchema } = require('../utils/schema/schemas');
+const { City } = require('../models/associations');
 
 exports.add = (req, res) => {
     const _b = req.body;
@@ -82,7 +84,7 @@ exports.delete = (req, res) => {
 
 exports.getAll = (req, res) => {
     const _b = req.body
-    const { isAdmin, userId } = getUserDetails(req.user)
+    const { isAdmin, userId, lang } = getUserDetails(req.user)
 
     if (isAdmin) {
         DeliveryAddress.findAll()
@@ -90,10 +92,10 @@ exports.getAll = (req, res) => {
                 // 
                 if (!c) throw new Error('No DeliveryAddress found!');
 
-                // let schema = getActivitySchema(_b.languageID)
+                let schema = getDeliveryAddressSchema(lang)
 
-                // let data = Serializer.serializeMany(c, DeliveryAddress, schema);
-                res.status(200).json({ status: true, data: c });
+                let data = Serializer.serializeMany(c, DeliveryAddress, schema);
+                res.status(200).json({ status: true, data });
                 // 
                 return
             })
@@ -105,16 +107,21 @@ exports.getAll = (req, res) => {
     DeliveryAddress.findAll({
         where: {
             user_id: userId
-        }
+        },
+        include: [
+            { model: City },
+        ]
     })
         .then(c => {
-            // 
+            // console.log(c)
             if (!c) throw new Error('No DeliveryAddress found!');
 
-            // let schema = getActivitySchema(_b.languageID)
+            let schema = getDeliveryAddressSchema(lang)
 
-            // let data = Serializer.serializeMany(c, DeliveryAddress, schema);
-            res.status(200).json({ status: true, data: c });
+            // console.log(DeliveryAddress, schema)
+            let data = Serializer.serializeMany(c, DeliveryAddress, schema);
+
+            res.status(200).json({ status: true, data });
             // 
             return
         })

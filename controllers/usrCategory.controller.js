@@ -5,6 +5,7 @@ const { insertingData, getUserDetails } = require('../utils/helperFunc')
 const { isAr } = require('../utils/verify')
 // const { getCategorySchema } = require('../utils/schema/schemas');
 const Serializer = require('sequelize-to-json');
+const { getUserCategorySchema, getSubCategorySchema } = require('../utils/schema/schemas');
 
 exports.add = (req, res) => {
     const _b = req.body;
@@ -84,9 +85,9 @@ exports.delete = (req, res) => {
 };
 
 exports.getAll = (req, res) => {
-    const { isAdmin, userId } = getUserDetails(req.user)
+    const { isAdmin, userId, lang } = getUserDetails(req.user)
     const _b = req.body
-    if (req.params.userId) {
+    if (req.params.self) {
         UsrCategory.findAll({
             where: {
                 user_id: userId
@@ -96,10 +97,10 @@ exports.getAll = (req, res) => {
 
                 if (!c) throw new Error('No UsrCategory found!');
 
-                // let schema = getCategorySchema(_b.languageID)
+                let schema = getUserCategorySchema(lang)
 
-                // let data = Serializer.serializeMany(c, UsrCategory, schema);
-                res.status(200).json({ status: true, data: c });
+                let data = Serializer.serializeMany(c, UsrCategory, schema);
+                res.status(200).json({ status: true, data });
 
             })
             .catch(err => {
@@ -112,10 +113,10 @@ exports.getAll = (req, res) => {
 
             if (!c) throw new Error('No UsrCategory found!');
 
-            // let schema = getCategorySchema(_b.languageID)
+            let schema = getUserCategorySchema(lang)
 
-            // let data = Serializer.serializeMany(c, UsrCategory, schema);
-            res.status(200).json({ status: true, data: c });
+            let data = Serializer.serializeMany(c, UsrCategory, schema);
+            res.status(200).json({ status: true, data });
 
         })
         .catch(err => {

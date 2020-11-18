@@ -5,6 +5,8 @@ const { insertingData, getUserDetails } = require('../utils/helperFunc')
 const { isAr } = require('../utils/verify')
 // const { getSubCategorySchema } = require('../utils/schema/schemas');
 const Serializer = require('sequelize-to-json');
+const { getSubCategorySchema } = require('../utils/schema/schemas');
+const { Category } = require('../models/associations');
 
 exports.add = (req, res) => {
     const _b = req.body;
@@ -81,18 +83,22 @@ exports.delete = (req, res) => {
 };
 
 exports.getAll = (req, res) => {
-    const { isAdmin, userId } = getUserDetails(req.user)
+    const { isAdmin, userId, lang } = getUserDetails(req.user)
     const _b = req.body
 
-    SubCategory.findAll()
+    SubCategory.findAll({
+        include: [
+            { model: Category },
+        ]
+    })
         .then(c => {
 
             if (!c) throw new Error('No SubCategory found!');
 
-            // let schema = getSubCategorySchema(_b.languageID)
+            let schema = getSubCategorySchema(lang)
 
-            // let data = Serializer.serializeMany(c, SubCategory, schema);
-            res.status(200).json({ status: true, data: c });
+            let data = Serializer.serializeMany(c, SubCategory, schema);
+            res.status(200).json({ status: true, data });
 
         })
         .catch(err => {

@@ -107,7 +107,7 @@ exports.delete = (req, res) => {
 };
 
 exports.getAll = (req, res) => {
-    const { isAdmin, userId } = getUserDetails(req.user)
+    const { isAdmin, userId, lang } = getUserDetails(req.user)
     const _b = req.body
 
     ShippingDetails.findAll()
@@ -115,10 +115,10 @@ exports.getAll = (req, res) => {
 
             if (!c) throw new Error('No ShippingDetails found!');
 
-            // let schema = getShippingDetailsSchema(_b.languageID)
+            let schema = getShipDetailSchema(lang)
 
-            // let data = Serializer.serializeMany(c, ShippingDetails, schema);
-            res.status(200).json({ status: true, data: c });
+            let data = Serializer.serializeMany(c, ShippingDetails, schema);
+            res.status(200).json({ status: true, data });
 
         })
         .catch(err => {

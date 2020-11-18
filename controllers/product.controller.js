@@ -97,8 +97,6 @@ exports.getAll = (req, res) => {
     Product.findAll({
         include: [
             {
-                model: User
-            }, {
                 model: SubCategory
             }
         ]

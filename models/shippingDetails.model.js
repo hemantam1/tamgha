@@ -11,10 +11,10 @@ const ShipingDetail = connection.define('ship_details', {
     weight: {
         type: Sequelize.DOUBLE(4, 2),
     },
-    currency: {
+    priceCurrency: {
         type: Sequelize.STRING,
     },
-    currencyAr: {
+    priceCurrencyAr: {
         type: Sequelize.STRING,
     },
     price: {

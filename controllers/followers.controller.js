@@ -5,13 +5,15 @@ const { insertingData, getUserDetails } = require('../utils/helperFunc')
 const { isAr } = require('../utils/verify')
 // const { getActivitySchema } = require('../utils/schema/schemas');
 const Serializer = require('sequelize-to-json');
+const { getFollowerSchema } = require('../utils/schema/schemas');
+const { User } = require('../models/associations');
 
 exports.add = (req, res) => {
     const _b = req.body;
     const { isAdmin, userId } = getUserDetails(req.user)
     let payload = {
-        user_id: userId,
-        follower_user_id: _b.follower_user_id
+        user_id: _b.user_id,
+        follower_user_id: userId
     }
 
     Followers.create(payload)
@@ -57,7 +59,7 @@ exports.delete = (req, res) => {
 
 exports.getAll = (req, res) => {
     const _b = req.body
-    const { isAdmin, userId } = getUserDetails(req.user)
+    const { isAdmin, userId, lang } = getUserDetails(req.user)
 
     if (isAdmin) {
         Followers.findAll()
@@ -79,15 +81,18 @@ exports.getAll = (req, res) => {
     Followers.findAll({
         where: {
             user_id: userId
-        }
+        },
+        include: [
+            { model: User },
+        ]
     })
         .then(c => {
 
             if (!c) throw new Error('No Followers found!');
 
-            // let schema = getActivitySchema(_b.languageID)
+            let schema = getFollowerSchema(lang)
 
-            // let data = Serializer.serializeMany(c, Followers, schema);
+            let data = Serializer.serializeMany(c, Followers, schema);
             res.status(200).json({ status: true, data: c });
 
         })
@@ -110,7 +115,10 @@ exports.getByID = (req, res) => {
         opts = {
             where: {
                 follower_user_id: req.params.follower_user_id
-            }
+            },
+            include: [
+                { model: User },
+            ]
         }
     }
     Followers.findAll(opts)

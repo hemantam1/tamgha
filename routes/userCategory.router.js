@@ -8,6 +8,7 @@ router.get('/', passport.authenticate('user', { session: false }), usrCategoryCo
 router.post('/', passport.authenticate('user', { session: false }), usrCategoryController.add);
 router.put('/', passport.authenticate('user', { session: false }), usrCategoryController.update);
 router.delete('/', passport.authenticate('user', { session: false }), usrCategoryController.delete);
+router.get('/:userCategoryID', passport.authenticate('user', { session: false }), usrCategoryController.getByID);
 
 
 

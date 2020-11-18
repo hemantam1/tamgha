@@ -21,7 +21,7 @@ const Favourite = require('./favourite.model');
 const Cart = require('./cart.model');
 const UsrCategory = require('./userCategory.model');
 const ShipingDetails = require('./shippingDetails.model');
-const State = require('./governorate.model');
+const State = require('./state.model');
 
 
 Country.hasMany(State, { foreignKey: 'country_id', onDelete: 'CASCADE' });

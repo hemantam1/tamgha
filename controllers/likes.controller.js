@@ -6,6 +6,7 @@ const { isAr } = require('../utils/verify')
 // const { getLikesSchema } = require('../utils/schema/schemas');
 const Serializer = require('sequelize-to-json');
 const Product = require('../models/product.model');
+const { getLikeSchema } = require('../utils/schema/schemas');
 
 exports.add = (req, res) => {
     const { isAdmin, userId } = getUserDetails(req.user)
@@ -108,7 +109,7 @@ exports.delete = (req, res) => {
 };
 
 exports.getAll = (req, res) => {
-    const { isAdmin, userId } = getUserDetails(req.user)
+    const { isAdmin, userId, lang } = getUserDetails(req.user)
     const _b = req.body
 
     if (isAdmin) {
@@ -131,18 +132,21 @@ exports.getAll = (req, res) => {
 
     // write a query for user has a product and user fetching likes of his product
     Likes.findAll({
-        // where: {
-        //     product_id: product_id
-        // }
+        where: {
+            user_id: userId
+        },
+        include: [
+            { model: Product },
+        ]
     })
         .then(c => {
 
             if (!c) throw new Error('No Likes found!');
 
-            // let schema = getLikesSchema(_b.languageID)
+            let schema = getLikeSchema(lang)
 
-            // let data = Serializer.serializeMany(c, Likes, schema);
-            res.status(200).json({ status: true, data: c });
+            let data = Serializer.serializeMany(c, Likes, schema);
+            res.status(200).json({ status: true, data });
 
         })
         .catch(err => {
@@ -157,11 +161,20 @@ exports.getAll = (req, res) => {
 exports.getByID = (req, res) => {
     const { isAdmin, userId } = getUserDetails(req.user)
 
-    Likes.findAll({
+    let opts = {
         where: {
-            product_id: req.params.product_id
-        }
-    })
+            likeID: req.params.likeID
+        },
+        include: [
+            { model: Product },
+        ]
+    }
+    let productID = req.params.productID
+
+    if (productID) opts.where = {
+        product_id: req.params.product_id
+    }
+    Likes.findAll(opts)
         .then(c => {
             if (!c) throw new Error('No Likes found!');
             res.status(200).json({ status: true, data: c });
