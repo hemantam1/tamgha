@@ -138,16 +138,25 @@ exports.getAll = (req, res) => {
 
 
 exports.getByID = (req, res) => {
-    const { isAdmin, userId } = getUserDetails(req.user)
+    const { isAdmin, userId, lang } = getUserDetails(req.user)
 
     Cart.findOne({
         where: {
-            cartID: req.params.cartID
-        }
+            cartID: req.params.cartID,
+            user_id: userId,
+        }, include: [
+            { model: User },
+            { model: Product }
+        ]
     })
         .then(c => {
             if (!c) throw new Error('No Cart found!');
-            res.status(200).json({ status: true, data: c });
+
+            let schema = getCartSchema(lang)
+            let serializer = new Serializer(Cart, schema);
+            let data = serializer.serialize(c);
+
+            res.status(200).json({ status: true, data });
         })
         .catch(err => {
             console.error(err);

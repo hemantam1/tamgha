@@ -136,7 +136,7 @@ exports.getAll = (req, res) => {
 
 
 exports.getByID = (req, res) => {
-    const { isAdmin, userId } = getUserDetails(req.user)
+    const { isAdmin, userId, lang } = getUserDetails(req.user)
 
     PrivateMessage.findAll({
         where: {
@@ -146,7 +146,10 @@ exports.getByID = (req, res) => {
     })
         .then(c => {
             if (!c) throw new Error('No PrivateMessage found!');
-            res.status(200).json({ status: true, data: c });
+            let schema = getPrivateMessageSchema(lang)
+            let serializer = new Serializer(PrivateMessage, schema);
+            let data = serializer.serialize(c);
+            res.status(200).json({ status: true, data });
         })
         .catch(err => {
             console.error(err);

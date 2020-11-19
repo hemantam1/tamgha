@@ -6,6 +6,7 @@ const { isAr } = require('../utils/verify')
 // const { getCategorySchema } = require('../utils/schema/schemas');
 const Serializer = require('sequelize-to-json');
 const { getUserCategorySchema, getSubCategorySchema } = require('../utils/schema/schemas');
+const UserCategory = require('../models/userCategory.model');
 
 exports.add = (req, res) => {
     const _b = req.body;
@@ -127,7 +128,7 @@ exports.getAll = (req, res) => {
 
 
 exports.getByID = (req, res) => {
-    const { isAdmin, userId } = getUserDetails(req.user)
+    const { isAdmin, userId, lang } = getUserDetails(req.user)
 
     UsrCategory.findOne({
         where: {
@@ -136,7 +137,10 @@ exports.getByID = (req, res) => {
     })
         .then(c => {
             if (!c) throw new Error('No UsrCategory found!');
-            res.status(200).json({ status: true, data: c });
+            let schema = getUserCategorySchema(lang)
+            let serializer = new Serializer(UsrCategory, schema);
+            let data = serializer.serialize(c);
+            res.status(200).json({ status: true, data });
         })
         .catch(err => {
             console.error(err);

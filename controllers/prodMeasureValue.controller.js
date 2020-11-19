@@ -6,9 +6,10 @@ const { isAr } = require('../utils/verify')
 // const { getMeasurementValueSchema } = require('../utils/schema/schemas');
 const Serializer = require('sequelize-to-json');
 const { ProductDetails } = require('../models/associations');
+const { getMeasurementsSchema } = require('../utils/schema/schemas');
 
 exports.add = (req, res) => {
-    const { isAdmin, userId } = getUserDetails(req.user)
+    const { isAdmin, userId, lang } = getUserDetails(req.user)
     const _b = req.body;
     let payload = {
         measurementValue: _b.measurementValue,
@@ -116,11 +117,11 @@ exports.getAll = (req, res) => {
 
 
 exports.getByID = (req, res) => {
-    const { isAdmin, userId } = getUserDetails(req.user)
+    const { isAdmin, userId, lang } = getUserDetails(req.user)
 
     let opts = {
         where: {
-            productDetail_id: req.params.productDetail_id
+            productDetail_id: req.params.productDetailId
         },
         include: [
             { model: ProductDetails },
@@ -128,10 +129,19 @@ exports.getByID = (req, res) => {
     }
     let measurementID = req.params.measurementID
     if (measurementID) opts.where = { measurementID: measurementID }
-    MeasurementValue.findOne(opts)
+    MeasurementValue.findAll(opts)
         .then(c => {
             if (!c) throw new Error('No MeasurementValue found!');
-            res.status(200).json({ status: true, data: c });
+            let schema = getMeasurementsSchema(lang)
+            let serializer = new Serializer(MeasurementValue, schema);
+            let data = {}
+            if (c[0]) {
+                data = Serializer.serializeMany(c, MeasurementValue, schema);
+            }
+            else {
+                data = serializer.serialize(c);
+            }
+            res.status(200).json({ status: true, data });
         })
         .catch(err => {
             console.error(err);

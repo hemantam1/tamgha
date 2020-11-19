@@ -139,17 +139,25 @@ exports.getAll = (req, res) => {
 
 
 exports.getByID = (req, res) => {
-    const { isAdmin, userId } = getUserDetails(req.user)
+    const { isAdmin, userId, lang } = getUserDetails(req.user)
     let productId = req.params.product_id
     let opts = {
         where: {
-            favouriteID: req.params.favouriteID
+            favouriteID: req.params.favouriteID,
+            user_id: userId,
+        },
+        include: [{
+            model: User,
+        }, {
+            model: Product
         }
+        ]
     }
     if (productId) {
         opts = {
             where: {
-                product_id: productId
+                product_id: productId,
+                user_id: userId,
             }, include: [
                 { model: User },
             ]
@@ -158,7 +166,11 @@ exports.getByID = (req, res) => {
     Favourite.findAll(opts)
         .then(c => {
             if (!c) throw new Error('No Favourite found!');
-            res.status(200).json({ status: true, data: c });
+
+            let schema = getFavouriteSchema(lang)
+
+            let data = Serializer.serializeMany(c, Favourite, schema);
+            res.status(200).json({ status: true, data });
         })
         .catch(err => {
             console.error(err);

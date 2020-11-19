@@ -2,9 +2,9 @@ const { userSchema } = require("./user.schema")
 
 function followerSchema(constant) {
     return {
-        include: ['followerID', 'user',],
+        include: ['followerID', 'followerUser'],
         assoc: {
-            user: userSchema(constant),
+            followerUser: userSchema(constant),
         }
     }
 }

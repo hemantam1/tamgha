@@ -8,7 +8,7 @@ router.get('/', passport.authenticate('user', { session: false }), cartControlle
 router.post('/', passport.authenticate('user', { session: false }), cartController.add);
 router.put('/', passport.authenticate('user', { session: false }), cartController.update);
 router.delete('/', passport.authenticate('user', { session: false }), cartController.delete);
-router.get('/:cartID', passport.authenticate('user', { session: false }), cartController.getByID);
+router.get('/getBy/:cartID', passport.authenticate('user', { session: false }), cartController.getByID);
 
 
 

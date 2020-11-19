@@ -7,7 +7,8 @@ const { isAr } = require('../utils/verify')
 const Serializer = require('sequelize-to-json');
 const { getOrderSchema } = require('../utils/schema/schemas');
 const DeliveryAddress = require('../models/deliveryAddres.model');
-const { ProductDetails, Product } = require('../models/associations');
+const ProductDetails = require('../models/prodDetails.model');
+const Product = require('../models/product.model');
 
 exports.add = (req, res) => {
     const { isAdmin, userId } = getUserDetails(req.user)
@@ -150,16 +151,31 @@ exports.getAll = (req, res) => {
 
 
 exports.getByID = (req, res) => {
-    const { isAdmin, userId } = getUserDetails(req.user)
+    const { isAdmin, userId, lang } = getUserDetails(req.user)
 
-    Orders.findOne({
+    let opts = {
         where: {
             orderID: req.params.orderID
+        }, include: [
+            { model: Product },
+            { model: ProductDetails },
+            { model: DeliveryAddress },
+        ]
+    }
+    let productId = req.params.productId
+    if (productId) {
+        opts.where = {
+            product_id: productId,
+            user_id: userId,
         }
-    })
+    }
+    Orders.findAll(opts)
         .then(c => {
             if (!c) throw new Error('No Orders found!');
-            res.status(200).json({ status: true, data: c });
+            let schema = getOrderSchema(lang)
+
+            let data = Serializer.serializeMany(c, Orders, schema);
+            res.status(200).json({ status: true, data });
         })
         .catch(err => {
             console.error(err);

@@ -6,6 +6,7 @@ const { isAr } = require('../utils/verify')
 // const { getShippingAddressSchema } = require('../utils/schema/schemas');
 const Serializer = require('sequelize-to-json');
 const { City, Product } = require('../models/associations');
+const { getShippingAddressSchema } = require('../utils/schema/schemas');
 
 exports.add = (req, res) => {
     const _b = req.body;
@@ -124,11 +125,11 @@ exports.getAll = (req, res) => {
 
 
 exports.getByID = (req, res) => {
-    const { isAdmin, userId } = getUserDetails(req.user)
+    const { isAdmin, userId, lang } = getUserDetails(req.user)
 
     let opts = {
         where: {
-            product_id: req.params.product_id
+            product_id: req.params.productId
         },
         include: [
             { model: City },
@@ -140,7 +141,11 @@ exports.getByID = (req, res) => {
     ShippingAddress.findOne(opts)
         .then(c => {
             if (!c) throw new Error('No ShippingAddress found!');
-            res.status(200).json({ status: true, data: c });
+            let schema = getShippingAddressSchema(lang)
+            let serializer = new Serializer(ShippingAddress, schema);
+            let data = serializer.serialize(c);
+
+            res.status(200).json({ status: true, data });
         })
         .catch(err => {
             console.error(err);

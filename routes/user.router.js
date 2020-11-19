@@ -10,7 +10,6 @@ router.use('/cart', require('./cart.router'));
 router.use('/favourite', require('./favourite.router'));
 router.use('/privateMessage', require('./privateMessage.router'));
 router.use('/transaction', require('./transaction.router'));
-router.use('/category', require('./userCategory.router'));
 
 router.use('/deliveryAddress', require('./deliveryAddress.router'));
 router.use('/follower', require('./follower.router'));

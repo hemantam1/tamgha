@@ -7,6 +7,8 @@ const { isAr } = require('../utils/verify')
 const Serializer = require('sequelize-to-json');
 const { getDeliveryAddressSchema } = require('../utils/schema/schemas');
 const { City } = require('../models/associations');
+const State = require('../models/state.model');
+const country = require('../models/country.model');
 
 exports.add = (req, res) => {
     const _b = req.body;
@@ -87,7 +89,15 @@ exports.getAll = (req, res) => {
     const { isAdmin, userId, lang } = getUserDetails(req.user)
 
     if (isAdmin) {
-        DeliveryAddress.findAll()
+        DeliveryAddress.findAll({
+            include: [{
+                model: City,
+                include: [
+                    { model: State }
+                ]
+            }]
+        }
+        )
             .then(c => {
                 // 
                 if (!c) throw new Error('No DeliveryAddress found!');
@@ -108,9 +118,12 @@ exports.getAll = (req, res) => {
         where: {
             user_id: userId
         },
-        include: [
-            { model: City },
-        ]
+        include: [{
+            model: City,
+            include: [
+                { model: State }
+            ]
+        }]
     })
         .then(c => {
             // console.log(c)
@@ -135,20 +148,40 @@ exports.getAll = (req, res) => {
 
 
 exports.getByID = (req, res) => {
-    const { isAdmin, userId } = getUserDetails(req.user)
+    const { isAdmin, userId, lang } = getUserDetails(req.user)
 
     DeliveryAddress.findOne({
         where: {
-            addressID: req.params.addressID
-        }
+            addressID: req.params.addressID,
+            user_id: userId
+        },
+        include: [{
+            model: City,
+            include: [
+                {
+                    model: State,
+                    include: [
+                        { model: country }
+                    ]
+                }
+            ]
+        }]
     })
         .then(c => {
             if (!c) throw new Error('No DeliveryAddress found!');
-            res.status(200).json({ status: true, data: c });
+
+            let schema = getDeliveryAddressSchema(lang)
+            let serializer = new Serializer(DeliveryAddress, schema);
+            let data = serializer.serialize(c);
+            res.status(200).json({ status: true, data });
         })
         .catch(err => {
             console.error(err);
-            res.status(400).json({ status: false });
+            console.log(err)
+            res.status(400).json({
+                status: false,
+                message: "No Address Found"
+            });
         });
 };
 

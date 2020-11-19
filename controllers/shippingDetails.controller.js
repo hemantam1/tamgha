@@ -5,6 +5,7 @@ const { insertingData, getUserDetails } = require('../utils/helperFunc')
 const { isAr } = require('../utils/verify')
 // const { getShippingDetailsSchema } = require('../utils/schema/schemas');
 const Serializer = require('sequelize-to-json');
+const { getShipDetailSchema } = require('../utils/schema/schemas');
 
 exports.add = (req, res) => {
     const { isAdmin, userId } = getUserDetails(req.user)
@@ -129,7 +130,7 @@ exports.getAll = (req, res) => {
 
 
 exports.getByID = (req, res) => {
-    const { isAdmin, userId } = getUserDetails(req.user)
+    const { isAdmin, userId, lang } = getUserDetails(req.user)
 
     ShippingDetails.findOne({
         where: {
@@ -138,7 +139,11 @@ exports.getByID = (req, res) => {
     })
         .then(c => {
             if (!c) throw new Error('No ShippingDetails found!');
-            res.status(200).json({ status: true, data: c });
+            let schema = getShipDetailSchema(lang)
+            let serializer = new Serializer(ShippingDetails, schema);
+            let data = serializer.serialize(c);
+
+            res.status(200).json({ status: true, data });
         })
         .catch(err => {
             console.error(err);

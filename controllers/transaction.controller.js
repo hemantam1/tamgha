@@ -128,16 +128,21 @@ exports.getAll = (req, res) => {
 
 
 exports.getByID = (req, res) => {
-    const { isAdmin, userId } = getUserDetails(req.user)
+    const { isAdmin, userId, lang } = getUserDetails(req.user)
 
     Transaction.findOne({
         where: {
-            transactionID: req.params.transactionID
+            transactionID: req.params.transactionID,
+            user_id: userId,
         }
     })
         .then(c => {
             if (!c) throw new Error('No Transaction found!');
-            res.status(200).json({ status: true, data: c });
+            let schema = getTransactionSchema(lang)
+            let serializer = new Serializer(Transaction, schema);
+            let data = serializer.serialize(c);
+
+            res.status(200).json({ status: true, data });
         })
         .catch(err => {
             console.error(err);

@@ -6,6 +6,7 @@ const { isAr } = require('../utils/verify')
 // const { getSchema } = require('../utils/schema/schemas');
 const Serializer = require('sequelize-to-json');
 const { Product } = require('../models/associations');
+const { getProductDetailSchema } = require('../utils/schema/schemas');
 
 exports.add = (req, res) => {
     const _b = req.body;
@@ -138,10 +139,10 @@ exports.getByID = (req, res) => {
     let prdID = req.params.productDetailID
     if (prdID) opts.where = { productDetailID: prdID }
 
-    ProdDetail.findOne(opts)
+    ProdDetail.findAll(opts)
         .then(c => {
             if (!c) throw new Error('No ProdDetail found!');
-            let schema = getSchema(lang)
+            let schema = getProductDetailSchema(lang)
 
             let data = Serializer.serializeMany(c, ProdDetail, schema);
             res.status(200).json({ status: true, data });

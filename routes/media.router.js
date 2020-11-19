@@ -9,8 +9,8 @@ router.get('/', passport.authenticate('user', { session: false }), mediaControll
 router.post('/', mediaController.add);
 router.put('/', multer.array('files'), passport.authenticate('user', { session: false }), mediaController.update);
 router.delete('/', passport.authenticate('user', { session: false }), mediaController.delete);
-router.get('/:mediaID', passport.authenticate('user', { session: false }), mediaController.getByID);
-router.get('/:product_id', passport.authenticate('user', { session: false }), mediaController.getByID);
+router.get('/getBy/:mediaID', passport.authenticate('user', { session: false }), mediaController.getByID);
+router.get('/getByProductId/:productId', passport.authenticate('user', { session: false }), mediaController.getByID);
 
 
 module.exports = router;

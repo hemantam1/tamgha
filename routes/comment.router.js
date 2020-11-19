@@ -8,8 +8,8 @@ router.get('/', passport.authenticate('user', { session: false }), commentContro
 router.post('/', passport.authenticate('user', { session: false }), commentController.add);
 router.put('/', passport.authenticate('user', { session: false }), commentController.update);
 router.delete('/', passport.authenticate('user', { session: false }), commentController.delete);
-router.get('/:commentID', passport.authenticate('user', { session: false }), commentController.getByID);
-router.get('/:product_id', passport.authenticate('user', { session: false }), commentController.getByID);
+router.get('/getBy/:commentID', passport.authenticate('user', { session: false }), commentController.getByID);
+router.get('/getByProductId/:product_id', passport.authenticate('user', { session: false }), commentController.getByID);
 
 
 

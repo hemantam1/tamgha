@@ -10,7 +10,7 @@ router.get('/', passport.authenticate('user', { session: false }), deliveryAddre
 router.post('/', passport.authenticate('user', { session: false }), deliveryAddressController.add);
 router.put('/', passport.authenticate('user', { session: false }), deliveryAddressController.update);
 router.delete('/', passport.authenticate('user', { session: false }), deliveryAddressController.delete);
-router.get('/:addressID', passport.authenticate('user', { session: false }), deliveryAddressController.getByID);
+router.get('/getBy/:addressID', passport.authenticate('user', { session: false }), deliveryAddressController.getByID);
 
 
 

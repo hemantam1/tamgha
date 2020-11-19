@@ -140,14 +140,14 @@ exports.getAll = (req, res) => {
 
 
 exports.getByID = (req, res) => {
-    const { isAdmin, userId } = getUserDetails(req.user)
+    const { isAdmin, userId, lang } = getUserDetails(req.user)
 
     let opts = {
         where: {
             mediaID: req.params.mediaID
         }
     }
-    let productId = req.params.product_id
+    let productId = req.params.productId
     if (productId) {
         opts = {
             where: {
@@ -155,10 +155,15 @@ exports.getByID = (req, res) => {
             }
         }
     }
+    console.log(opts)
     Media.findOne(opts)
         .then(c => {
-            if (!c) throw new Error('No Media found!');
-            res.status(200).json({ status: true, data: c });
+            if (!c) throw new Error('No Me_idia found!');
+            let schema = getMediaSchema(lang)
+            let serializer = new Serializer(Media, schema);
+            let data = serializer.serialize(c);
+
+            res.status(200).json({ status: true, data });
         })
         .catch(err => {
             console.error(err);

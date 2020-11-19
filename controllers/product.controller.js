@@ -17,19 +17,104 @@ const Likes = require('../models/likes.model')
 
 exports.add = (req, res) => {
     const _b = req.body;
+    const { isAdmin, userId, lang } = getUserDetails(req.user)
+
+    if (isAdmin) {
+        let payload = getData(_b, req.user)
+
+        Product.create(payload)
+            .then(r => {
+                res.status(200).json({ status: true, result: r });
+            })
+            .catch(err => {
+                console.error(err);
+                res.status(400).json({
+                    status: false,
+                    error: err
+                });
+            });
+    }
 
     let payload = getData(_b, req.user)
 
     Product.create(payload)
-        .then(r => {
-            res.status(200).json({ status: true, result: r });
+        .then(c => {
+
+            if (!c) throw new Error('No Product found!');
+            let productID = c.dataValues.productID
+            if (productID) {
+                const files = req.dir;
+                if (files) {
+                    // console.log(files)
+                    Media.bulkCreate(files)
+                        .then((media) => {
+                            console.log(media);
+                            return
+                        })
+                        .catch((err) => reject(res, err));
+                }
+
+                try {
+                    for (let j = 0; j < _b.sizes.length; j++) {
+                        let additionalPrice = parseInt(_b.sizes[j].additionalPrice) + parseInt(_b.price)
+                        let productDetailsPayload = {
+                            available: _b.sizes[j].available,
+                            totalPrice: additionalPrice,
+                            isFaltDiscount: _b.isFaltDiscount,
+                            priceExcluding: _b.priceExcluding,
+                            product_id: productID
+                        }
+                        if (isAr(lang)) {
+                            productDetailsPayload.sizeAr = _b.sizes[j].size
+                            productDetailsPayload.colorAr = _b.sizes[j].color
+                            productDetailsPayload.priceCurrencyAr = _b.priceCurrency
+                        } else {
+                            productDetailsPayload.size = _b.sizes[j].size
+                            productDetailsPayload.color = _b.sizes[j].color
+                            productDetailsPayload.priceCurrency = _b.priceCurrency
+                        }
+                        ProductDetails.create(productDetailsPayload)
+                    }
+                } catch (err) {
+                    console.error(err);
+                    res.status(400).json({ status: false });
+                }
+                try {
+
+                    let shippingAddresPayload = {
+                        pinCode: _b.locationCode,
+                        isTamghaShipping: false,
+                        phoneNo: _b.phoneNo,
+                        city_id: _b.city_id,
+                        user_id: _b.user_id,
+                        product_id: productID
+                    }
+                    if (isAr(lang)) {
+                        shippingAddresPayload.addressAr = _b.locationTitle
+                        shippingAddresPayload.areaAr = _b.locationArea
+                        shippingAddresPayload.emailAr = _b.email
+                    } else {
+                        shippingAddresPayload.address = _b.locationTitle
+                        shippingAddresPayload.area = _b.locationArea
+                        shippingAddresPayload.email = _b.email
+                    }
+                    ShippingAddress.create(shippingAddresPayload)
+                        .then(s => res.json({
+                            status: true,
+                            data: _b
+                        })
+                        )
+                }
+                catch (err) {
+                    console.error(err);
+                    res.status(400).json({ status: false });
+                }
+            }
+
         })
         .catch(err => {
             console.error(err);
-            res.status(400).json({
-                status: false,
-                error: err
-            });
+            res.status(400).json({ status: false });
         });
 };
 
@@ -64,7 +149,7 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
     const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
-    console.log(data[0].productID)
+    // console.log(data[0].productID)
 
     if (!_b.productID) {
         res.status(400).json({ status: false, message: "productID does not exists" });
@@ -124,7 +209,7 @@ exports.getAll = (req, res) => {
 
 
 exports.getByID = (req, res) => {
-    const { isAdmin, userId } = getUserDetails(req.user)
+    const { isAdmin, userId, lang } = getUserDetails(req.user)
 
     Product.findOne({
         where: {
@@ -133,7 +218,11 @@ exports.getByID = (req, res) => {
     })
         .then(c => {
             if (!c) throw new Error('No Product found!');
-            res.status(200).json({ status: true, data: c });
+            let schema = getProductSchema(lang)
+            let serializer = new Serializer(Product, schema);
+            let data = serializer.serialize(c);
+
+            res.status(200).json({ status: true, data });
         })
         .catch(err => {
             console.error(err);
@@ -177,98 +266,6 @@ exports.uploadPhotos = (req, res, next) => {
     //     });
 };
 
-
-
-
-exports.upload = (req, res) => {
-    const _b = req.body
-    const { isAdmin, userId } = getUserDetails(req.user)
-
-    let productPayload = {
-        productName: _b.productName,
-        productNameAr: _b.productNameAr,
-        productDescription: _b.productDescription,
-        productDescriptionAr: _b.productDescriptionAr,
-        priceCurrency: _b.priceCurrency,
-        priceCurrencyAr: _b.priceCurrencyAr,
-        price: _b.price,
-        isAvailable: _b.isAvailable,
-        user_id: userId,
-        subCategory_id: _b.subCategory_id
-    }
-
-    Product.create(productPayload)
-        .then(c => {
-
-            if (!c) throw new Error('No Product found!');
-            let productID = c.dataValues.productID
-            if (productID) {
-                const files = req.dir;
-                if (files) {
-                    console.log(files)
-                    Media.bulkCreate(files)
-                        .then((media) => {
-                            console.log(media);
-                            return
-                        })
-                        .catch((err) => reject(res, err));
-                }
-
-                try {
-                    for (let j = 0; j < _b.sizes.length; j++) {
-                        let additionalPrice = parseInt(_b.sizes[j].additionalPrice) + parseInt(_b.price)
-                        let productDetailsPayload = {
-                            size: _b.sizes[j].size,
-                            sizeAr: _b.sizes[j].sizeAr,
-                            available: _b.sizes[j].available,
-                            color: _b.sizes[j].color,
-                            colorAr: _b.colorAr,
-                            priceCurrency: _b.priceCurrency,
-                            priceCurrencyAr: _b.priceCurrencyAr,
-                            totalPrice: additionalPrice,
-                            isFaltDiscount: _b.isFaltDiscount,
-                            priceExcluding: _b.priceExcluding,
-                            product_id: productID
-                        }
-                        ProductDetails.create(productDetailsPayload)
-                    }
-                } catch (err) {
-                    console.error(err);
-                    res.status(400).json({ status: false });
-                }
-                try {
-
-                    let shippingAddresPayload = {
-                        address: _b.locationTitle,
-                        area: _b.locationArea,
-                        pinCode: _b.locationCode,
-                        isTamghaShipping: false,
-                        phoneNo: _b.phoneNo,
-                        email: _b.email,
-                        emailAr: _b.emailAr,
-                        city_id: _b.city_id,
-                        user_id: _b.user_id,
-                        product_id: productID
-                    }
-                    ShippingAddress.create(shippingAddresPayload)
-                        .then(s => res.json({
-                            status: true,
-                            data: _b
-                        })
-                        )
-                }
-                catch (err) {
-                    console.error(err);
-                    res.status(400).json({ status: false });
-                }
-            }
-
-        })
-        .catch(err => {
-            console.error(err);
-            res.status(400).json({ status: false });
-        });
-};
 
 
 

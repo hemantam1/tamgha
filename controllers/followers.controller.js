@@ -83,7 +83,7 @@ exports.getAll = (req, res) => {
             user_id: userId
         },
         include: [
-            { model: User },
+            { model: User, as: 'followerUser' },
         ]
     })
         .then(c => {
@@ -93,7 +93,7 @@ exports.getAll = (req, res) => {
             let schema = getFollowerSchema(lang)
 
             let data = Serializer.serializeMany(c, Followers, schema);
-            res.status(200).json({ status: true, data: c });
+            res.status(200).json({ status: true, data });
 
         })
         .catch(err => {
@@ -104,27 +104,35 @@ exports.getAll = (req, res) => {
 
 
 exports.getByID = (req, res) => {
-    const { isAdmin, userId } = getUserDetails(req.user)
-    let followerUserId = req.params.followerUserId
+    const { isAdmin, userId, lang } = getUserDetails(req.user)
+    let followerUserId = req.params.userId
     let opts = {
         where: {
             followerID: req.params.followerID
-        }
+        },
+        include: [
+            { model: User, as: 'followerUser' },
+        ]
     }
     if (followerUserId) {
         opts = {
             where: {
-                follower_user_id: req.params.follower_user_id
+                follower_user_id: followerUserId
             },
             include: [
-                { model: User },
+                { model: User, as: 'followerUser' },
+
             ]
         }
     }
     Followers.findAll(opts)
         .then(c => {
             if (!c) throw new Error('No Followers found!');
-            res.status(200).json({ status: true, data: c });
+
+            let schema = getFollowerSchema(lang)
+
+            let data = Serializer.serializeMany(c, Followers, schema);
+            res.status(200).json({ status: true, data });
         })
         .catch(err => {
             console.error(err);

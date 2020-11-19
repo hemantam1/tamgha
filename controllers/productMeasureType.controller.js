@@ -7,6 +7,7 @@ const { isAr } = require('../utils/verify')
 const Serializer = require('sequelize-to-json');
 const { getMeasurementTypeSchema } = require('../utils/schema/schemas');
 const { Product } = require('../models/associations');
+const measureTypeSchema = require('../utils/schema/measureType.schema');
 
 exports.add = (req, res) => {
     const _b = req.body;
@@ -83,48 +84,55 @@ exports.delete = (req, res) => {
 exports.getAll = (req, res) => {
     const _b = req.body
     const { isAdmin, userId, lang } = getUserDetails(req.user)
+    if (isAdmin) {
 
-    ProductMeasureType.findAll({
-        include: [
-            { model: Product },
-        ]
-    })
-        .then(c => {
 
-            if (!c) throw new Error('No ProductMeasurementType found!');
-
-            let schema = getMeasurementTypeSchema(lang)
-
-            let data = Serializer.serializeMany(c, ProductMeasureType, schema);
-            res.status(200).json({ status: true, data });
-
+        ProductMeasureType.findAll({
+            include: [
+                { model: Product },
+            ]
         })
-        .catch(err => {
-            console.error(err);
-            res.status(400).json({ status: false });
-        });
+            .then(c => {
+
+                if (!c) throw new Error('No ProductMeasurementType found!');
+
+                let schema = getMeasurementTypeSchema(lang)
+
+                let data = Serializer.serializeMany(c, ProductMeasureType, schema);
+                res.status(200).json({ status: true, data });
+
+            })
+            .catch(err => {
+                console.error(err);
+                res.status(400).json({ status: false });
+            });
+    }
+    res.status(400).json({ status: false, message: "Not a user API" });
 };
 
 
 exports.getByID = (req, res) => {
-    const { isAdmin, userId } = getUserDetails(req.user)
+    const { isAdmin, userId, lang } = getUserDetails(req.user)
     let opts = {
         where: {
             typeID: req.params.typeID
         }
     }
-    let productId = req.params.product_id
+    let productId = req.params.productId
     if (productId) {
         opts = {
             where: {
-                product_id: req.params.product_id
+                product_id: productId
             }
         }
     }
     ProductMeasureType.findAll(opts)
         .then(c => {
             if (!c) throw new Error('No ProductMeasurementType found!');
-            res.status(200).json({ status: true, data: c });
+            let schema = getMeasurementTypeSchema(lang)
+
+            let data = Serializer.serializeMany(c, ProductMeasureType, schema);
+            res.status(200).json({ status: true, data });
         })
         .catch(err => {
             console.error(err);

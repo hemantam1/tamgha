@@ -6,6 +6,7 @@ const { isAr } = require('../utils/verify');
 const { getCitySchema } = require('../utils/schema/schemas');
 const Serializer = require('sequelize-to-json');
 const State = require('../models/state.model');
+const Country = require('../models/country.model');
 
 exports.add = (req, res) => {
     const _b = req.body;
@@ -84,7 +85,12 @@ exports.getAll = (req, res) => {
     City.findAll(
         {
             include: [
-                { model: State },
+                {
+                    model: State,
+                    include: [
+                        { model: Country }
+                    ]
+                },
             ]
         }
     )
@@ -104,16 +110,27 @@ exports.getAll = (req, res) => {
 
 
 exports.getByID = (req, res) => {
-    const { isAdmin, userId } = getUserDetails(req.user)
+    const { isAdmin, userId, lang } = getUserDetails(req.user)
 
     City.findOne({
         where: {
             cityID: req.params.cityID
-        }
+        }, include: [
+            {
+                model: State,
+                include: [
+                    { model: Country }
+                ]
+            },
+        ]
     })
         .then(c => {
             if (!c) throw new Error('No City found!');
-            res.status(200).json({ status: true, data: c });
+
+            let schema = getCitySchema(lang)
+            let serializer = new Serializer(City, schema);
+            let data = serializer.serialize(c);
+            res.status(200).json({ status: true, data });
         })
         .catch(err => {
             console.error(err);

@@ -9,7 +9,7 @@ router.post('/', passport.authenticate('user', { session: false }), cityControll
 router.put('/', passport.authenticate('user', { session: false }), cityController.update);
 router.delete('/', passport.authenticate('user', { session: false }), cityController.delete);
 router.get('/', passport.authenticate('user', { session: false }), cityController.getAll);
-router.get('/:cityID', passport.authenticate('user', { session: false }), cityController.getByID);
+router.get('/getBy/:cityID', passport.authenticate('user', { session: false }), cityController.getByID);
 
 
 module.exports = router;

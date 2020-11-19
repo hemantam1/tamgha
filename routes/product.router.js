@@ -20,27 +20,22 @@ const multer = require('../services/multer.service');
 
 
 router.get('/', passport.authenticate('user', { session: false }), productController.getAll);
-router.post('/upload', multer.array("files"), passport.authenticate('user', { session: false }), productController.upload);
+// router.post('/upload', multer.array("files"), passport.authenticate('user', { session: false }), productController.upload);
 router.post('/', passport.authenticate('user', { session: false }), productController.add);
 router.put('/', passport.authenticate('user', { session: false }), productController.update);
 router.delete('/', passport.authenticate('user', { session: false }), productController.delete);
-router.get('/:productID', passport.authenticate('user', { session: false }), productController.getByID);
+router.get('/getBy/:productID', passport.authenticate('user', { session: false }), productController.getByID);
 
 
 router.use('/category', require('./category.router'));
+router.use('/subCategory', require('./subCategory.router'));
 router.use('/media', require('./media.router'));
 router.use('/measurementType', require('./productMeasureType.router'));
 
-router.use('/productDetail', require('./prodDetails.router'));
+router.use('/detail', require('./prodDetails.router'));
 router.use('/shippingAddress', require('./shippingAddress.router'));
 router.use('/comment', require('./comment.router'));
 router.use('/like', require('./likes.router'));
 
-// router.get('/comment', productController.add);
-// router.post('/comment/add', productController.add);
-
-
-
-// app.post('/photos',)
 
 module.exports = router;

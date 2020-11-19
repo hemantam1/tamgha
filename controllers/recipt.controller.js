@@ -138,41 +138,45 @@ exports.getAll = (req, res) => {
 
 
 exports.getByID = (req, res) => {
-    const { isAdmin, userId } = getUserDetails(req.user)
+    const { isAdmin, userId, lang } = getUserDetails(req.user)
 
-    if (req.params.sold) {
-        Recipts.findAll({
+    if (req.params.reciptID) {
+        Recipts.findOne({
             where: {
-                seller_user_id: userId
+                reciptID: req.params.reciptID
             }
         })
             .then(c => {
-
                 if (!c) throw new Error('No Recipts found!');
-
                 let schema = getReciptSchema(lang)
+                let serializer = new Serializer(Recipts, schema);
+                let data = serializer.serialize(c);
 
-                let data = Serializer.serializeMany(c, Recipts, schema);
                 res.status(200).json({ status: true, data });
-                return
             })
             .catch(err => {
                 console.error(err);
                 res.status(400).json({ status: false });
             });
     }
-
-    Recipts.findOne({
+    Recipts.findAll({
         where: {
-            reciptID: req.params.reciptID
+            seller_user_id: userId
         }
     })
         .then(c => {
+
             if (!c) throw new Error('No Recipts found!');
-            res.status(200).json({ status: true, data: c });
+
+            let schema = getReciptSchema(lang)
+
+            let data = Serializer.serializeMany(c, Recipts, schema);
+            res.status(200).json({ status: true, data });
+            return
         })
         .catch(err => {
             console.error(err);
             res.status(400).json({ status: false });
         });
+
 };

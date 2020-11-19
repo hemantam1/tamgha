@@ -159,7 +159,7 @@ exports.getAll = (req, res) => {
 
 
 exports.getByID = (req, res) => {
-    const { isAdmin, userId } = getUserDetails(req.user)
+    const { isAdmin, userId, lang } = getUserDetails(req.user)
 
     let opts = {
         where: {
@@ -169,15 +169,22 @@ exports.getByID = (req, res) => {
             { model: Product },
         ]
     }
-    let productID = req.params.productID
+    let productId = req.params.productId
 
-    if (productID) opts.where = {
-        product_id: req.params.product_id
+    if (productId) {
+        opts.where = {
+            product_id: productId,
+        }
     }
     Likes.findAll(opts)
         .then(c => {
             if (!c) throw new Error('No Likes found!');
-            res.status(200).json({ status: true, data: c });
+
+            let schema = getLikeSchema(lang)
+
+            let data = Serializer.serializeMany(c, Likes, schema);
+
+            res.status(200).json({ status: true, data });
         })
         .catch(err => {
             console.error(err);

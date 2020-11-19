@@ -60,7 +60,7 @@ User.hasMany(Followers, { foreignKey: 'user_id', onDelete: 'CASCADE' })
 Followers.belongsTo(User, { foreignKey: 'user_id' })
 
 User.hasMany(Followers, { foreignKey: 'follower_user_id', onDelete: 'CASCADE' })
-Followers.belongsTo(User, { foreignKey: 'follower_user_id' })
+Followers.belongsTo(User, { as: 'followerUser', foreignKey: 'follower_user_id' })
 
 // Likes
 User.hasMany(Likes, { foreignKey: 'user_id', onDelete: 'CASCADE' })

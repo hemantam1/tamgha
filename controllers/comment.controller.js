@@ -95,7 +95,11 @@ exports.getAll = (req, res) => {
     const { isAdmin, userId, lang } = getUserDetails(req.user)
 
     if (isAdmin) {
-        Comment.findAll()
+        Comment.findAll({
+            include: [
+                { model: Product },
+            ]
+        })
             .then(c => {
 
                 if (!c) throw new Error('No Comment found!');
@@ -114,7 +118,10 @@ exports.getAll = (req, res) => {
     Comment.findAll({
         where: {
             user_id: userId
-        }
+        },
+        include: [
+            { model: Product },
+        ]
     })
         .then(c => {
 
@@ -137,7 +144,7 @@ exports.getAll = (req, res) => {
 
 
 exports.getByID = (req, res) => {
-    const { isAdmin, userId } = getUserDetails(req.user)
+    const { isAdmin, userId, lang } = getUserDetails(req.user)
 
     let opts = {
         where: {
@@ -149,14 +156,29 @@ exports.getByID = (req, res) => {
     }
     let productId = req.params.product_id
     if (productId) {
-        opts.where = {
-            product_id: productId
+        opts = {
+            where: {
+                product_id: productId
+            },
+            include: [
+                { model: Product },
+            ]
         }
     }
+    // console.log(opts)
     Comment.findAll(opts)
         .then(c => {
             if (!c) throw new Error('No Comment found!');
-            res.status(200).json({ status: true, data: c });
+
+            let schema = getCommentSchema(lang)
+            let serializer = new Serializer(Comment, schema);
+            let data = {}
+            if (!c[0]) {
+                data = serializer.serialize(c);
+            } else {
+                data = Serializer.serializeMany(c, Comment, schema);
+            }
+            res.status(200).json({ status: true, data });
         })
         .catch(err => {
             console.error(err);

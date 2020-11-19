@@ -8,7 +8,8 @@ router.get('/', passport.authenticate('user', { session: false }), ordersControl
 router.post('/', passport.authenticate('user', { session: false }), ordersController.add);
 // router.put('/', passport.authenticate('user', { session: false }), ordersController.update);
 router.delete('/', passport.authenticate('user', { session: false }), ordersController.delete);
-router.get('/:orderID', passport.authenticate('user', { session: false }), ordersController.getByID);
+router.get('/getBy/:orderID', passport.authenticate('user', { session: false }), ordersController.getByID);
+router.get('/getByProductId/:productId', passport.authenticate('user', { session: false }), ordersController.getByID);
 
 
 module.exports = router;
