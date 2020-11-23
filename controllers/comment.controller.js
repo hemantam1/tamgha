@@ -186,9 +186,8 @@ exports.getByID = (req, res) => {
         });
 };
 
-function getData(body, user) {
-    const lang = body.lCode
-    const { isAdmin, userId } = getUserDetails(user)
+function getData(_b, user) {
+    const { isAdmin, userId, lang } = getUserDetails(user)
     let payload = {}
     if (isAdmin) {
         payload = {

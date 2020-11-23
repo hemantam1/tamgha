@@ -104,7 +104,7 @@ exports.getAll = (req, res) => {
 
                 // let data = Serializer.serializeMany(c, Recipts, schema);
                 res.status(200).json({ status: true, data: c });
-
+                return
             })
             .catch(err => {
                 console.error(err);
@@ -117,7 +117,7 @@ exports.getAll = (req, res) => {
             buyer_user_id: userId
         },
         include: [
-            { model: User },
+            { model: User, as: 'Seller' },
         ]
     })
         .then(c => {
@@ -144,7 +144,10 @@ exports.getByID = (req, res) => {
         Recipts.findOne({
             where: {
                 reciptID: req.params.reciptID
-            }
+            },
+            include: [
+                { model: User, as: 'Buyer' }
+            ]
         })
             .then(c => {
                 if (!c) throw new Error('No Recipts found!');
@@ -153,6 +156,7 @@ exports.getByID = (req, res) => {
                 let data = serializer.serialize(c);
 
                 res.status(200).json({ status: true, data });
+                return
             })
             .catch(err => {
                 console.error(err);
@@ -162,7 +166,10 @@ exports.getByID = (req, res) => {
     Recipts.findAll({
         where: {
             seller_user_id: userId
-        }
+        },
+        include: [
+            { model: User, as: 'Buyer' }
+        ]
     })
         .then(c => {
 

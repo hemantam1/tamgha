@@ -2,10 +2,11 @@ const { userSchema } = require("./user.schema")
 
 function reciptSchema(constant) {
     return {
-        include: ['reciptID', 'order', 'user'],
+        include: ['reciptID', 'order', 'Buyer', 'Seller'],
         // as: { categoryAr: 'category' },
         assoc: {
-            user: userSchema(constant),
+            Buyer: userSchema(constant),
+            Seller: userSchema(constant),
 
         },
     }

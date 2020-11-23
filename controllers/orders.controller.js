@@ -11,7 +11,7 @@ const ProductDetails = require('../models/prodDetails.model');
 const Product = require('../models/product.model');
 
 exports.add = (req, res) => {
-    const { isAdmin, userId } = getUserDetails(req.user)
+    const { isAdmin, userId, lang } = getUserDetails(req.user)
     const _b = req.body;
     let payload = {
         deliveryMethod: _b.deliveryMethod,

@@ -111,6 +111,7 @@ exports.getByID = (req, res) => {
             followerID: req.params.followerID
         },
         include: [
+            { model: User },
             { model: User, as: 'followerUser' },
         ]
     }
@@ -120,6 +121,7 @@ exports.getByID = (req, res) => {
                 follower_user_id: followerUserId
             },
             include: [
+                { model: User },
                 { model: User, as: 'followerUser' },
 
             ]

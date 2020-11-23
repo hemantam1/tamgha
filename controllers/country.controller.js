@@ -4,6 +4,7 @@ const config = require('../config');
 const { getUserDetails } = require('../utils/helperFunc');
 const Serializer = require('sequelize-to-json');
 const { getCountrySchema } = require('../utils/schema/schemas');
+const { isAr } = require('../utils/verify');
 
 exports.add = (req, res) => {
     const _b = req.body;
@@ -57,7 +58,7 @@ exports.delete = (req, res) => {
         res.status(400).json({ status: false, message: "countryID does not exists" });
         return
     }
-
+    Server
 
     Country.destroy(
         {

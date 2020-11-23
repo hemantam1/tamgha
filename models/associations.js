@@ -148,11 +148,11 @@ Recipt.belongsTo(Orders, { foreignKey: 'order_id', onDelete: 'CASCADE' })
 
 
 User.hasMany(Recipt, { foreignKey: 'buyer_user_id', onDelete: 'CASCADE' })
-Recipt.belongsTo(User, { foreignKey: 'buyer_user_id' })
+Recipt.belongsTo(User, { as: 'Buyer', foreignKey: 'buyer_user_id' })
 
 
 User.hasMany(Recipt, { foreignKey: 'seller_user_id', onDelete: 'CASCADE' })
-Recipt.belongsTo(User, { foreignKey: 'seller_user_id' })
+Recipt.belongsTo(User, { as: 'Seller', foreignKey: 'seller_user_id' })
 
 module.exports = {
     Country,
