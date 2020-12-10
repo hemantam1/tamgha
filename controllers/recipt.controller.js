@@ -11,16 +11,23 @@ const { User } = require('../models/associations');
 exports.add = (req, res, next) => {
     const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
+    let payloads = []
+    let type = { type: 'sell' }
     let payload = {
         order_id: _b.order_id,
         buyer_user_id: userId,
+        seller_user_id: _b.seller_user_id,
         // Join Two tables Orders, Product, Users.
         // fetch from order_id --> product_id --> user_id 
         // seller_user_id: user_id
     }
-
-
-    Recipts.create(payload)
+    let anotherPayload = {
+        ...payload, ...type
+    }
+    payloads.push(payload)
+    payloads.push(anotherPayload)
+    console.log(payloads)
+    Recipts.bulkCreate(payloads)
         .then(r => {
             res.status(200).json({ status: true, result: r });
         })
@@ -70,20 +77,27 @@ exports.delete = (req, res, next) => {
     if (!_b.reciptID) {
         res.status(400).json({ status: false, message: "reciptID does not exists" });
         next('Client Error')
+        return
     }
-
-
-    Recipts.destroy(
-        {
+    let opts = {
+        where: {
+            reciptID: _b.reciptID,
+            seller_user_id: userId
+        }
+    }
+    if (_b.type === 'buy') {
+        opts = {
             where: {
                 reciptID: _b.reciptID,
-                seller_user_id: userId
+                buyer_user_id: userId
             }
         }
-    )
+    }
+
+    Recipts.destroy(opts)
         .then(c => {
             if (!c) throw new Error('No Recipts found!');
-            res.status(200).json({ status: true, category: c });
+            res.status(200).json({ status: true, delete: c });
         })
         .catch(err => {
             console.error(err);
@@ -123,7 +137,8 @@ exports.getAll = (req, res, next) => {
 
     Recipts.findAll({
         where: {
-            buyer_user_id: userId
+            buyer_user_id: userId,
+            type: 'buy'
         },
         include: [
             { model: User, as: 'Seller' },
@@ -159,7 +174,9 @@ exports.getByID = (req, res, next) => {
                 reciptID: req.params.reciptID
             },
             include: [
-                { model: User, as: 'Buyer' }
+                { model: User, as: 'Buyer' },
+                { model: User, as: 'Seller' }
+
             ]
         })
             .then(c => {
@@ -179,10 +196,12 @@ exports.getByID = (req, res, next) => {
                 });
                 next(err.message);
             });
+        return
     }
     Recipts.findAll({
         where: {
-            seller_user_id: userId
+            seller_user_id: userId,
+            type: 'sell'
         },
         include: [
             { model: User, as: 'Buyer' }

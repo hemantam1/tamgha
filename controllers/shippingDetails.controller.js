@@ -48,6 +48,7 @@ exports.update = (req, res, next) => {
             status: false, message: "shipID does not exists"
         });
         next('Client Error')
+        return
     }
     if (!isAdmin) {
         res.status(400).json({
@@ -67,7 +68,7 @@ exports.update = (req, res, next) => {
     )
         .then(c => {
             if (!c) throw new Error('No Details found!');
-            res.status(200).json({ status: true, ShippingDetails: c });
+            res.status(200).json({ status: true, update: c });
         })
         .catch(err => {
             console.error(err);
@@ -88,12 +89,14 @@ exports.delete = (req, res, next) => {
             status: false, message: "Not a Admin"
         });
         next('Client Error')
+        return
     }
     if (!_b.shipID) {
         res.status(400).json({
             status: false, message: "shipID does not exists"
         });
         next('Client Error')
+        return
     }
 
 
@@ -106,7 +109,7 @@ exports.delete = (req, res, next) => {
     )
         .then(c => {
             if (!c) throw new Error('No ShippingDetails found!');
-            res.status(200).json({ status: true, ShippingDetails: c });
+            res.status(200).json({ status: true, delete: c });
         })
         .catch(err => {
             console.error(err);
@@ -152,6 +155,7 @@ exports.getByID = (req, res, next) => {
             status: false, message: "No Param Name shipID found"
         });
         next('Client Error')
+        return
     }
 
     ShippingDetails.findOne({

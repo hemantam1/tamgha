@@ -34,6 +34,7 @@ exports.update = (req, res, next) => {
     if (!_b.subCategoryID) {
         res.status(400).json({ status: false, message: "subCategoryID does not exists" });
         next('Client Error')
+        return
     }
 
     let payload = getData(_b, req.user);
@@ -47,7 +48,7 @@ exports.update = (req, res, next) => {
     )
         .then(c => {
             if (!c) throw new Error('No SubCategory found!');
-            res.status(200).json({ status: true, category: c });
+            res.status(200).json({ status: true, update: c });
         })
         .catch(err => {
             console.error(err);
@@ -67,6 +68,7 @@ exports.delete = (req, res, next) => {
     if (!_b.subCategoryID) {
         res.status(400).json({ status: false, message: "subCategoryID does not exists" });
         next('Client Error')
+        return
     }
 
 
@@ -79,7 +81,7 @@ exports.delete = (req, res, next) => {
     )
         .then(c => {
             if (!c) throw new Error('No SubCategory found!');
-            res.status(200).json({ status: true, category: c });
+            res.status(200).json({ status: true, delete: c });
         })
         .catch(err => {
             console.error(err);
@@ -128,6 +130,7 @@ exports.getByID = (req, res, next) => {
     if (!req.params.subCategoryID) {
         res.status(400).json({ status: false, message: "No param Name subCategoryID exists" });
         next('Client Error')
+        return
     }
 
     SubCategory.findOne({

@@ -47,7 +47,7 @@ exports.update = (req, res, next) => {
     )
         .then(c => {
             if (!c) throw new Error('No Categories found!');
-            res.status(200).json({ status: true, category: c });
+            res.status(200).json({ status: true, update: c });
         })
         .catch(err => {
             console.error(err);
@@ -69,6 +69,7 @@ exports.delete = (req, res, next) => {
             status: false, message: "categoryID does not exists"
         });
         next('Client Error')
+        return
     }
 
 
@@ -81,7 +82,7 @@ exports.delete = (req, res, next) => {
     )
         .then(c => {
             if (!c) throw new Error('No Category found!');
-            res.status(200).json({ status: true, category: c });
+            res.status(200).json({ status: true, delete: c });
         })
         .catch(err => {
             console.error(err);
@@ -123,20 +124,15 @@ exports.getByID = (req, res, next) => {
     const { isAdmin, userId, lang } = getUserDetails(req.user)
 
 
-    if (!req.params.categoryID || !req.params.product_id) {
+    if (!req.params.categoryID) {
         res.status(400).json({
-            status: false, message: "No params Name categoryID/product_id found"
+            status: false, message: "No param Name categoryID found"
         });
         next('Client Error')
+        return
     }
     // console.log("GET BY")
-    if (req.params.product_id) {
-        opts = {
-            where: {
-                product_id: req.params.product_id
-            }
-        }
-    }
+
     Category.findOne({
         where: {
             categoryID: req.params.categoryID

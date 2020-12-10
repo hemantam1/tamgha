@@ -46,7 +46,7 @@ exports.update = (req, res, next) => {
     )
         .then(c => {
             if (!c) throw new Error('No City found!');
-            res.status(200).json({ status: true, category: c });
+            res.status(200).json({ status: true, update: c });
         })
         .catch(err => {
             console.error(err);
@@ -66,6 +66,7 @@ exports.delete = (req, res, next) => {
     if (!_b.cityID) {
         res.status(400).json({ status: false, message: "cityID does not exists" });
         next('Client Error')
+        return
     }
 
     City.destroy(
@@ -77,7 +78,7 @@ exports.delete = (req, res, next) => {
     )
         .then(c => {
             if (!c) throw new Error('No City found!');
-            res.status(200).json({ status: true, category: c });
+            res.status(200).json({ status: true, delete: c });
         })
         .catch(err => {
             console.error(err);
@@ -129,6 +130,8 @@ exports.getByID = (req, res, next) => {
     if (!req.params.cityID) {
         res.status(400).json({ status: false, message: "No Param Name cityID found" });
         next('Client Error')
+        return
+
     }
     City.findOne({
         where: {

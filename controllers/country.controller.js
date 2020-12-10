@@ -30,6 +30,7 @@ exports.update = (req, res, next) => {
     if (!_b.countryID) {
         res.status(400).json({ status: false, message: "countryID does not exists" });
         next('Client Error')
+        return
     }
     let payload = getData(_b, req.user)
 
@@ -42,7 +43,7 @@ exports.update = (req, res, next) => {
     )
         .then(c => {
             if (!c) throw new Error('No country found!');
-            res.status(200).json({ status: true, category: c });
+            res.status(200).json({ status: true, update: c });
         })
         .catch(err => {
             console.error(err);
@@ -62,6 +63,7 @@ exports.delete = (req, res, next) => {
     if (!_b.countryID) {
         res.status(400).json({ status: false, message: "countryID does not exists" });
         next('Client Error')
+        return
     }
 
     Country.destroy(
@@ -73,7 +75,7 @@ exports.delete = (req, res, next) => {
     )
         .then(c => {
             if (!c) throw new Error('No country found!');
-            res.status(200).json({ status: true, category: c });
+            res.status(200).json({ status: true, delete: c });
         })
         .catch(err => {
             console.error(err);
@@ -115,6 +117,7 @@ exports.getByID = (req, res, next) => {
     if (!req.params.countryID) {
         res.status(400).json({ status: false, message: "No Param Name countryID found" });
         next('Client Error')
+        return
     }
     Country.findOne({
         where: {

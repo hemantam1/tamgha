@@ -67,6 +67,7 @@ exports.delete = (req, res, next) => {
     if (!_b.messageID) {
         res.status(400).json({ status: false, message: "messageID does not exists" });
         next('Client Error')
+        return
     }
 
 
@@ -80,7 +81,7 @@ exports.delete = (req, res, next) => {
     )
         .then(c => {
             if (!c) throw new Error('No PrivateMessage found!');
-            res.status(200).json({ status: true, category: c });
+            res.status(200).json({ status: true, delete: c });
         })
         .catch(err => {
             console.error(err);
@@ -151,21 +152,25 @@ exports.getAll = (req, res, next) => {
 exports.getByID = (req, res, next) => {
     const { isAdmin, userId, lang } = getUserDetails(req.user)
 
-    if (!req.params.messageID) {
-        res.status(400).json({ status: false, message: "No param Name messageID found" });
+    if (!req.params.forUserId) {
+        res.status(400).json({ status: false, message: "No param Name forUserId found" });
         next('Client Error')
+        return
     }
     PrivateMessage.findAll({
         where: {
-            to_user_id: req.params.to_user_id,
+            to_user_id: req.params.forUserId,
             user_id: userId
         }
     })
         .then(c => {
             if (!c) throw new Error('No PrivateMessage found!');
+            console.log(c)
             let schema = getPrivateMessageSchema(lang)
-            let serializer = new Serializer(PrivateMessage, schema);
-            let data = serializer.serialize(c);
+
+            let data = Serializer.serializeMany(c, PrivateMessage, schema);
+            res.status(200).json({ status: true, data });
+
             res.status(200).json({ status: true, data });
         })
         .catch(err => {

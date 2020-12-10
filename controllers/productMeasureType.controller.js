@@ -34,6 +34,7 @@ exports.update = (req, res, next) => {
     if (!_b.typeID) {
         res.status(400).json({ status: false, message: "typeID does not exists" });
         next('Client Error')
+        return
     }
     let payload = getData(_b, req.user)
 
@@ -46,7 +47,7 @@ exports.update = (req, res, next) => {
     )
         .then(c => {
             if (!c) throw new Error('No MeasurementTypes found!');
-            res.status(200).json({ status: true, category: c });
+            res.status(200).json({ status: true, update: c });
         })
         .catch(err => {
             console.error(err);
@@ -66,6 +67,7 @@ exports.delete = (req, res, next) => {
     if (!_b.typeID) {
         res.status(400).json({ status: false, message: "typeID does not exists" });
         next('Client Error')
+        return
     }
 
 
@@ -78,7 +80,7 @@ exports.delete = (req, res, next) => {
     )
         .then(c => {
             if (!c) throw new Error('No ProductMeasurementType found!');
-            res.status(200).json({ status: true, category: c });
+            res.status(200).json({ status: true, delete: c });
         })
         .catch(err => {
             console.error(err);
@@ -126,16 +128,17 @@ exports.getAll = (req, res, next) => {
 
 exports.getByID = (req, res, next) => {
     const { isAdmin, userId, lang } = getUserDetails(req.user)
-    if (!req.params.typeID || !req.params.product_id) {
-        res.status(400).json({ status: false, message: "No params name typeID / product_id exists" });
+    if (!req.params.typeID && !req.params.productId) {
+        res.status(400).json({ status: false, message: "No params name typeID / productId exists" });
         next('Client Error')
+        return
     }
     let opts = {
         where: {
             typeID: req.params.typeID
         }
     }
-    let productId = req.params.product_id
+    let productId = req.params.productId
     if (productId) {
         opts = {
             where: {

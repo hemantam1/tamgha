@@ -49,7 +49,7 @@ exports.update = (req, res, next) => {
     )
         .then(c => {
             if (!c) throw new Error('No Address found!');
-            res.status(200).json({ status: true, category: c });
+            res.status(200).json({ status: true, update: c });
         })
         .catch(err => {
             console.error(err);
@@ -69,6 +69,7 @@ exports.delete = (req, res, next) => {
     if (!_b.addressID) {
         res.status(400).json({ status: false, message: "addressID does not exists" });
         next('Client Error')
+        return
     }
 
 
@@ -82,7 +83,7 @@ exports.delete = (req, res, next) => {
     )
         .then(c => {
             if (!c) throw new Error('No DeliveryAddress found!');
-            res.status(200).json({ status: true, category: c });
+            res.status(200).json({ status: true, delete: c });
         })
         .catch(err => {
             console.error(err);
@@ -171,6 +172,7 @@ exports.getByID = (req, res, next) => {
     if (!req.params.addressID) {
         res.status(400).json({ status: false, message: "No Param Name addressID found" });
         next('Client Error')
+        return
     }
     DeliveryAddress.findOne({
         where: {

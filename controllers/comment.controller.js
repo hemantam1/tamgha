@@ -32,6 +32,8 @@ exports.update = (req, res, next) => {
     if (!_b.commentID) {
         res.status(400).json({ status: false, message: "commentID does not exists" });
         next('Client Error')
+        return
+
     }
 
     let payload = getData(_b, req.user)
@@ -45,7 +47,7 @@ exports.update = (req, res, next) => {
     )
         .then(c => {
             if (!c) throw new Error('No Comments found!');
-            res.status(200).json({ status: true, category: c });
+            res.status(200).json({ status: true, update: c });
         })
         .catch(err => {
             console.error(err);
@@ -65,6 +67,8 @@ exports.delete = (req, res, next) => {
     if (!_b.commentID) {
         res.status(400).json({ status: false, message: "commentID does not exists" });
         next('Client Error')
+        return
+
     }
 
 
@@ -87,7 +91,7 @@ exports.delete = (req, res, next) => {
     Comment.destroy(opts)
         .then(c => {
             if (!c) throw new Error('No Comment found!');
-            res.status(200).json({ status: true, category: c });
+            res.status(200).json({ status: true, delete: c });
         })
         .catch(err => {
             console.error(err);
@@ -163,9 +167,11 @@ exports.getAll = (req, res, next) => {
 exports.getByID = (req, res, next) => {
     const { isAdmin, userId, lang } = getUserDetails(req.user)
 
-    if (!req.params.commentID || !req.params.product_id) {
+    if (!req.params.commentID && !req.params.productId) {
         res.status(400).json({ status: false, message: "No Params Name (commentID/product_id) Found  " });
         next('Client Error')
+        return
+
     }
     let opts = {
         where: {
@@ -175,7 +181,7 @@ exports.getByID = (req, res, next) => {
             { model: Product },
         ]
     }
-    let productId = req.params.product_id
+    let productId = req.params.productId
     if (productId) {
         opts = {
             where: {
@@ -189,11 +195,12 @@ exports.getByID = (req, res, next) => {
     // console.log(opts)
     Comment.findAll(opts)
         .then(c => {
-            if (!c) throw new Error('No Comment found!');
-
+            if (!c || !c[0]) throw new Error('No Comment found!');
+            console.log(c)
             let schema = getCommentSchema(lang)
             let serializer = new Serializer(Comment, schema);
             let data = {}
+
             if (!c[0]) {
                 data = serializer.serialize(c);
             } else {

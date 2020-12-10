@@ -28,33 +28,50 @@ exports.add = (req, res, next) => {
 
 exports.update = (req, res, next) => {
     const _b = req.body;
+    const { isAdmin, userId, lang } = getUserDetails(req.user)
 
     if (!_b.productDetailID) {
         res.status(400).json({ status: false, message: "productDetailID does not exists" });
         next('Client Error')
+        return
     }
     let payload = getData(_b, req.user)
 
-
-    ProdDetail.update(payload,
-        {
-            where: {
-                productDetailID: _b.productDetailID
-            }
+    Product.findAll({
+        where: {
+            productId: payload.product_id,
+            user_id: userId
         }
-    )
-        .then(c => {
-            if (!c) throw new Error('No ProductDetails found!');
-            res.status(200).json({ status: true, category: c });
-        })
-        .catch(err => {
-            console.error(err);
-            res.status(400).json({
-                status: false,
-                message: err.message
+    }).then(r => {
+        if (!r) throw new Error('Access Denied');
+        ProdDetail.update(payload,
+            {
+                where: {
+                    productDetailID: _b.productDetailID
+                }
+            }
+        )
+            .then(c => {
+                if (!c) throw new Error('No ProductDetails found!');
+                res.status(200).json({ status: true, update: c });
+            })
+            .catch(err => {
+                console.error(err);
+                res.status(400).json({
+                    status: false,
+                    message: err.message
+                });
+                next(err.message);
             });
-            next(err.message);
+    }).catch(err => {
+        console.error(err);
+        res.status(400).json({
+            status: false,
+            message: err.message
         });
+        next(err.message);
+    });
+
 };
 
 
@@ -65,6 +82,7 @@ exports.delete = (req, res, next) => {
     if (!_b.productDetailID) {
         res.status(400).json({ status: false, message: "productDetailID does not exists" });
         next('Client Error')
+        return
     }
 
     // write a logic for is permissible to delete this productDetail
@@ -77,7 +95,7 @@ exports.delete = (req, res, next) => {
     )
         .then(c => {
             if (!c) throw new Error('No ProdDetail found!');
-            res.status(200).json({ status: true, category: c });
+            res.status(200).json({ status: true, delete: c });
         })
         .catch(err => {
             console.error(err);
@@ -141,9 +159,10 @@ exports.getAll = (req, res, next) => {
 exports.getByID = (req, res, next) => {
     const { isAdmin, userId, lang } = getUserDetails(req.user)
 
-    if (!req.params.productDetailID || !req.params.product_id) {
+    if (!req.params.productDetailID && !req.params.product_id) {
         res.status(400).json({ status: false, message: "No params Name productDetailID / product_id exists" });
         next('Client Error')
+        return
     }
     let opts = {
         where: {

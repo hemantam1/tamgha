@@ -19,6 +19,7 @@ router.use('/recipt', require('./recipt.router'));
 router.get('/feed', passport.authenticate('user', { session: false }), productController.explore);
 router.post('/signUp', userController.register);
 router.post('/signIn', userController.login);
+router.post('/getAll', passport.authenticate('admin', { session: false }), userController.getAll);
 
 // router.post('/details', userController.detail);
 // router.post('/products', userController.detail);

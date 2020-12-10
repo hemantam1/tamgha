@@ -48,7 +48,7 @@ exports.update = (req, res, next) => {
     )
         .then(c => {
             if (!c) throw new Error('No Carts found!');
-            res.status(200).json({ status: true, Cart: c });
+            res.status(200).json({ status: true, update: c });
         })
         .catch(err => {
             console.error(err);
@@ -82,7 +82,7 @@ exports.delete = (req, res, next) => {
     Cart.destroy(payload)
         .then(c => {
             if (!c) throw new Error('No Cart found!');
-            res.status(200).json({ status: true, Cart: c });
+            res.status(200).json({ status: true, delete: c });
         })
         .catch(err => {
             console.error(err);

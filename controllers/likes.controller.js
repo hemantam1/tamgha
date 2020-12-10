@@ -89,6 +89,7 @@ exports.delete = (req, res, next) => {
     if (!_b.likeID) {
         res.status(400).json({ status: false, message: "likeID does not exists" });
         next('Client Error')
+        return
     }
     const { isAdmin, userId } = getUserDetails(req.user)
 
@@ -102,7 +103,7 @@ exports.delete = (req, res, next) => {
     )
         .then(c => {
             if (!c) throw new Error('No Likes found!');
-            res.status(200).json({ status: true, category: c });
+            res.status(200).json({ status: true, delete: c });
         })
         .catch(err => {
             console.error(err);
@@ -175,9 +176,10 @@ exports.getAll = (req, res, next) => {
 exports.getByID = (req, res, next) => {
     const { isAdmin, userId, lang } = getUserDetails(req.user)
 
-    if (!req.params.likeID || !req.params.product_id) {
+    if (!req.params.likeID && !req.params.product_id) {
         res.status(400).json({ status: false, message: "No Parama Name likeID / product_id found" });
         next('Client Error')
+        return
     }
     let opts = {
         where: {

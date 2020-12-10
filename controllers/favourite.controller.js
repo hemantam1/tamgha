@@ -71,6 +71,7 @@ exports.delete = (req, res, next) => {
             status: false, message: "favouriteID does not exists"
         });
         next('Client Error')
+        return
     }
 
 
@@ -84,7 +85,7 @@ exports.delete = (req, res, next) => {
     )
         .then(c => {
             if (!c) throw new Error('No Favourite found!');
-            res.status(200).json({ status: true, Favourite: c });
+            res.status(200).json({ status: true, delete: c });
         })
         .catch(err => {
             console.error(err);
@@ -153,13 +154,14 @@ exports.getAll = (req, res, next) => {
 
 exports.getByID = (req, res, next) => {
     const { isAdmin, userId, lang } = getUserDetails(req.user)
-    if (!req.params.favouriteID || !req.params.product_id) {
+    if (!req.params.favouriteID && !req.params.productId) {
         res.status(400).json({
-            status: false, message: "No Params Name favouriteID / product_id found"
+            status: false, message: "No Params Name favouriteID / productId found"
         });
         next('Client Error')
+        return
     }
-    let productId = req.params.product_id
+    let productId = req.params.productId
     let opts = {
         where: {
             favouriteID: req.params.favouriteID,
@@ -176,7 +178,6 @@ exports.getByID = (req, res, next) => {
         opts = {
             where: {
                 product_id: productId,
-                user_id: userId,
             }, include: [
                 { model: User },
             ]

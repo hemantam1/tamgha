@@ -42,6 +42,7 @@ exports.update = (req, res, next) => {
     if (!_b.measurementID) {
         res.status(400).json({ status: false, message: "measurementID does not exists" });
         next('Client Error')
+        return
     }
 
     let payload = insertingData(_b, _b.measurementID);
@@ -55,7 +56,7 @@ exports.update = (req, res, next) => {
     )
         .then(c => {
             if (!c) throw new Error('No MeasurementValues found!');
-            res.status(200).json({ status: true, category: c });
+            res.status(200).json({ status: true, update: c });
         })
         .catch(err => {
             console.error(err);
@@ -75,6 +76,7 @@ exports.delete = (req, res, next) => {
     if (!_b.measurementID) {
         res.status(400).json({ status: false, message: "measurementID does not exists" });
         next('Client Error')
+        return
     }
 
 
@@ -87,7 +89,7 @@ exports.delete = (req, res, next) => {
     )
         .then(c => {
             if (!c) throw new Error('No MeasurementValue found!');
-            res.status(200).json({ status: true, category: c });
+            res.status(200).json({ status: true, delete: c });
         })
         .catch(err => {
             console.error(err);
@@ -133,9 +135,10 @@ exports.getByID = (req, res, next) => {
     const { isAdmin, userId, lang } = getUserDetails(req.user)
 
 
-    if (!req.params.measurementID || !req.params.productDetailId) {
+    if (!req.params.measurementID && !req.params.productDetailId) {
         res.status(400).json({ status: false, message: "No params Name measurementID / productDetailId exists" });
         next('Client Error')
+        return
     }
     let opts = {
         where: {

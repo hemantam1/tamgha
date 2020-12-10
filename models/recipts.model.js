@@ -7,7 +7,12 @@ const Recipt = connection.define('recipt', {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
         primaryKey: true
-    }
+    },
+    type: {
+        type: Sequelize.ENUM,
+        values: ['buy', 'sell'],
+        defaultValue: 'buy'
+    },
 }
 );
 module.exports = Recipt;

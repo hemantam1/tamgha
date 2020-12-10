@@ -63,6 +63,7 @@ exports.delete = (req, res, next) => {
     if (!_b.transactionID) {
         res.status(400).json({ status: false, message: "transactionID does not exists" });
         next('Client Error')
+        return
     }
 
     Transaction.destroy(
@@ -74,7 +75,7 @@ exports.delete = (req, res, next) => {
     )
         .then(c => {
             if (!c) throw new Error('No Transaction found!');
-            res.status(200).json({ status: true, category: c });
+            res.status(200).json({ status: true, delete: c });
         })
         .catch(err => {
             console.error(err);
@@ -147,6 +148,7 @@ exports.getByID = (req, res, next) => {
     if (!req.params.transactionID) {
         res.status(400).json({ status: false, message: "No param Name transactionID exists" });
         next('Client Error')
+        return
     }
     Transaction.findOne({
         where: {

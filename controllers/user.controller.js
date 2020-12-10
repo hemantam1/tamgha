@@ -14,20 +14,24 @@ exports.register = (req, res, next) => {
     if (_b.registrationType === 'google') {
         res.send('redirect to /user/auth/google');
         next('Client Error')
+        return
     }
     if (!_b.email) {
         res.status(400).send({ message: "Email cannot be null" });
         next('Client Error')
+        return
 
     }
     else if (!_b.password) {
         res.status(400).send({ message: "Password cannot be null" });
         next('Client Error')
+        return
 
     }
     else if (!_b.userName) {
         res.status(400).send({ message: "user name cannot be null" });
         next('Client Error')
+        return
     }
     else {
         User.findOne({
@@ -42,6 +46,8 @@ exports.register = (req, res, next) => {
                         status: false,
                         message: "Email already registered"
                     });
+                    return
+
                 }
                 else {
                     User.create({
@@ -66,8 +72,8 @@ exports.register = (req, res, next) => {
                                 data
                             });
                         })
-                        .catch(e => {
-                            console.error(e);
+                        .catch(err => {
+                            console.error(err);
                             res.status(400).json({
                                 status: false,
                                 message: err.message
@@ -76,8 +82,8 @@ exports.register = (req, res, next) => {
                         });
                 }
             })
-            .catch(e => {
-                console.error(e);
+            .catch(err => {
+                console.error(err);
                 res.status(400).json({
                     status: false,
                     message: err.message
@@ -87,18 +93,35 @@ exports.register = (req, res, next) => {
     }
 };
 
-
+exports.getAll = (req, res, next) => {
+    const { isAdmin, userId } = getUserDetails(req.user)
+    if (isAdmin) {
+        User.findAll()
+            .then(c => res.status(200).json({
+                status: true,
+                data: c
+            }))
+            .catch(err => {
+                console.error(e);
+                res.status(400).json({
+                    status: false,
+                    message: err.message
+                });
+                next(err.message);
+            })
+    }
+}
 exports.login = (req, res, next) => {
     const _b = req.body;
     if (!_b.email) {
         res.status(400).send({ message: "email cannot be null" });
         next('Client Error')
-
+        return
     }
     else if (!_b.password) {
         res.status(400).send({ message: "Password cannot be null" });
         next('Client Error')
-
+        return
     }
     else {
         User.findOne({
@@ -113,13 +136,15 @@ exports.login = (req, res, next) => {
                             status: false,
                             message: "Email not Verified"
                         });
+                        next('Client Error');
+
                     }
                     else if (!bcrypt.compareSync(_b.password, u.password)) {
                         res.status(401).json({
                             status: false,
                             message: "wrong password"
                         });
-                        next(err.message);
+                        next('Client Error');
                     }
                     else {
                         const auth = `bearer ${jwt.sign(u.userID, config.passport.jwtSecret)}`;
@@ -136,10 +161,11 @@ exports.login = (req, res, next) => {
                         message: "email not found"
                     });
                     next('Client Error')
+                    return
                 }
             })
-            .catch(e => {
-                console.error(e);
+            .catch(err => {
+                console.error(err);
                 res.status(400).json({
                     status: false,
                     message: err.message
@@ -168,8 +194,8 @@ exports.suggestAll = (req, res, next) => {
                 .then(r => res.status(200).json({
                     status: true, data: r
                 }))
-                .catch(e => {
-                    console.error(e);
+                .catch(err => {
+                    console.error(err);
                     res.status(400).json({
                         status: false,
                         message: err.message
@@ -178,8 +204,8 @@ exports.suggestAll = (req, res, next) => {
                 });
 
         })
-        .catch(e => {
-            console.error(e);
+        .catch(err => {
+            console.error(err);
             res.status(400).json({
                 status: false,
                 message: err.message

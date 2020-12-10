@@ -9,15 +9,19 @@ const { getMediaSchema } = require('../utils/schema/schemas');
 const { Product } = require('../models/associations');
 
 exports.add = (req, res, next) => {
+    const _b = req.body;
+
+    let payload = {
+        mediaLink: _b.mediaLink
+    }
+
     if (req.user) {
         const { isAdmin, userId } = getUserDetails(req.user)
+        payload.user_id = userId
     }
-    const _b = req.body;
     // console.log(req)
-    let payload = {
-        mediaLink: _b.mediaLink,
-        user_id: userId,
-        product_id: _b.product_id
+    if (_b.product_id) {
+        payload.product_id = _b.product_id
     }
 
     Media.create(payload)
@@ -41,6 +45,7 @@ exports.update = (req, res, next) => {
     if (!_b.mediaID) {
         res.status(400).json({ status: false, message: "mediaID does not exists" });
         next('Client Error')
+        return
     }
 
     let payload = insertingData(_b, _b.mediaID);
@@ -54,7 +59,7 @@ exports.update = (req, res, next) => {
     )
         .then(c => {
             if (!c) throw new Error('No Media found!');
-            res.status(200).json({ status: true, category: c });
+            res.status(200).json({ status: true, update: c });
         })
         .catch(err => {
             console.error(err);
@@ -74,6 +79,7 @@ exports.delete = (req, res, next) => {
     if (!_b.mediaID) {
         res.status(400).json({ status: false, message: "mediaID does not exists" });
         next('Client Error')
+        return
     }
 
 
@@ -86,7 +92,7 @@ exports.delete = (req, res, next) => {
     )
         .then(c => {
             if (!c) throw new Error('No Media found!');
-            res.status(200).json({ status: true, category: c });
+            res.status(200).json({ status: true, delete: c });
         })
         .catch(err => {
             console.error(err);
@@ -158,9 +164,10 @@ exports.getAll = (req, res, next) => {
 
 exports.getByID = (req, res, next) => {
     const { isAdmin, userId, lang } = getUserDetails(req.user)
-    if (!req.params.mediaID || !req.params.product_id) {
+    if (!req.params.mediaID && !req.params.product_id) {
         res.status(400).json({ status: false, message: "No Params Name mediaID product_id found" });
         next('Client Error')
+        return
     }
     let opts = {
         where: {

@@ -35,6 +35,7 @@ exports.update = (req, res, next) => {
             status: false, message: "userCategoryID does not exists"
         });
         next('Client Error')
+        return
     }
 
     let payload = getData(_b, req.user)
@@ -48,7 +49,7 @@ exports.update = (req, res, next) => {
     )
         .then(c => {
             if (!c) throw new Error('No Categories found!');
-            res.status(200).json({ status: true, category: c });
+            res.status(200).json({ status: true, update: c });
         })
         .catch(err => {
             console.error(err);
@@ -70,6 +71,7 @@ exports.delete = (req, res, next) => {
             status: false, message: "userCategoryID does not exists"
         });
         next('Client Error')
+        return
     }
 
 
@@ -82,7 +84,7 @@ exports.delete = (req, res, next) => {
     )
         .then(c => {
             if (!c) throw new Error('No UsrCategory found!');
-            res.status(200).json({ status: true, category: c });
+            res.status(200).json({ status: true, delete: c });
         })
         .catch(err => {
             console.error(err);
@@ -153,6 +155,7 @@ exports.getByID = (req, res, next) => {
             status: false, message: "No param name userCategoryID exists"
         });
         next('Client Error')
+        return
     }
     UsrCategory.findOne({
         where: {
@@ -177,7 +180,7 @@ exports.getByID = (req, res, next) => {
 };
 
 function getData(_b, user) {
-    const { isAdmin, userId } = getUserDetails(user)
+    const { isAdmin, userId, lang } = getUserDetails(user)
     let payload = {}
     if (isAdmin) {
         payload = {

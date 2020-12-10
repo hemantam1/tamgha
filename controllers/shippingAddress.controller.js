@@ -34,6 +34,7 @@ exports.update = (req, res, next) => {
     if (!_b.addressID) {
         res.status(400).json({ status: false, message: "addressID does not exists" });
         next('Client Error')
+        return
     }
 
     let payload = getData(_b, req.user);
@@ -48,7 +49,7 @@ exports.update = (req, res, next) => {
     )
         .then(c => {
             if (!c) throw new Error('No ShippingAddress found!');
-            res.status(200).json({ status: true, category: c });
+            res.status(200).json({ status: true, update: c });
         })
         .catch(err => {
             console.error(err);
@@ -68,6 +69,7 @@ exports.delete = (req, res, next) => {
     if (!_b.addressID) {
         res.status(400).json({ status: false, message: "addressID does not exists" });
         next('Client Error')
+        return
     }
 
 
@@ -80,7 +82,7 @@ exports.delete = (req, res, next) => {
     )
         .then(c => {
             if (!c) throw new Error('No ShippingAddress found!');
-            res.status(200).json({ status: true, category: c });
+            res.status(200).json({ status: true, delete: c });
         })
         .catch(err => {
             console.error(err);
@@ -142,13 +144,14 @@ exports.getByID = (req, res, next) => {
     const { isAdmin, userId, lang } = getUserDetails(req.user)
 
 
-    if (!req.params.addressID) {
-        res.status(400).json({ status: false, message: "No Params Name addressID / product_id found" });
+    if (!req.params.addressID && !req.params.productId) {
+        res.status(400).json({ status: false, message: "No Params Name addressID / productId found" });
         next('Client Error')
+        return
     }
     let opts = {
         where: {
-            product_id: req.params.product_id
+            product_id: req.params.productId
         },
         include: [
             { model: City },
