@@ -1,7 +1,6 @@
 const router = require('express').Router();
 const ordersController = require('../controllers/orders.controller');
 const passport = require('passport');
-const { user, admin, guest } = require('../middlewares/auth')
 
 
 router.get('/', passport.authenticate('user', { session: false }), ordersController.getAll);
@@ -9,7 +8,7 @@ router.post('/', passport.authenticate('user', { session: false }), ordersContro
 // router.put('/', passport.authenticate('user', { session: false }), ordersController.update);
 router.delete('/', passport.authenticate('user', { session: false }), ordersController.delete);
 router.get('/getBy/:orderID', passport.authenticate('user', { session: false }), ordersController.getByID);
-router.get('/getByProductId/:productId', passport.authenticate('user', { session: false }), ordersController.getByID);
+router.get('/getByProductId/:product_id', passport.authenticate('user', { session: false }), ordersController.getByID);
 
 
 module.exports = router;

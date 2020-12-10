@@ -1,7 +1,6 @@
 const router = require('express').Router();
 const usrCategoryController = require('../controllers/usrCategory.controller');
 const passport = require('passport');
-const { user, admin, guest } = require('../middlewares/auth')
 
 
 router.get('/', passport.authenticate('user', { session: false }), usrCategoryController.getAll);
@@ -9,6 +8,7 @@ router.post('/', passport.authenticate('user', { session: false }), usrCategoryC
 router.put('/', passport.authenticate('user', { session: false }), usrCategoryController.update);
 router.delete('/', passport.authenticate('user', { session: false }), usrCategoryController.delete);
 router.get('/getBy/:userCategoryID', passport.authenticate('user', { session: false }), usrCategoryController.getByID);
+router.get('/:self', passport.authenticate('user', { session: false }), usrCategoryController.getByID);
 
 
 

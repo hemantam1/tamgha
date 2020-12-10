@@ -7,7 +7,7 @@ const { isAr } = require('../utils/verify')
 const Serializer = require('sequelize-to-json');
 const { getCategorySchema } = require('../utils/schema/schemas');
 
-exports.add = (req, res) => {
+exports.add = (req, res, next) => {
     const _b = req.body;
 
     let payload = getData(_b, req.user)
@@ -20,18 +20,20 @@ exports.add = (req, res) => {
             console.error(err);
             res.status(400).json({
                 status: false,
-                error: err
+                error: err, message: err.message
             });
+            next(err.message);
         });
 };
 
-exports.update = (req, res) => {
+exports.update = (req, res, next) => {
     const _b = req.body;
 
     if (!_b.categoryID) {
         res.status(400).json({
             status: false, message: "categoryID does not exists"
         });
+        next('Client Error')
         return
     }
     let payload = getData(_b, req.user)
@@ -49,12 +51,16 @@ exports.update = (req, res) => {
         })
         .catch(err => {
             console.error(err);
-            res.status(400).json({ status: false });
+            res.status(400).json({
+                status: false,
+                error: err, message: err.message
+            });
+            next(err.message);
         });
 };
 
 
-exports.delete = (req, res) => {
+exports.delete = (req, res, next) => {
     const _b = req.body;
     const { isAdmin, userId } = getUserDetails(req.user)
 
@@ -62,7 +68,7 @@ exports.delete = (req, res) => {
         res.status(400).json({
             status: false, message: "categoryID does not exists"
         });
-        return
+        next('Client Error')
     }
 
 
@@ -79,11 +85,15 @@ exports.delete = (req, res) => {
         })
         .catch(err => {
             console.error(err);
-            res.status(400).json({ status: false });
+            res.status(400).json({
+                status: false,
+                error: err, message: err.message
+            });
+            next(err.message);
         });
 };
 
-exports.getAll = (req, res) => {
+exports.getAll = (req, res, next) => {
     const _b = req.body
     const { isAdmin, userId, lang } = getUserDetails(req.user)
 
@@ -100,14 +110,25 @@ exports.getAll = (req, res) => {
         })
         .catch(err => {
             console.error(err);
-            res.status(400).json({ status: false });
+            res.status(400).json({
+                status: false,
+                error: err, message: err.message
+            });
+            next(err.message);
         });
 };
 
 
-exports.getByID = (req, res) => {
+exports.getByID = (req, res, next) => {
     const { isAdmin, userId, lang } = getUserDetails(req.user)
 
+
+    if (!req.params.categoryID || !req.params.product_id) {
+        res.status(400).json({
+            status: false, message: "No params Name categoryID/product_id found"
+        });
+        next('Client Error')
+    }
     // console.log("GET BY")
     if (req.params.product_id) {
         opts = {
@@ -131,7 +152,11 @@ exports.getByID = (req, res) => {
         })
         .catch(err => {
             console.error(err);
-            res.status(400).json({ status: false });
+            res.status(400).json({
+                status: false,
+                error: err, message: err.message
+            });
+            next(err.message);
         });
 };
 

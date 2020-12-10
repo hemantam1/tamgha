@@ -1,6 +1,5 @@
 const router = require('express').Router();
 const countryController = require('../controllers/country.controller');
-const { user, admin, guest } = require('../middlewares/auth')
 
 const passport = require('passport');
 

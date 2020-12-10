@@ -8,7 +8,7 @@ const Serializer = require('sequelize-to-json');
 const Product = require('../models/product.model');
 const { getLikeSchema } = require('../utils/schema/schemas');
 
-exports.add = (req, res) => {
+exports.add = (req, res, next) => {
     const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
     let payload = {
@@ -29,9 +29,10 @@ exports.add = (req, res) => {
                     });
                     if (!product.noOfLikes) {
                         res.status(400).json({ status: false, message: 'No Product Found' });
+                        next('Client Error')
                         return
                     }
-                    console.log(product.noOfLikes); // 'John Doe'
+                    // console.log(product.noOfLikes); // 'John Doe'
                     product.noOfLikes = 1;
                     await product.save();
                     res.status(200).json({ status: true, result: r });
@@ -47,8 +48,9 @@ exports.add = (req, res) => {
             console.error(err);
             res.status(400).json({
                 status: false,
-                error: err
+                message: err.message
             });
+            next(err.message);
         });
 };
 
@@ -81,12 +83,12 @@ exports.add = (req, res) => {
 // };
 
 
-exports.delete = (req, res) => {
+exports.delete = (req, res, next) => {
     const _b = req.body;
 
     if (!_b.likeID) {
         res.status(400).json({ status: false, message: "likeID does not exists" });
-        return
+        next('Client Error')
     }
     const { isAdmin, userId } = getUserDetails(req.user)
 
@@ -104,11 +106,15 @@ exports.delete = (req, res) => {
         })
         .catch(err => {
             console.error(err);
-            res.status(400).json({ status: false });
+            res.status(400).json({
+                status: false,
+                message: err.message
+            });
+            next(err.message);
         });
 };
 
-exports.getAll = (req, res) => {
+exports.getAll = (req, res, next) => {
     const { isAdmin, userId, lang } = getUserDetails(req.user)
     const _b = req.body
 
@@ -126,7 +132,11 @@ exports.getAll = (req, res) => {
             })
             .catch(err => {
                 console.error(err);
-                res.status(400).json({ status: false });
+                res.status(400).json({
+                    status: false,
+                    message: err.message
+                });
+                next(err.message);
             });
     }
 
@@ -151,16 +161,24 @@ exports.getAll = (req, res) => {
         })
         .catch(err => {
             console.error(err);
-            res.status(400).json({ status: false });
+            res.status(400).json({
+                status: false,
+                message: err.message
+            });
+            next(err.message);
         });
 
 
 };
 
 
-exports.getByID = (req, res) => {
+exports.getByID = (req, res, next) => {
     const { isAdmin, userId, lang } = getUserDetails(req.user)
 
+    if (!req.params.likeID || !req.params.product_id) {
+        res.status(400).json({ status: false, message: "No Parama Name likeID / product_id found" });
+        next('Client Error')
+    }
     let opts = {
         where: {
             likeID: req.params.likeID
@@ -169,7 +187,7 @@ exports.getByID = (req, res) => {
             { model: Product },
         ]
     }
-    let productId = req.params.productId
+    let productId = req.params.product_id
 
     if (productId) {
         opts.where = {
@@ -188,6 +206,10 @@ exports.getByID = (req, res) => {
         })
         .catch(err => {
             console.error(err);
-            res.status(400).json({ status: false });
+            res.status(400).json({
+                status: false,
+                message: err.message
+            });
+            next(err.message);
         });
 };

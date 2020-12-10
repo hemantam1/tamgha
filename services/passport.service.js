@@ -5,6 +5,7 @@ const User = require('../models/user.model');
 const passportService = require('passport');
 const config = require('../config');
 const { Op } = require("sequelize");
+var logger = require('../utils/loging.js')
 
 const opts = {
     jwt: {
@@ -35,9 +36,16 @@ module.exports = {
                 .then(u => {
 
                     if (u) done(null, u);
-                    else done(null, false);
+                    else {
+                        done(null, false);
+                        logger.error({ message: "UNAUTHORIZED" })
+
+                    }
                 })
-                .catch(e => done(e, false));
+                .catch(e => {
+                    logger.error({ message: "UNAUTHORIZED" })
+                    done(e, false)
+                });
         }));
         passportService.use('user', new JwtStrategy(opts.jwt, (jwt_payload, done) => {
             User.findOne({
@@ -49,9 +57,16 @@ module.exports = {
 
                     if (u) {
                         done(null, u);
-                    } else done(null, false);
+                    } else {
+                        logger.log("UNAUTHORIZED")
+                        done(null, false);
+
+                    }
                 })
-                .catch(e => done(e, false));
+                .catch(e => {
+                    logger.log("UNAUTHORIZED")
+                    done(e, false)
+                });
         }));
         //PassportJs Google OAuth2.0 Strategy for login/Registration
         // passportService.use(new GoogleStrategy(opts.google, function(accessToken, refreshToken, profile, done) {

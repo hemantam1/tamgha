@@ -1,7 +1,6 @@
 const router = require('express').Router();
 const reciptController = require('../controllers/recipt.controller');
 const passport = require('passport');
-const { user, admin, guest } = require('../middlewares/auth')
 
 
 router.get('/', passport.authenticate('user', { session: false }), reciptController.getAll);

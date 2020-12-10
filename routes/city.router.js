@@ -1,6 +1,5 @@
 const router = require('express').Router();
 const cityController = require('../controllers/city.controller');
-const { user, admin, guest } = require('../middlewares/auth')
 
 const passport = require('passport');
 

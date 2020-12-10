@@ -10,7 +10,7 @@ const DeliveryAddress = require('../models/deliveryAddres.model');
 const ProductDetails = require('../models/prodDetails.model');
 const Product = require('../models/product.model');
 
-exports.add = (req, res) => {
+exports.add = (req, res, next) => {
     const { isAdmin, userId, lang } = getUserDetails(req.user)
     const _b = req.body;
     let payload = {
@@ -39,8 +39,9 @@ exports.add = (req, res) => {
             console.error(err);
             res.status(400).json({
                 status: false,
-                error: err
+                message: err.message
             });
+            next(err.message);
         });
 };
 
@@ -73,13 +74,13 @@ exports.add = (req, res) => {
 // };
 
 
-exports.delete = (req, res) => {
+exports.delete = (req, res, next) => {
     const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
 
     if (!_b.orderID) {
         res.status(400).json({ status: false, message: "orderID does not exists" });
-        return
+        next('Client Error')
     }
 
 
@@ -96,11 +97,15 @@ exports.delete = (req, res) => {
         })
         .catch(err => {
             console.error(err);
-            res.status(400).json({ status: false });
+            res.status(400).json({
+                status: false,
+                message: err.message
+            });
+            next(err.message);
         });
 };
 
-exports.getAll = (req, res) => {
+exports.getAll = (req, res, next) => {
     const { isAdmin, userId, lang } = getUserDetails(req.user)
     const _b = req.body
 
@@ -118,7 +123,11 @@ exports.getAll = (req, res) => {
             })
             .catch(err => {
                 console.error(err);
-                res.status(400).json({ status: false });
+                res.status(400).json({
+                    status: false,
+                    message: err.message
+                });
+                next(err.message);
             });
     }
     Orders.findAll({
@@ -143,16 +152,24 @@ exports.getAll = (req, res) => {
         })
         .catch(err => {
             console.error(err);
-            res.status(400).json({ status: false });
+            res.status(400).json({
+                status: false,
+                message: err.message
+            });
+            next(err.message);
         });
 
 
 };
 
 
-exports.getByID = (req, res) => {
+exports.getByID = (req, res, next) => {
     const { isAdmin, userId, lang } = getUserDetails(req.user)
 
+    if (!req.params.orderID || !req.params.product_id) {
+        res.status(400).json({ status: false, message: "No params Name orderID / product_id found" });
+        next('Client Error')
+    }
     let opts = {
         where: {
             orderID: req.params.orderID
@@ -162,7 +179,7 @@ exports.getByID = (req, res) => {
             { model: DeliveryAddress },
         ]
     }
-    let productId = req.params.productId
+    let productId = req.params.product_id
     if (productId) {
         opts.where = {
             product_id: productId,
@@ -179,6 +196,10 @@ exports.getByID = (req, res) => {
         })
         .catch(err => {
             console.error(err);
-            res.status(400).json({ status: false });
+            res.status(400).json({
+                status: false,
+                message: err.message
+            });
+            next(err.message);
         });
 };

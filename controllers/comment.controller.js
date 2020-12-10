@@ -7,7 +7,7 @@ const { getCommentSchema } = require('../utils/schema/schemas');
 const Serializer = require('sequelize-to-json');
 const { Product } = require('../models/associations');
 
-exports.add = (req, res) => {
+exports.add = (req, res, next) => {
     const _b = req.body;
 
     let payload = getData(_b, req.user)
@@ -20,17 +20,18 @@ exports.add = (req, res) => {
             console.error(err);
             res.status(400).json({
                 status: false,
-                error: err
+                error: err, message: err.message
             });
+            next(err.message);
         });
 };
 
-exports.update = (req, res) => {
+exports.update = (req, res, next) => {
     const _b = req.body;
 
     if (!_b.commentID) {
         res.status(400).json({ status: false, message: "commentID does not exists" });
-        return
+        next('Client Error')
     }
 
     let payload = getData(_b, req.user)
@@ -48,18 +49,22 @@ exports.update = (req, res) => {
         })
         .catch(err => {
             console.error(err);
-            res.status(400).json({ status: false });
+            res.status(400).json({
+                status: false,
+                error: err, message: err.message
+            });
+            next(err.message);
         });
 };
 
 
-exports.delete = (req, res) => {
+exports.delete = (req, res, next) => {
     const _b = req.body;
     const { isAdmin, userId } = getUserDetails(req.user)
 
     if (!_b.commentID) {
         res.status(400).json({ status: false, message: "commentID does not exists" });
-        return
+        next('Client Error')
     }
 
 
@@ -86,11 +91,15 @@ exports.delete = (req, res) => {
         })
         .catch(err => {
             console.error(err);
-            res.status(400).json({ status: false });
+            res.status(400).json({
+                status: false,
+                message: err.message
+            });
+            next(err.message);
         });
 };
 
-exports.getAll = (req, res) => {
+exports.getAll = (req, res, next) => {
     const _b = req.body
     const { isAdmin, userId, lang } = getUserDetails(req.user)
 
@@ -112,7 +121,11 @@ exports.getAll = (req, res) => {
             })
             .catch(err => {
                 console.error(err);
-                res.status(400).json({ status: false });
+                res.status(400).json({
+                    status: false,
+                    message: err.message
+                });
+                next(err.message);
             });
     }
     Comment.findAll({
@@ -135,7 +148,11 @@ exports.getAll = (req, res) => {
         })
         .catch(err => {
             console.error(err);
-            res.status(400).json({ status: false });
+            res.status(400).json({
+                status: false,
+                message: err.message
+            });
+            next(err.message);
         });
 
     // res.status(401).json({ status: false, message: "Not Authorised" });
@@ -143,9 +160,13 @@ exports.getAll = (req, res) => {
 };
 
 
-exports.getByID = (req, res) => {
+exports.getByID = (req, res, next) => {
     const { isAdmin, userId, lang } = getUserDetails(req.user)
 
+    if (!req.params.commentID || !req.params.product_id) {
+        res.status(400).json({ status: false, message: "No Params Name (commentID/product_id) Found  " });
+        next('Client Error')
+    }
     let opts = {
         where: {
             commentID: req.params.commentID
@@ -182,7 +203,11 @@ exports.getByID = (req, res) => {
         })
         .catch(err => {
             console.error(err);
-            res.status(400).json({ status: false });
+            res.status(400).json({
+                status: false,
+                message: err.message
+            });
+            next(err.message);
         });
 };
 

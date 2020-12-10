@@ -7,13 +7,14 @@ const { isAr } = require('../utils/verify')
 const Serializer = require('sequelize-to-json');
 const { getShipDetailSchema } = require('../utils/schema/schemas');
 
-exports.add = (req, res) => {
+exports.add = (req, res, next) => {
     const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
     if (!isAdmin) {
         res.status(400).json({
             status: false, message: "Not a Admin"
         });
+        next('Client Error');
         return
     }
     let payload = {
@@ -31,13 +32,14 @@ exports.add = (req, res) => {
             console.error(err);
             res.status(400).json({
                 status: false,
-                error: err
+                message: err.message
             });
+            next(err.message);
         });
 
 };
 
-exports.update = (req, res) => {
+exports.update = (req, res, next) => {
     const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
 
@@ -45,12 +47,13 @@ exports.update = (req, res) => {
         res.status(400).json({
             status: false, message: "shipID does not exists"
         });
-        return
+        next('Client Error')
     }
     if (!isAdmin) {
         res.status(400).json({
             status: false, message: "Not a Admin"
         });
+        next('Client Error')
         return
     }
     let payload = insertingData(_b, _b.shipID);
@@ -68,25 +71,29 @@ exports.update = (req, res) => {
         })
         .catch(err => {
             console.error(err);
-            res.status(400).json({ status: false });
+            res.status(400).json({
+                status: false,
+                message: err.message
+            });
+            next(err.message);
         });
 };
 
 
-exports.delete = (req, res) => {
+exports.delete = (req, res, next) => {
     const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
     if (!isAdmin) {
         res.status(400).json({
             status: false, message: "Not a Admin"
         });
-        return
+        next('Client Error')
     }
     if (!_b.shipID) {
         res.status(400).json({
             status: false, message: "shipID does not exists"
         });
-        return
+        next('Client Error')
     }
 
 
@@ -103,11 +110,15 @@ exports.delete = (req, res) => {
         })
         .catch(err => {
             console.error(err);
-            res.status(400).json({ status: false });
+            res.status(400).json({
+                status: false,
+                message: err.message
+            });
+            next(err.message);
         });
 };
 
-exports.getAll = (req, res) => {
+exports.getAll = (req, res, next) => {
     const { isAdmin, userId, lang } = getUserDetails(req.user)
     const _b = req.body
 
@@ -124,13 +135,24 @@ exports.getAll = (req, res) => {
         })
         .catch(err => {
             console.error(err);
-            res.status(400).json({ status: false });
+            res.status(400).json({
+                status: false,
+                message: err.message
+            });
+            next(err.message);
         });
 };
 
 
-exports.getByID = (req, res) => {
+exports.getByID = (req, res, next) => {
     const { isAdmin, userId, lang } = getUserDetails(req.user)
+
+    if (!req.params.shipID) {
+        res.status(400).json({
+            status: false, message: "No Param Name shipID found"
+        });
+        next('Client Error')
+    }
 
     ShippingDetails.findOne({
         where: {
@@ -147,6 +169,10 @@ exports.getByID = (req, res) => {
         })
         .catch(err => {
             console.error(err);
-            res.status(400).json({ status: false });
+            res.status(400).json({
+                status: false,
+                message: err.message
+            });
+            next(err.message);
         });
 };

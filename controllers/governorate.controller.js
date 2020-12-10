@@ -4,7 +4,7 @@ const config = require('../config');
 const { getUserDetails } = require('../utils/helperFunc');
 const { Country } = require('../models/associations');
 
-exports.add = (req, res) => {
+exports.add = (req, res, next) => {
     const _b = req.body;
 
     let payload = getData(_b, req.user)
@@ -17,17 +17,18 @@ exports.add = (req, res) => {
             console.error(err);
             res.status(400).json({
                 status: false,
-                error: err
+                message: err.message
             });
+            next(err.message);
         });
 };
 
-exports.update = (req, res) => {
+exports.update = (req, res, next) => {
     const _b = req.body;
 
     if (!_b.stateID) {
         res.status(400).json({ status: false, message: "stateID does not exists" });
-        return
+        next('Client Error')
     }
     let payload = getData(_b, req.user)
 
@@ -45,18 +46,22 @@ exports.update = (req, res) => {
         })
         .catch(err => {
             console.error(err);
-            res.status(400).json({ status: false });
+            res.status(400).json({
+                status: false,
+                message: err.message
+            });
+            next(err.message);
         });
 };
 
 
-exports.delete = (req, res) => {
+exports.delete = (req, res, next) => {
     const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
 
     if (!_b.stateID) {
         res.status(400).json({ status: false, message: "stateID does not exists" });
-        return
+        next('Client Error')
     }
 
     State.destroy(
@@ -72,11 +77,15 @@ exports.delete = (req, res) => {
         })
         .catch(err => {
             console.error(err);
-            res.status(400).json({ status: false });
+            res.status(400).json({
+                status: false,
+                message: err.message
+            });
+            next(err.message);
         });
 };
 
-exports.getAll = (req, res) => {
+exports.getAll = (req, res, next) => {
     const { isAdmin, userId, lang } = getUserDetails(req.user)
 
     State.findAll({
@@ -94,14 +103,22 @@ exports.getAll = (req, res) => {
         })
         .catch(err => {
             console.error(err);
-            res.status(400).json({ status: false });
+            res.status(400).json({
+                status: false,
+                message: err.message
+            });
+            next(err.message);
         });
 };
 
 
-exports.getByID = (req, res) => {
+exports.getByID = (req, res, next) => {
     const { isAdmin, userId, lang } = getUserDetails(req.user)
 
+    if (!req.params.stateID) {
+        res.status(400).json({ status: false, message: "No Param Name stateID found" });
+        next('Client Error')
+    }
     State.findOne({
         where: {
             stateID: req.params.stateID
@@ -116,7 +133,11 @@ exports.getByID = (req, res) => {
         })
         .catch(err => {
             console.error(err);
-            res.status(400).json({ status: false });
+            res.status(400).json({
+                status: false,
+                message: err.message
+            });
+            next(err.message);
         });
 };
 

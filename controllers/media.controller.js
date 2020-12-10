@@ -8,7 +8,7 @@ const Serializer = require('sequelize-to-json');
 const { getMediaSchema } = require('../utils/schema/schemas');
 const { Product } = require('../models/associations');
 
-exports.add = (req, res) => {
+exports.add = (req, res, next) => {
     if (req.user) {
         const { isAdmin, userId } = getUserDetails(req.user)
     }
@@ -28,18 +28,19 @@ exports.add = (req, res) => {
             console.error(err);
             res.status(400).json({
                 status: false,
-                error: err
+                message: err.message
             });
+            next(err.message);
         });
 };
 
-exports.update = (req, res) => {
+exports.update = (req, res, next) => {
     const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
 
     if (!_b.mediaID) {
         res.status(400).json({ status: false, message: "mediaID does not exists" });
-        return
+        next('Client Error')
     }
 
     let payload = insertingData(_b, _b.mediaID);
@@ -57,18 +58,22 @@ exports.update = (req, res) => {
         })
         .catch(err => {
             console.error(err);
-            res.status(400).json({ status: false });
+            res.status(400).json({
+                status: false,
+                message: err.message
+            });
+            next(err.message);
         });
 };
 
 
-exports.delete = (req, res) => {
+exports.delete = (req, res, next) => {
     const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
 
     if (!_b.mediaID) {
         res.status(400).json({ status: false, message: "mediaID does not exists" });
-        return
+        next('Client Error')
     }
 
 
@@ -85,11 +90,15 @@ exports.delete = (req, res) => {
         })
         .catch(err => {
             console.error(err);
-            res.status(400).json({ status: false });
+            res.status(400).json({
+                status: false,
+                message: err.message
+            });
+            next(err.message);
         });
 };
 
-exports.getAll = (req, res) => {
+exports.getAll = (req, res, next) => {
     const { isAdmin, userId, lang } = getUserDetails(req.user)
     const _b = req.body
 
@@ -107,7 +116,11 @@ exports.getAll = (req, res) => {
             })
             .catch(err => {
                 console.error(err);
-                res.status(400).json({ status: false });
+                res.status(400).json({
+                    status: false,
+                    message: err.message
+                });
+                next(err.message);
             });
     }
 
@@ -134,20 +147,27 @@ exports.getAll = (req, res) => {
         })
         .catch(err => {
             console.error(err);
-            res.status(400).json({ status: false });
+            res.status(400).json({
+                status: false,
+                message: err.message
+            });
+            next(err.message);
         });
 };
 
 
-exports.getByID = (req, res) => {
+exports.getByID = (req, res, next) => {
     const { isAdmin, userId, lang } = getUserDetails(req.user)
-
+    if (!req.params.mediaID || !req.params.product_id) {
+        res.status(400).json({ status: false, message: "No Params Name mediaID product_id found" });
+        next('Client Error')
+    }
     let opts = {
         where: {
             mediaID: req.params.mediaID
         }
     }
-    let productId = req.params.productId
+    let productId = req.params.product_id
     if (productId) {
         opts = {
             where: {
@@ -155,7 +175,7 @@ exports.getByID = (req, res) => {
             }
         }
     }
-    console.log(opts)
+    // console.log(opts)
     Media.findOne(opts)
         .then(c => {
             if (!c) throw new Error('No Me_idia found!');
@@ -167,6 +187,10 @@ exports.getByID = (req, res) => {
         })
         .catch(err => {
             console.error(err);
-            res.status(400).json({ status: false });
+            res.status(400).json({
+                status: false,
+                message: err.message
+            });
+            next(err.message);
         });
 };

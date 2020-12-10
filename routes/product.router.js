@@ -1,7 +1,6 @@
 const router = require('express').Router();
 const productController = require('../controllers/product.controller');
 const passport = require('passport');
-const { user, admin, guest } = require('../middlewares/auth');
 const multer = require('../services/multer.service');
 
 // var multer = require('multer')

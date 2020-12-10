@@ -8,7 +8,7 @@ const Serializer = require('sequelize-to-json');
 const { getPrivateMessageSchema } = require('../utils/schema/schemas');
 const { User } = require('../models/associations');
 
-exports.add = (req, res) => {
+exports.add = (req, res, next) => {
     const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
     let payload = {
@@ -25,8 +25,9 @@ exports.add = (req, res) => {
             console.error(err);
             res.status(400).json({
                 status: false,
-                error: err
+                message: err.message
             });
+            next(err.message);
         });
 };
 
@@ -59,13 +60,13 @@ exports.add = (req, res) => {
 // };
 
 
-exports.delete = (req, res) => {
+exports.delete = (req, res, next) => {
     const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
 
     if (!_b.messageID) {
         res.status(400).json({ status: false, message: "messageID does not exists" });
-        return
+        next('Client Error')
     }
 
 
@@ -83,11 +84,15 @@ exports.delete = (req, res) => {
         })
         .catch(err => {
             console.error(err);
-            res.status(400).json({ status: false });
+            res.status(400).json({
+                status: false,
+                message: err.message
+            });
+            next(err.message);
         });
 };
 
-exports.getAll = (req, res) => {
+exports.getAll = (req, res, next) => {
     const { isAdmin, userId, lang } = getUserDetails(req.user)
     const _b = req.body
 
@@ -105,7 +110,11 @@ exports.getAll = (req, res) => {
             })
             .catch(err => {
                 console.error(err);
-                res.status(400).json({ status: false });
+                res.status(400).json({
+                    status: false,
+                    message: err.message
+                });
+                next(err.message);
             });
     }
 
@@ -129,15 +138,23 @@ exports.getAll = (req, res) => {
         })
         .catch(err => {
             console.error(err);
-            res.status(400).json({ status: false });
+            res.status(400).json({
+                status: false,
+                message: err.message
+            });
+            next(err.message);
         });
 
 };
 
 
-exports.getByID = (req, res) => {
+exports.getByID = (req, res, next) => {
     const { isAdmin, userId, lang } = getUserDetails(req.user)
 
+    if (!req.params.messageID) {
+        res.status(400).json({ status: false, message: "No param Name messageID found" });
+        next('Client Error')
+    }
     PrivateMessage.findAll({
         where: {
             to_user_id: req.params.to_user_id,
@@ -153,6 +170,10 @@ exports.getByID = (req, res) => {
         })
         .catch(err => {
             console.error(err);
-            res.status(400).json({ status: false });
+            res.status(400).json({
+                status: false,
+                message: err.message
+            });
+            next(err.message);
         });
 };

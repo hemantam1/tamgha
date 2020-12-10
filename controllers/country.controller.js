@@ -6,7 +6,7 @@ const Serializer = require('sequelize-to-json');
 const { getCountrySchema } = require('../utils/schema/schemas');
 const { isAr } = require('../utils/verify');
 
-exports.add = (req, res) => {
+exports.add = (req, res, next) => {
     const _b = req.body;
     let payload = getData(_b, req.user)
 
@@ -18,17 +18,18 @@ exports.add = (req, res) => {
             console.error(err);
             res.status(400).json({
                 status: false,
-                error: err
+                message: err.message
             });
+            next(err.message);
         });
 };
 
-exports.update = (req, res) => {
+exports.update = (req, res, next) => {
     const _b = req.body;
 
     if (!_b.countryID) {
         res.status(400).json({ status: false, message: "countryID does not exists" });
-        return
+        next('Client Error')
     }
     let payload = getData(_b, req.user)
 
@@ -45,20 +46,23 @@ exports.update = (req, res) => {
         })
         .catch(err => {
             console.error(err);
-            res.status(400).json({ status: false });
+            res.status(400).json({
+                status: false,
+                message: err.message
+            });
+            next(err.message);
         });
 };
 
 
-exports.delete = (req, res) => {
+exports.delete = (req, res, next) => {
     const _b = req.body;
     const { isAdmin, userId } = getUserDetails(req.user)
 
     if (!_b.countryID) {
         res.status(400).json({ status: false, message: "countryID does not exists" });
-        return
+        next('Client Error')
     }
-    Server
 
     Country.destroy(
         {
@@ -73,11 +77,15 @@ exports.delete = (req, res) => {
         })
         .catch(err => {
             console.error(err);
-            res.status(400).json({ status: false });
+            res.status(400).json({
+                status: false,
+                message: err.message
+            });
+            next(err.message);
         });
 };
 
-exports.getAll = (req, res) => {
+exports.getAll = (req, res, next) => {
     const { isAdmin, userId, lang } = getUserDetails(req.user)
 
 
@@ -92,14 +100,22 @@ exports.getAll = (req, res) => {
         })
         .catch(err => {
             console.error(err);
-            res.status(400).json({ status: false });
+            res.status(400).json({
+                status: false,
+                message: err.message
+            });
+            next(err.message);
         });
 };
 
 
-exports.getByID = (req, res) => {
+exports.getByID = (req, res, next) => {
     const { isAdmin, userId, lang } = getUserDetails(req.user)
 
+    if (!req.params.countryID) {
+        res.status(400).json({ status: false, message: "No Param Name countryID found" });
+        next('Client Error')
+    }
     Country.findOne({
         where: {
             countryID: req.params.countryID
@@ -116,7 +132,11 @@ exports.getByID = (req, res) => {
         })
         .catch(err => {
             console.error(err);
-            res.status(400).json({ status: false });
+            res.status(400).json({
+                status: false,
+                message: err.message
+            });
+            next(err.message);
         });
 };
 

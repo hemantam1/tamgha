@@ -8,7 +8,7 @@ const Serializer = require('sequelize-to-json');
 const { ProductDetails } = require('../models/associations');
 const { getMeasurementsSchema } = require('../utils/schema/schemas');
 
-exports.add = (req, res) => {
+exports.add = (req, res, next) => {
     const { isAdmin, userId, lang } = getUserDetails(req.user)
     const _b = req.body;
     let payload = {
@@ -29,18 +29,19 @@ exports.add = (req, res) => {
             console.error(err);
             res.status(400).json({
                 status: false,
-                error: err
+                message: err.message
             });
+            next(err.message);
         });
 };
 
-exports.update = (req, res) => {
+exports.update = (req, res, next) => {
     const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
 
     if (!_b.measurementID) {
         res.status(400).json({ status: false, message: "measurementID does not exists" });
-        return
+        next('Client Error')
     }
 
     let payload = insertingData(_b, _b.measurementID);
@@ -58,18 +59,22 @@ exports.update = (req, res) => {
         })
         .catch(err => {
             console.error(err);
-            res.status(400).json({ status: false });
+            res.status(400).json({
+                status: false,
+                message: err.message
+            });
+            next(err.message);
         });
 };
 
 
-exports.delete = (req, res) => {
+exports.delete = (req, res, next) => {
     const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
 
     if (!_b.measurementID) {
         res.status(400).json({ status: false, message: "measurementID does not exists" });
-        return
+        next('Client Error')
     }
 
 
@@ -86,11 +91,15 @@ exports.delete = (req, res) => {
         })
         .catch(err => {
             console.error(err);
-            res.status(400).json({ status: false });
+            res.status(400).json({
+                status: false,
+                message: err.message
+            });
+            next(err.message);
         });
 };
 
-exports.getAll = (req, res) => {
+exports.getAll = (req, res, next) => {
     const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body
 
@@ -108,17 +117,26 @@ exports.getAll = (req, res) => {
             })
             .catch(err => {
                 console.error(err);
-                res.status(400).json({ status: false });
+                res.status(400).json({
+                    status: false,
+                    message: err.message
+                });
+                next(err.message);
             });
     }
     res.status(400).json({ status: false, message: "Not A USER API" });
-
+    next('Client Error')
 };
 
 
-exports.getByID = (req, res) => {
+exports.getByID = (req, res, next) => {
     const { isAdmin, userId, lang } = getUserDetails(req.user)
 
+
+    if (!req.params.measurementID || !req.params.productDetailId) {
+        res.status(400).json({ status: false, message: "No params Name measurementID / productDetailId exists" });
+        next('Client Error')
+    }
     let opts = {
         where: {
             productDetail_id: req.params.productDetailId
@@ -145,6 +163,10 @@ exports.getByID = (req, res) => {
         })
         .catch(err => {
             console.error(err);
-            res.status(400).json({ status: false });
+            res.status(400).json({
+                status: false,
+                message: err.message
+            });
+            next(err.message);
         });
 };

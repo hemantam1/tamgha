@@ -15,7 +15,7 @@ const { User, } = require('../models/associations');
 const SubCategory = require('../models/subCategory.model');
 const Likes = require('../models/likes.model')
 
-exports.add = (req, res) => {
+exports.add = (req, res, next) => {
     const _b = req.body;
     const { isAdmin, userId, lang } = getUserDetails(req.user)
 
@@ -30,8 +30,9 @@ exports.add = (req, res) => {
                 console.error(err);
                 res.status(400).json({
                     status: false,
-                    error: err
+                    message: err.message
                 });
+                next(err.message);
             });
     }
 
@@ -77,7 +78,11 @@ exports.add = (req, res) => {
                     }
                 } catch (err) {
                     console.error(err);
-                    res.status(400).json({ status: false });
+                    res.status(400).json({
+                        status: false,
+                        message: err.message
+                    });
+                    next(err.message);
                 }
                 try {
 
@@ -104,26 +109,41 @@ exports.add = (req, res) => {
                             data: _b
                         })
                         )
+                        .catch(err => {
+                            res.status(400).json({
+                                status: false,
+                                message: err.message
+                            });
+                            next(err.message);
+                        })
                 }
                 catch (err) {
                     console.error(err);
-                    res.status(400).json({ status: false });
+                    res.status(400).json({
+                        status: false,
+                        message: err.message
+                    });
+                    next(err.message);
                 }
             }
 
         })
         .catch(err => {
             console.error(err);
-            res.status(400).json({ status: false });
+            res.status(400).json({
+                status: false,
+                message: err.message
+            });
+            next(err.message);
         });
 };
 
-exports.update = (req, res) => {
+exports.update = (req, res, next) => {
     const _b = req.body;
 
     if (!_b.productID) {
         res.status(400).json({ status: false, message: "productID does not exists" });
-        return
+        next('Client Error')
     }
 
     let payload = getData(_b, req.user)
@@ -141,19 +161,23 @@ exports.update = (req, res) => {
         })
         .catch(err => {
             console.error(err);
-            res.status(400).json({ status: false });
+            res.status(400).json({
+                status: false,
+                message: err.message
+            });
+            next(err.message);
         });
 };
 
 
-exports.delete = (req, res) => {
+exports.delete = (req, res, next) => {
     const { isAdmin, userId } = getUserDetails(req.user)
     const _b = req.body;
     // console.log(data[0].productID)
 
     if (!_b.productID) {
         res.status(400).json({ status: false, message: "productID does not exists" });
-        return
+        next('Client Error')
     }
 
 
@@ -171,11 +195,15 @@ exports.delete = (req, res) => {
         })
         .catch(err => {
             console.error(err);
-            res.status(400).json({ status: false });
+            res.status(400).json({
+                status: false,
+                message: err.message
+            });
+            next(err.message);
         });
 };
 
-exports.getAll = (req, res) => {
+exports.getAll = (req, res, next) => {
     const { isAdmin, userId, lang } = getUserDetails(req.user)
     const _b = req.body
 
@@ -203,13 +231,22 @@ exports.getAll = (req, res) => {
         })
         .catch(err => {
             console.error(err);
-            res.status(400).json({ status: false });
+            res.status(400).json({
+                status: false,
+                message: err.message
+            });
+            next(err.message);
         });
 };
 
 
-exports.getByID = (req, res) => {
+exports.getByID = (req, res, next) => {
     const { isAdmin, userId, lang } = getUserDetails(req.user)
+
+    if (!req.params.productID) {
+        res.status(400).json({ status: false, message: "No param Name productID exists" });
+        next('Client Error')
+    }
 
     Product.findOne({
         where: {
@@ -226,7 +263,11 @@ exports.getByID = (req, res) => {
         })
         .catch(err => {
             console.error(err);
-            res.status(400).json({ status: false });
+            res.status(400).json({
+                status: false,
+                message: err.message
+            });
+            next(err.message);
         });
 };
 
@@ -269,7 +310,7 @@ exports.uploadPhotos = (req, res, next) => {
 
 
 
-exports.explore = (req, res) => {
+exports.explore = (req, res, next) => {
     // const _b = req.body
     const { isAdmin, userId } = getUserDetails(req.user)
 
@@ -288,7 +329,11 @@ exports.explore = (req, res) => {
         })
         .catch(err => {
             console.error(err);
-            res.status(400).json({ status: false });
+            res.status(400).json({
+                status: false,
+                message: err.message
+            });
+            next(err.message);
         });
 };
 

@@ -8,7 +8,7 @@ const Serializer = require('sequelize-to-json');
 const { getFollowerSchema } = require('../utils/schema/schemas');
 const { User } = require('../models/associations');
 
-exports.add = (req, res) => {
+exports.add = (req, res, next) => {
     const _b = req.body;
     const { isAdmin, userId } = getUserDetails(req.user)
     let payload = {
@@ -24,19 +24,20 @@ exports.add = (req, res) => {
             console.error(err);
             res.status(400).json({
                 status: false,
-                error: err
+                message: err.message
             });
+            next(err.message);
         });
 };
 
 
-exports.delete = (req, res) => {
+exports.delete = (req, res, next) => {
     const _b = req.body;
     const { isAdmin, userId } = getUserDetails(req.user)
 
     if (!_b.followerID) {
         res.status(400).json({ status: false, message: "followerID does not exists" });
-        return
+        next('Client Error')
     }
 
 
@@ -53,11 +54,15 @@ exports.delete = (req, res) => {
         })
         .catch(err => {
             console.error(err);
-            res.status(400).json({ status: false });
+            res.status(400).json({
+                status: false,
+                message: err.message
+            });
+            next(err.message);
         });
 };
 
-exports.getAll = (req, res) => {
+exports.getAll = (req, res, next) => {
     const _b = req.body
     const { isAdmin, userId, lang } = getUserDetails(req.user)
 
@@ -75,7 +80,11 @@ exports.getAll = (req, res) => {
             })
             .catch(err => {
                 console.error(err);
-                res.status(400).json({ status: false });
+                res.status(400).json({
+                    status: false,
+                    message: err.message
+                });
+                next(err.message);
             });
     }
     Followers.findAll({
@@ -98,13 +107,22 @@ exports.getAll = (req, res) => {
         })
         .catch(err => {
             console.error(err);
-            res.status(400).json({ status: false });
+            res.status(400).json({
+                status: false,
+                message: err.message
+            });
+            next(err.message);
         });
 };
 
 
-exports.getByID = (req, res) => {
+exports.getByID = (req, res, next) => {
     const { isAdmin, userId, lang } = getUserDetails(req.user)
+    if (!req.params.followerID || !req.params.userId) {
+        res.status(400).json({ status: false, message: "No Params Name followerID / userId found  " });
+        next('Client Error')
+    }
+
     let followerUserId = req.params.userId
     let opts = {
         where: {
@@ -138,6 +156,10 @@ exports.getByID = (req, res) => {
         })
         .catch(err => {
             console.error(err);
-            res.status(400).json({ status: false });
+            res.status(400).json({
+                status: false,
+                message: err.message
+            });
+            next(err.message);
         });
 };

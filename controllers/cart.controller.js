@@ -7,7 +7,7 @@ const { getCartSchema } = require('../utils/schema/schemas');
 const Serializer = require('sequelize-to-json');
 const { User, Product } = require('../models/associations');
 
-exports.add = (req, res) => {
+exports.add = (req, res, next) => {
 
     let payload = getData(req.body, req.user)
 
@@ -19,18 +19,21 @@ exports.add = (req, res) => {
             console.error(err);
             res.status(400).json({
                 status: false,
-                error: err
+                error: err, message: err.message
             });
+            next(err.message);
         });
 };
 
-exports.update = (req, res) => {
+exports.update = (req, res, next) => {
     const _b = req.body;
 
     if (!_b.cartID) {
         res.status(400).json({
-            status: false, message: "cartID does not exists"
+            status: false, message: "cartID does not exists",
+            message: err.message
         });
+        next('Client Error');
         return
     }
 
@@ -49,19 +52,20 @@ exports.update = (req, res) => {
         })
         .catch(err => {
             console.error(err);
-            res.status(400).json({ status: false });
+            res.status(400).json({ status: false, message: err.message });
         });
 };
 
 
-exports.delete = (req, res) => {
+exports.delete = (req, res, next) => {
     const _b = req.body;
     const { isAdmin, userId } = getUserDetails(req.user)
 
     if (!_b.cartID) {
         res.status(400).json({
-            status: false, message: "cartID does not exists"
+            status: false, message: "cartID does not exists", message: err.message
         });
+        next('Client Error');
         return
     }
 
@@ -82,11 +86,13 @@ exports.delete = (req, res) => {
         })
         .catch(err => {
             console.error(err);
-            res.status(400).json({ status: false });
+            res.status(400).json({ status: false, message: err.message });
+            next(err.message);
         });
+
 };
 
-exports.getAll = (req, res) => {
+exports.getAll = (req, res, next) => {
     // const _b = req.body
     const { isAdmin, userId, lang } = getUserDetails(req.user)
     // console.log(userId, "User", isAdmin)
@@ -109,7 +115,8 @@ exports.getAll = (req, res) => {
             })
             .catch(err => {
                 console.error(err);
-                res.status(400).json({ status: false });
+                res.status(400).json({ status: false, message: err.message });
+                next(err.message);
             });
     }
     Cart.findAll({
@@ -130,16 +137,24 @@ exports.getAll = (req, res) => {
     })
         .catch(err => {
             console.error(err);
-            res.status(400).json({ status: false });
+            res.status(400).json({ status: false, message: err.message });
+            next(err.message);
         });
 
 
 };
 
 
-exports.getByID = (req, res) => {
+exports.getByID = (req, res, next) => {
     const { isAdmin, userId, lang } = getUserDetails(req.user)
 
+    if (!req.params.cartID) {
+        res.status(400).json({
+            status: false, message: "No Param Name cartID found ", message: err.message
+        });
+        next('Client Error');
+        return
+    }
     Cart.findOne({
         where: {
             cartID: req.params.cartID,
@@ -160,7 +175,8 @@ exports.getByID = (req, res) => {
         })
         .catch(err => {
             console.error(err);
-            res.status(400).json({ status: false });
+            res.status(400).json({ status: false, message: err.message });
+            next(err.message);
         });
 };
 
@@ -169,9 +185,9 @@ function getData(body, user) {
     const { isAdmin, userId, lang } = getUserDetails(user)
 
     let payload = {
-        quantity: _b.quantity,
-        price: _b.price,
-        product_id: _b.product_id,
+        quantity: body.quantity,
+        price: body.price,
+        product_id: body.product_id,
         user_id: userId
     }
     if (isAr(lang)) {

@@ -7,6 +7,7 @@ const morgan = require('morgan');
 const config = require('./config');
 const sequelize = require('./services/sequelize.service');
 const { authenticate } = require('passport');
+var logger = require('./utils/loging.js')
 
 app.use(cors());
 app.use(morgan(':method :url'));
@@ -15,6 +16,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 sequelize.connect();
 require('./models/associations');
 require('./services/passport.service').initialize();
+
+app.use(logger.log);
 
 app.use('/', require('./routes/allRoute.router'));
 app.use('/country', require('./routes/country.router'));
@@ -25,6 +28,7 @@ app.use('/user', require('./routes/user.router'));
 app.use('/product', require('./routes/product.router'));
 app.use('/tamghaShip', require('./routes/shippingDetail.router'));
 
+app.use(logger.error);
 
 
 sequelize.connection()
