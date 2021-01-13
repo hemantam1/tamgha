@@ -15,6 +15,7 @@ module.exports = {
     //     },
     //     bucket: 'fileupload101'
     // },
+    // ORIGINAL
     db: {
         HOST: "remotemysql.com",
         USER: "mAue1jDzmB",
@@ -27,6 +28,19 @@ module.exports = {
             acquire: 30000,
             idle: 10000
         }
-    }
+    },
 
+    // db: {
+    //     HOST: "remotemysql.com",
+    //     USER: "URbZ25iaBo",
+    //     PASSWORD: "ydl2CZxLBB",
+    //     DB: "URbZ25iaBo",
+    //     dialect: "mysql",
+    //     pool: {
+    //         max: 5,
+    //         min: 0,
+    //         acquire: 30000,
+    //         idle: 10000
+    //     }
+    // }
 };

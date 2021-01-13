@@ -5,6 +5,7 @@ const passport = require('passport');
 
 
 router.get('/', passport.authenticate('user', { session: false }), categoryController.getAll);
+router.get('/', passport.authenticate('admin', { session: false }), categoryController.getAll);
 
 router.post('/', passport.authenticate('user', { session: false }), categoryController.add);
 router.put('/', passport.authenticate('user', { session: false }), categoryController.update);
