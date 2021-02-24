@@ -4,6 +4,8 @@ const passport = require('passport');
 
 
 router.get('/', passport.authenticate('user', { session: false }), ordersController.getAll);
+router.get('/', passport.authenticate('admin', { session: false }), ordersController.getAll);
+
 router.post('/', passport.authenticate('user', { session: false }), ordersController.add);
 // router.put('/', passport.authenticate('user', { session: false }), ordersController.update);
 router.delete('/', passport.authenticate('user', { session: false }), ordersController.delete);
