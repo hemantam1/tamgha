@@ -36,7 +36,7 @@ exports.register = (req, res, next) => {
     else {
         User.findOne({
             where: {
-                email: _b.email
+                userName: _b.userName
             },
             attributes: ['userID']
         })
@@ -44,7 +44,7 @@ exports.register = (req, res, next) => {
                 if (u) {
                     res.status(400).send({
                         status: false,
-                        message: "Email already registered"
+                        message: "Username already registered"
                     });
                     return
 
@@ -113,8 +113,8 @@ exports.getAll = (req, res, next) => {
 }
 exports.login = (req, res, next) => {
     const _b = req.body;
-    if (!_b.email) {
-        res.status(400).send({ message: "email cannot be null" });
+    if (!_b.userName) {
+        res.status(400).send({ message: "userName cannot be null" });
         next('Client Error')
         return
     }
@@ -126,7 +126,7 @@ exports.login = (req, res, next) => {
     else {
         User.findOne({
             where: {
-                email: _b.email
+                userName: _b.userName
             }
         })
             .then(u => {
@@ -158,7 +158,7 @@ exports.login = (req, res, next) => {
                 else {
                     res.status(400).json({
                         status: false,
-                        message: "email not found"
+                        message: "User not found"
                     });
                     next('Client Error')
                     return
